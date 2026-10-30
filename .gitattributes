@@ -1,0 +1,4 @@
+# 셸 훅은 Git for Windows 의 sh 로 실행되므로 LF 고정
+*.sh text eol=lf
+**/scripts/post-receive text eol=lf
+**/.githooks/* text eol=lf

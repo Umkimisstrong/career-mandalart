@@ -1,0 +1,31 @@
+#!/bin/sh
+# 로컬 bare 저장소(배포 서버 역할)에 설치되는 훅.
+# push 를 받으면 배포용 작업 폴더에 체크아웃하고 scripts/deploy.mjs 를 실행한다.
+# setup-local-git.ps1 이 __DEPLOY_DIR__ 를 실제 경로로 바꿔 설치한다.
+
+DEPLOY_DIR="__DEPLOY_DIR__"
+GIT_DIR=$(cd "${GIT_DIR:-.}" && pwd)
+export GIT_DIR
+LOG="$GIT_DIR/deploy.log"
+
+mkdir -p "$DEPLOY_DIR"
+
+while read oldrev newrev ref; do
+  # 삭제 push 는 무시
+  [ "$newrev" = "0000000000000000000000000000000000000000" ] && continue
+
+  echo "==== $(date) $ref $newrev" >> "$LOG"
+  git --work-tree="$DEPLOY_DIR" checkout -f "$newrev" -- . >> "$LOG" 2>&1
+  msg=$(git log -1 --format=%s "$newrev")
+
+  (
+    unset GIT_DIR
+    cd "$DEPLOY_DIR" && node scripts/deploy.mjs "$ref" "$msg"
+  ) >> "$LOG" 2>&1
+
+  if [ $? -eq 0 ]; then
+    echo "[deploy] $ref 성공 (로그: $LOG)"
+  else
+    echo "[deploy] $ref 실패 — 로그 확인: $LOG"
+  fi
+done
