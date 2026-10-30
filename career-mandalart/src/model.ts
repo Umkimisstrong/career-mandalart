@@ -5,12 +5,16 @@
 // 가운데 블록의 나머지 8칸 = 세부 목표이며, 같은 번호의 바깥 블록 가운데 칸과 동일하다.
 // 그래서 바깥 블록의 가운데 칸은 저장하지 않고 blocks[4][b] 를 참조한다.
 
+import type { AgeBand } from './categories/data';
+
 export const CENTER = 4;
 
 export type Cell = {
   text: string;
   note: string;
   done: boolean;
+  // 세부 목표 칸에 지정한 목표 카테고리 id (src/categories/data.ts)
+  cat?: string;
 };
 
 export type Plan = {
@@ -24,6 +28,10 @@ export type Plan = {
 export type Store = {
   version: 1;
   plans: Plan[];
+  // 사용자가 "카테고리에 추가"한 속성 — 카테고리 id → 라벨 목록
+  custom?: Record<string, string[]>;
+  // 추천 아이템을 고를 때 기준이 되는 내 연령대
+  age?: AgeBand;
 };
 
 export const BLOCK_COLORS = [
@@ -96,8 +104,9 @@ export function isStore(v: unknown): v is Store {
 export function samplePlan(): Plan {
   let p = newPlan('나의 커리어 청사진');
   const goals = ['전문성', '리더십', '네트워크', '건강', '', '재무', '브랜딩', '학습', '마인드셋'];
+  const cats = ['career', 'career', 'network', 'health', '', 'money', 'recognition', 'growth', 'mindset'];
   p = setCell(p, CENTER, CENTER, { text: '10년 후 업계 최고의 전문가' });
-  goals.forEach((g, i) => { if (i !== CENTER) p = setCell(p, CENTER, i, { text: g }); });
+  goals.forEach((g, i) => { if (i !== CENTER) p = setCell(p, CENTER, i, { text: g, cat: cats[i] }); });
   ['핵심 자격증 취득', '사이드 프로젝트 1개/분기', '기술 블로그 주 1회', '컨퍼런스 발표'].forEach((t, i) => {
     p = setCell(p, 0, [0, 1, 2, 3][i], { text: t });
   });

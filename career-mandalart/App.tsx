@@ -105,6 +105,13 @@ export default function App() {
             onBack={() => setRoute({ ...route, block: null })}
             onChangeBlock={block => setRoute({ ...route, block })}
             onEdit={(b, c, patch: Partial<Cell>) => updatePlan(plan.id, p => setCell(p, b, c, patch))}
+            age={store.age}
+            custom={store.custom ?? {}}
+            onAge={age => setStore(s => s && { ...s, age })}
+            onAddCustom={(catId, label) => setStore(s => s && {
+              ...s,
+              custom: { ...s.custom, [catId]: [...(s.custom?.[catId] ?? []), label] },
+            })}
           />
         );
       }

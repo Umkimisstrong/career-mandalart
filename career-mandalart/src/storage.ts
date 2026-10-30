@@ -32,5 +32,10 @@ export function importJson(current: Store, text: string): Store {
   if (!isStore(parsed)) throw new Error('만다라트 백업 형식이 아닙니다.');
   const byId = new Map(current.plans.map(p => [p.id, p]));
   parsed.plans.forEach(p => byId.set(p.id, p));
-  return { version: 1, plans: [...byId.values()] };
+  // 사용자 카테고리 항목도 합치고, 연령대 설정은 현재 기기 것을 유지
+  const custom = { ...parsed.custom, ...current.custom };
+  for (const [k, v] of Object.entries(parsed.custom ?? {})) {
+    custom[k] = [...new Set([...(current.custom?.[k] ?? []), ...v])];
+  }
+  return { ...current, plans: [...byId.values()], custom };
 }

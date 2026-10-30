@@ -4,21 +4,29 @@ import {
   KeyboardAvoidingView, Modal, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput,
   useWindowDimensions, View,
 } from 'react-native';
+import { AgeBand, categoryById } from '../categories/data';
+import { ActionItemPicker, GoalCategoryPicker } from '../components/CategoryPicker';
 import { CENTER, Cell, cellRole, getCell, Plan, progress } from '../model';
 import { blockColor, blockTextColor, ui } from '../theme';
 
 type Props = {
   plan: Plan;
   block: number;
+  age?: AgeBand;
+  custom: Record<string, string[]>;
   onBack: () => void;
   onChangeBlock: (block: number) => void;
   onEdit: (block: number, cell: number, patch: Partial<Cell>) => void;
+  onAge: (age: AgeBand | undefined) => void;
+  onAddCustom: (catId: string, label: string) => void;
 };
 
 const IDX = [0, 1, 2, 3, 4, 5, 6, 7, 8];
 const ROLE_LABEL = { core: '핵심 목표', goal: '세부 목표', action: '실행 과제' } as const;
 
-export default function BlockEditor({ plan, block, onBack, onChangeBlock, onEdit }: Props) {
+export default function BlockEditor({
+  plan, block, age, custom, onBack, onChangeBlock, onEdit, onAge, onAddCustom,
+}: Props) {
   const { width } = useWindowDimensions();
   const size = Math.min(width, 520) - 32;
   const cellSize = (size - 16) / 3;
@@ -27,6 +35,7 @@ export default function BlockEditor({ plan, block, onBack, onChangeBlock, onEdit
   const center = getCell(plan, block, CENTER);
   const pr = progress(plan, block);
   const headerTitle = block === CENTER ? '핵심 블록' : center.text || `세부 목표 ${block < CENTER ? block + 1 : block}`;
+  const blockCat = block === CENTER ? undefined : center.cat;
 
   return (
     <View style={{ flex: 1 }}>
@@ -52,7 +61,9 @@ export default function BlockEditor({ plan, block, onBack, onChangeBlock, onEdit
                   v.done && role === 'action' && styles.done,
                 ]}
               >
-                <Text style={[styles.role, role === 'core' && { color: '#D1D5DB' }]}>{ROLE_LABEL[role]}</Text>
+                <Text style={[styles.role, role === 'core' && { color: '#D1D5DB' }]}>
+                  {ROLE_LABEL[role]}{role === 'goal' && categoryById(v.cat) ? ` · ${categoryById(v.cat)!.emoji}` : ''}
+                </Text>
                 <Text
                   numberOfLines={4}
                   style={[
@@ -101,6 +112,11 @@ export default function BlockEditor({ plan, block, onBack, onChangeBlock, onEdit
         <CellEditor
           role={cellRole(block, editing)}
           cell={getCell(plan, block, editing)}
+          blockCat={blockCat}
+          age={age}
+          custom={custom}
+          onAge={onAge}
+          onAddCustom={onAddCustom}
           onClose={() => setEditing(null)}
           onSave={patch => { onEdit(block, editing, patch); setEditing(null); }}
         />
@@ -109,20 +125,33 @@ export default function BlockEditor({ plan, block, onBack, onChangeBlock, onEdit
   );
 }
 
-function CellEditor({ role, cell, onClose, onSave }: {
+function CellEditor({ role, cell, blockCat, age, custom, onAge, onAddCustom, onClose, onSave }: {
   role: keyof typeof ROLE_LABEL;
   cell: Cell;
+  blockCat?: string;
+  age?: AgeBand;
+  custom: Record<string, string[]>;
+  onAge: (age: AgeBand | undefined) => void;
+  onAddCustom: (catId: string, label: string) => void;
   onClose: () => void;
   onSave: (patch: Partial<Cell>) => void;
 }) {
   const [text, setText] = useState(cell.text);
   const [note, setNote] = useState(cell.note);
   const [done, setDone] = useState(cell.done);
+  const [cat, setCat] = useState(cell.cat);
+
+  // 카테고리를 고를 때 제목이 비어 있거나 이전 카테고리 이름 그대로면 새 카테고리 이름으로 채운다
+  const selectCat = (id: string | undefined) => {
+    const prev = categoryById(cat)?.label;
+    if (!text.trim() || text === prev) setText(categoryById(id)?.label ?? '');
+    setCat(id);
+  };
 
   return (
     <Modal transparent animationType="slide" onRequestClose={onClose}>
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={styles.backdrop}>
-        <View style={styles.sheet}>
+        <ScrollView style={styles.sheetScroll} contentContainerStyle={styles.sheet} keyboardShouldPersistTaps="handled">
           <Text style={styles.sheetTitle}>{ROLE_LABEL[role]}</Text>
           <TextInput
             autoFocus value={text} onChangeText={setText} multiline maxLength={60}
@@ -134,6 +163,18 @@ function CellEditor({ role, cell, onClose, onSave }: {
             placeholder="메모 · 기한 · 측정 기준 (선택)"
             style={[ui.input, { minHeight: 80 }]}
           />
+          {role === 'goal' && <GoalCategoryPicker selected={cat} onSelect={selectCat} />}
+          {role === 'action' && (
+            <ActionItemPicker
+              initialCat={blockCat}
+              text={text}
+              age={age}
+              custom={custom}
+              onAge={onAge}
+              onPick={label => setText(label)}
+              onAddCustom={onAddCustom}
+            />
+          )}
           {role === 'action' && (
             <Pressable style={[ui.btn, done && { backgroundColor: '#D1FAE5', borderColor: '#10B981' }]} onPress={() => setDone(!done)}>
               <Text style={ui.btnText}>{done ? '✓ 완료됨' : '완료로 표시'}</Text>
@@ -141,11 +182,14 @@ function CellEditor({ role, cell, onClose, onSave }: {
           )}
           <View style={{ flexDirection: 'row', gap: 8 }}>
             <Pressable style={[ui.btn, { flex: 1 }]} onPress={onClose}><Text style={ui.btnText}>취소</Text></Pressable>
-            <Pressable style={[ui.btnPrimary, { flex: 1 }]} onPress={() => onSave({ text: text.trim(), note, done })}>
+            <Pressable
+              style={[ui.btnPrimary, { flex: 1 }]}
+              onPress={() => onSave({ text: text.trim(), note, done, ...(role === 'goal' ? { cat } : {}) })}
+            >
               <Text style={ui.btnPrimaryText}>저장</Text>
             </Pressable>
           </View>
-        </View>
+        </ScrollView>
       </KeyboardAvoidingView>
     </Modal>
   );
@@ -167,9 +211,10 @@ const styles = StyleSheet.create({
   miniCell: { width: 40, height: 40, borderRadius: 6, alignItems: 'center', justifyContent: 'center', opacity: 0.6 },
   miniActive: { opacity: 1, borderWidth: 2, borderColor: '#111827' },
   backdrop: { flex: 1, justifyContent: 'flex-end', backgroundColor: 'rgba(0,0,0,0.35)' },
-  sheet: {
-    backgroundColor: '#F9FAFB', padding: 20, gap: 12, borderTopLeftRadius: 20, borderTopRightRadius: 20,
-    paddingBottom: 36,
+  sheetScroll: {
+    flexGrow: 0, maxHeight: '88%', backgroundColor: '#F9FAFB',
+    borderTopLeftRadius: 20, borderTopRightRadius: 20,
   },
+  sheet: { padding: 20, gap: 12, paddingBottom: 36 },
   sheetTitle: { fontSize: 16, fontWeight: '700', color: '#111827' },
 });

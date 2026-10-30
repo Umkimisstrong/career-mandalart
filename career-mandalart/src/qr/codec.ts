@@ -20,7 +20,8 @@ for (let b = 0; b < 9; b++) {
   }
 }
 
-type Packed = [title: string, texts: string[], notes: string[] | 0, done: number[]];
+// cats(5번째)는 가운데 블록 9칸의 카테고리 id — 이전 버전 QR 에는 없을 수 있다
+type Packed = [title: string, texts: string[], notes: string[] | 0, done: number[], cats?: string[]];
 
 const trimEnd = (a: string[]) => {
   let n = a.length;
@@ -32,7 +33,10 @@ function pack(plan: Plan, withNotes: boolean): Packed {
   const texts = trimEnd(SLOTS.map(([b, c]) => plan.blocks[b][c].text));
   const notes = withNotes ? trimEnd(SLOTS.map(([b, c]) => plan.blocks[b][c].note)) : [];
   const done = SLOTS.flatMap(([b, c], i) => (plan.blocks[b][c].done ? [i] : []));
-  return [plan.title, texts, notes.length ? notes : 0, done];
+  const cats = trimEnd(plan.blocks[CENTER].map(c => c.cat ?? ''));
+  const packed: Packed = [plan.title, texts, notes.length ? notes : 0, done];
+  if (cats.length) packed.push(cats);
+  return packed;
 }
 
 export type Encoded = { text: string; droppedNotes: boolean };
@@ -61,7 +65,7 @@ export function decodePlan(text: string): Plan {
   } catch {
     throw new Error('QR 데이터가 손상되었습니다.');
   }
-  const [title, texts, notes, done] = packed;
+  const [title, texts, notes, done, cats = []] = packed;
   const plan = newPlan(title || '불러온 청사진');
   const doneSet = new Set(done);
   SLOTS.forEach(([b, c], i) => {
@@ -71,6 +75,7 @@ export function decodePlan(text: string): Plan {
       done: doneSet.has(i),
     };
   });
+  cats.forEach((id, i) => { if (id) plan.blocks[CENTER][i].cat = id; });
   return plan;
 }
 
