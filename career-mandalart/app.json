@@ -25,6 +25,14 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "plugins": [
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "만다라트 QR 코드를 읽어 청사진을 불러오기 위해 카메라를 사용합니다."
+        }
+      ]
+    ]
   }
 }

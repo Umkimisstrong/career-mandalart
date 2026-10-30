@@ -13,6 +13,8 @@
 | iOS + Android 모두 지원 | Expo SDK 58 + React Native 0.88 + TypeScript (웹도 같은 코드로 동작) |
 | DB 없이 정보 관리 | AsyncStorage 에 JSON 1개 (`career-mandalart/store/v1` 키). 웹에서는 localStorage |
 | 데이터 이동 | JSON 내보내기(공유 시트) / 붙여넣기 복원, 같은 id 는 덮어쓰기 병합 |
+| QR 저장소 | 청사진 1개 = QR 이미지 1장. `src/qr/codec.ts`: 저장 칸 73개 튜플 JSON → deflate(fflate) → base45 → `MDA1:` 접두사. 영숫자 모드 용량 4296자 초과 시 메모 제외, 그래도 넘치면 오류. 불러오면 항상 새 id 로 추가 |
+| QR 읽기 | 웹: `image.web.ts` 파일 선택(사진/촬영) + jsQR. 네이티브: `QrScan.tsx` expo-camera `CameraView`. 생성: 웹 qrcode→canvas PNG(제목 캡션), 네이티브 react-native-svg |
 | 로컬 Git 자동배포 | 로컬 bare 저장소 + post-receive 훅 → `scripts/deploy.mjs` → EAS Update/Build |
 | 사용자 기기 | 사용자는 **iPhone** 사용. 다른 사람에게도 보여주고 싶어함 |
 | iPhone 배포 경로 | ① Vercel 웹 배포(+홈 화면 추가) — 무료, 즉시 ② Expo Go — 개발용 ③ TestFlight/App Store — Apple 개발자 계정($99/년) 필요 |
@@ -55,6 +57,7 @@ npm run deploy:dry      # EAS 호출 없이 배포 파이프라인 점검
 - 검증: tsc 통과, 웹 번들 빌드 성공, 375px 모바일 뷰에서 편집·완료·저장·진행률 동작 확인.
 - GitHub: https://github.com/Umkimisstrong/career-mandalart (public, 저장소 루트 = 이 폴더)
 - Vercel: https://career-mandalart.vercel.app — GitHub `main` push 시 자동 배포. 루트 `vercel.json` 이 `career-mandalart/` 하위 폴더를 빌드하도록 지정 (Vercel 프로젝트 Root Directory 는 비워둠).
+- QR 기능: 웹에서 81칸 + 메모 + 완료 체크 왕복(생성 PNG → jsQR 디코드 → 복원) 일치 확인. 네이티브 카메라 스캔은 미검증.
 - 미검증: 실제 iPhone 실행, 로컬 Git 훅 push, EAS update/build.
 - 환경: Git·GitHub CLI·Vercel CLI 설치·로그인 완료. Node 는 아직 **20.10 (Expo 58 은 22.13+ 필요)** — 로컬 실행 전 업그레이드 필요.
 - Windows PowerShell 실행 정책 때문에 `vercel` 대신 `vercel.cmd` 로 호출해야 함.

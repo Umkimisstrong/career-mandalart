@@ -9,6 +9,8 @@ type Props = {
   onCreate: (title: string) => void;
   onDelete: (id: string) => void;
   onBackup: () => void;
+  onScanQr: () => void;
+  notice?: string;
 };
 
 function confirm(message: string, onYes: () => void) {
@@ -22,7 +24,7 @@ function confirm(message: string, onYes: () => void) {
   ]);
 }
 
-export default function PlanList({ plans, onOpen, onCreate, onDelete, onBackup }: Props) {
+export default function PlanList({ plans, onOpen, onCreate, onDelete, onBackup, onScanQr, notice }: Props) {
   const [title, setTitle] = useState('');
 
   const create = () => {
@@ -70,9 +72,16 @@ export default function PlanList({ plans, onOpen, onCreate, onDelete, onBackup }
         );
       })}
 
-      <Pressable style={[ui.btn, { marginTop: 16 }]} onPress={onBackup}>
-        <Text style={ui.btnText}>백업 / 복원 (JSON)</Text>
-      </Pressable>
+      {!!notice && <Text style={[ui.sub, { color: '#DC2626' }]}>{notice}</Text>}
+
+      <View style={{ flexDirection: 'row', gap: 8, marginTop: 16 }}>
+        <Pressable style={[ui.btn, { flex: 1 }]} onPress={onScanQr}>
+          <Text style={ui.btnText}>QR로 불러오기</Text>
+        </Pressable>
+        <Pressable style={[ui.btn, { flex: 1 }]} onPress={onBackup}>
+          <Text style={ui.btnText}>JSON 백업 / 복원</Text>
+        </Pressable>
+      </View>
     </ScrollView>
   );
 }

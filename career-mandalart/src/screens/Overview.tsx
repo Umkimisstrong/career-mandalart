@@ -8,11 +8,12 @@ type Props = {
   onBack: () => void;
   onRename: (title: string) => void;
   onOpenBlock: (block: number) => void;
+  onQr: () => void;
 };
 
 const IDX = [0, 1, 2, 3, 4, 5, 6, 7, 8];
 
-export default function Overview({ plan, onBack, onRename, onOpenBlock }: Props) {
+export default function Overview({ plan, onBack, onRename, onOpenBlock, onQr }: Props) {
   const { width } = useWindowDimensions();
   const size = Math.min(width, 640) - 32;
   const cell = (size - 2 * 6) / 9; // 블록 사이 간격 6px
@@ -23,6 +24,7 @@ export default function Overview({ plan, onBack, onRename, onOpenBlock }: Props)
       <View style={ui.header}>
         <Pressable onPress={onBack}><Text style={ui.back}>‹ 목록</Text></Pressable>
         <TextInput value={plan.title} onChangeText={onRename} style={ui.headerTitle} />
+        <Pressable onPress={onQr} hitSlop={8}><Text style={ui.back}>QR 저장</Text></Pressable>
       </View>
       <ScrollView contentContainerStyle={{ padding: 16, alignItems: 'center', gap: 14 }}>
         <View style={[styles.grid, { width: size, gap: 6 }]}>
