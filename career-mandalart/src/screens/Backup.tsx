@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { Pressable, ScrollView, Share, Text, TextInput, View } from 'react-native';
 import { Store } from '../model';
 import { exportJson, importJson } from '../storage';
-import { ui } from '../theme';
+import { useTheme } from '../theme';
 
 type Props = {
   store: Store;
@@ -12,6 +12,7 @@ type Props = {
 };
 
 export default function Backup({ store, onBack, onImport }: Props) {
+  const { ui } = useTheme();
   const json = exportJson(store);
   const [paste, setPaste] = useState('');
   const [msg, setMsg] = useState('');

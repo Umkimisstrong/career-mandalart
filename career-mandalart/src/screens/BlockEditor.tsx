@@ -7,7 +7,7 @@ import {
 import { AgeBand, categoryById } from '../categories/data';
 import { ActionItemPicker, GoalCategoryPicker } from '../components/CategoryPicker';
 import { CENTER, Cell, cellRole, getCell, Plan, progress } from '../model';
-import { blockColor, blockTextColor, ui } from '../theme';
+import { useTheme } from '../theme';
 
 type Props = {
   plan: Plan;
@@ -28,6 +28,7 @@ export default function BlockEditor({
   plan, block, age, custom, onBack, onChangeBlock, onEdit, onAge, onAddCustom,
 }: Props) {
   const { width } = useWindowDimensions();
+  const { t, ui } = useTheme();
   const size = Math.min(width, 520) - 32;
   const cellSize = (size - 16) / 3;
   const [editing, setEditing] = useState<number | null>(null);
@@ -49,7 +50,10 @@ export default function BlockEditor({
           {IDX.map(c => {
             const v = getCell(plan, block, c);
             const role = cellRole(block, c);
-            const color = role === 'core' ? blockColor(CENTER) : role === 'goal' ? blockColor(block === CENTER ? c : block) : '#fff';
+            const isAction = role === 'action';
+            const color = role === 'core' ? t.blocks[CENTER] : role === 'goal' ? t.blocks[block === CENTER ? c : block]
+              : v.done ? t.done : t.surface;
+            const fg = isAction ? (v.done ? t.doneText : t.text) : t.on(color);
             return (
               <Pressable
                 key={c}
@@ -57,26 +61,26 @@ export default function BlockEditor({
                 onLongPress={() => block === CENTER && c !== CENTER && onChangeBlock(c)}
                 style={[
                   styles.cell,
-                  { width: cellSize, height: cellSize, backgroundColor: color },
-                  v.done && role === 'action' && styles.done,
+                  { width: cellSize, height: cellSize, backgroundColor: color, borderColor: t.border },
+                  v.done && isAction && { borderColor: t.doneBorder },
                 ]}
               >
-                <Text style={[styles.role, role === 'core' && { color: '#D1D5DB' }]}>
+                <Text style={[styles.role, { color: fg, opacity: 0.6 }]}>
                   {ROLE_LABEL[role]}{role === 'goal' && categoryById(v.cat) ? ` · ${categoryById(v.cat)!.emoji}` : ''}
                 </Text>
                 <Text
                   numberOfLines={4}
                   style={[
                     styles.txt,
-                    role === 'core' && { color: blockTextColor(CENTER), fontWeight: '800' },
+                    { color: fg },
+                    role === 'core' && { fontWeight: '800' },
                     role === 'goal' && { fontWeight: '700' },
-                    !v.text && styles.placeholder,
-                    v.done && styles.doneText,
+                    !v.text && { opacity: 0.45, fontWeight: '400' },
                   ]}
                 >
                   {v.text || '+ 입력'}
                 </Text>
-                {v.done && <Text style={styles.check}>✓</Text>}
+                {v.done && <Text style={[styles.check, { color: t.doneBorder }]}>✓</Text>}
               </Pressable>
             );
           })}
@@ -98,9 +102,9 @@ export default function BlockEditor({
             <Pressable
               key={b}
               onPress={() => onChangeBlock(b)}
-              style={[styles.miniCell, { backgroundColor: blockColor(b) }, b === block && styles.miniActive]}
+              style={[styles.miniCell, { backgroundColor: t.blocks[b] }, b === block && [styles.miniActive, { borderColor: t.text }]]}
             >
-              <Text style={{ fontSize: 10, color: blockTextColor(b) }} numberOfLines={1}>
+              <Text style={{ fontSize: 10, color: t.on(t.blocks[b]) }} numberOfLines={1}>
                 {b === CENTER ? '핵심' : getCell(plan, CENTER, b).text.slice(0, 3) || b + 1}
               </Text>
             </Pressable>
@@ -136,6 +140,7 @@ function CellEditor({ role, cell, blockCat, age, custom, onAge, onAddCustom, onC
   onClose: () => void;
   onSave: (patch: Partial<Cell>) => void;
 }) {
+  const { t, ui } = useTheme();
   const [text, setText] = useState(cell.text);
   const [note, setNote] = useState(cell.note);
   const [done, setDone] = useState(cell.done);
@@ -151,8 +156,8 @@ function CellEditor({ role, cell, blockCat, age, custom, onAge, onAddCustom, onC
   return (
     <Modal transparent animationType="slide" onRequestClose={onClose}>
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={styles.backdrop}>
-        <ScrollView style={styles.sheetScroll} contentContainerStyle={styles.sheet} keyboardShouldPersistTaps="handled">
-          <Text style={styles.sheetTitle}>{ROLE_LABEL[role]}</Text>
+        <ScrollView style={[styles.sheetScroll, { backgroundColor: t.bg }]} contentContainerStyle={styles.sheet} keyboardShouldPersistTaps="handled">
+          <Text style={[styles.sheetTitle, { color: t.text }]}>{ROLE_LABEL[role]}</Text>
           <TextInput
             autoFocus value={text} onChangeText={setText} multiline maxLength={60}
             placeholder={role === 'action' ? '예: 매주 토요일 2시간 영어 공부' : '목표를 짧고 명확하게'}
@@ -176,7 +181,7 @@ function CellEditor({ role, cell, blockCat, age, custom, onAge, onAddCustom, onC
             />
           )}
           {role === 'action' && (
-            <Pressable style={[ui.btn, done && { backgroundColor: '#D1FAE5', borderColor: '#10B981' }]} onPress={() => setDone(!done)}>
+            <Pressable style={[ui.btn, done && { backgroundColor: t.done, borderColor: t.doneBorder }]} onPress={() => setDone(!done)}>
               <Text style={ui.btnText}>{done ? '✓ 완료됨' : '완료로 표시'}</Text>
             </Pressable>
           )}
@@ -198,23 +203,20 @@ function CellEditor({ role, cell, blockCat, age, custom, onAge, onAddCustom, onC
 const styles = StyleSheet.create({
   grid: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   cell: {
-    borderRadius: 12, borderWidth: 1, borderColor: '#E5E7EB', padding: 8,
+    borderRadius: 12, borderWidth: 1, padding: 8,
     alignItems: 'center', justifyContent: 'center',
   },
-  role: { position: 'absolute', top: 6, left: 8, fontSize: 9, color: '#6B7280' },
-  txt: { fontSize: 14, textAlign: 'center', color: '#111827' },
-  placeholder: { color: '#9CA3AF', fontWeight: '400' },
-  done: { backgroundColor: '#D1FAE5', borderColor: '#10B981' },
-  doneText: { color: '#047857' },
-  check: { position: 'absolute', bottom: 6, right: 8, color: '#10B981', fontWeight: '800' },
+  role: { position: 'absolute', top: 6, left: 8, fontSize: 9 },
+  txt: { fontSize: 14, textAlign: 'center' },
+  check: { position: 'absolute', bottom: 6, right: 8, fontWeight: '800' },
   mini: { flexDirection: 'row', flexWrap: 'wrap', gap: 4 },
   miniCell: { width: 40, height: 40, borderRadius: 6, alignItems: 'center', justifyContent: 'center', opacity: 0.6 },
-  miniActive: { opacity: 1, borderWidth: 2, borderColor: '#111827' },
+  miniActive: { opacity: 1, borderWidth: 2 },
   backdrop: { flex: 1, justifyContent: 'flex-end', backgroundColor: 'rgba(0,0,0,0.35)' },
   sheetScroll: {
-    flexGrow: 0, maxHeight: '88%', backgroundColor: '#F9FAFB',
+    flexGrow: 0, maxHeight: '88%',
     borderTopLeftRadius: 20, borderTopRightRadius: 20,
   },
   sheet: { padding: 20, gap: 12, paddingBottom: 36 },
-  sheetTitle: { fontSize: 16, fontWeight: '700', color: '#111827' },
+  sheetTitle: { fontSize: 16, fontWeight: '700' },
 });

@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { ReactNode, useEffect, useRef, useState } from 'react';
+import { ReactNode, useEffect, useMemo, useRef, useState } from 'react';
 import { ActivityIndicator, Platform, View } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import InstallBanner from './src/components/InstallBanner';
@@ -12,12 +12,15 @@ import Overview from './src/screens/Overview';
 import PlanList from './src/screens/PlanList';
 import QrScan from './src/screens/QrScan';
 import QrShare from './src/screens/QrShare';
+import ThemeSettings from './src/screens/ThemeSettings';
 import { loadStore, saveStore } from './src/storage';
+import { buildTheme, ThemeProvider } from './src/theme';
 
 type Route =
   | { name: 'list' }
   | { name: 'backup' }
   | { name: 'scan' }
+  | { name: 'theme' }
   | { name: 'qr'; id: string }
   | { name: 'plan'; id: string; block: number | null };
 
@@ -26,6 +29,7 @@ export default function App() {
   const [route, setRoute] = useState<Route>({ name: 'list' });
   const [notice, setNotice] = useState('');
   const loaded = useRef(false);
+  const theme = useMemo(() => buildTheme(store?.theme), [store?.theme]);
 
   useEffect(() => {
     loadStore().then(s => { loaded.current = true; setStore(s); });
@@ -72,11 +76,20 @@ export default function App() {
           onDelete={id => setStore({ ...store, plans: store.plans.filter(p => p.id !== id) })}
           onBackup={() => setRoute({ name: 'backup' })}
           onScanQr={scanQr}
+          onTheme={() => setRoute({ name: 'theme' })}
           notice={notice}
         />
       );
     } else if (route.name === 'backup') {
       screen = <Backup store={store} onBack={() => setRoute({ name: 'list' })} onImport={setStore} />;
+    } else if (route.name === 'theme') {
+      screen = (
+        <ThemeSettings
+          setting={store.theme}
+          onBack={() => setRoute({ name: 'list' })}
+          onChange={theme => setStore(s => s && { ...s, theme })}
+        />
+      );
     } else if (route.name === 'scan') {
       screen = <QrScan onBack={() => setRoute({ name: 'list' })} onImport={importPlan} />;
     } else if (route.name === 'qr') {
@@ -120,12 +133,14 @@ export default function App() {
   }
 
   return (
-    <SafeAreaProvider>
-      <SafeAreaView style={{ flex: 1, backgroundColor: '#F3F4F6' }}>
-        <View style={{ flex: 1, width: '100%', maxWidth: 720, alignSelf: 'center' }}>{screen}</View>
-        <InstallBanner />
-        <StatusBar style="dark" />
-      </SafeAreaView>
-    </SafeAreaProvider>
+    <ThemeProvider value={theme}>
+      <SafeAreaProvider>
+        <SafeAreaView style={{ flex: 1, backgroundColor: theme.bg }}>
+          <View style={{ flex: 1, width: '100%', maxWidth: 720, alignSelf: 'center' }}>{screen}</View>
+          <InstallBanner />
+          <StatusBar style="dark" />
+        </SafeAreaView>
+      </SafeAreaProvider>
+    </ThemeProvider>
   );
 }

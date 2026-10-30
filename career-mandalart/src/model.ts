@@ -6,6 +6,7 @@
 // 그래서 바깥 블록의 가운데 칸은 저장하지 않고 blocks[4][b] 를 참조한다.
 
 import type { AgeBand } from './categories/data';
+import type { ThemeSetting } from './theme';
 
 export const CENTER = 4;
 
@@ -32,13 +33,9 @@ export type Store = {
   custom?: Record<string, string[]>;
   // 추천 아이템을 고를 때 기준이 되는 내 연령대
   age?: AgeBand;
+  // 화면 테마 (src/theme.ts)
+  theme?: ThemeSetting;
 };
-
-export const BLOCK_COLORS = [
-  '#F28B82', '#FBBC04', '#FFF475',
-  '#CCFF90', '#1F2937', '#A7FFEB',
-  '#AECBFA', '#D7AEFB', '#FDCFE8',
-];
 
 const emptyCell = (): Cell => ({ text: '', note: '', done: false });
 

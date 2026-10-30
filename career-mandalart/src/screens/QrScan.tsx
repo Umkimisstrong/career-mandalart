@@ -4,11 +4,12 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import { Plan } from '../model';
 import { decodePlan, isPlanQr } from '../qr/codec';
-import { ui } from '../theme';
+import { useTheme } from '../theme';
 
 type Props = { onBack: () => void; onImport: (plan: Plan) => void };
 
 export default function QrScan({ onBack, onImport }: Props) {
+  const { ui } = useTheme();
   const [permission, requestPermission] = useCameraPermissions();
   const [msg, setMsg] = useState('만다라트 QR 을 화면 가운데에 맞춰주세요.');
   const handled = useRef(false);

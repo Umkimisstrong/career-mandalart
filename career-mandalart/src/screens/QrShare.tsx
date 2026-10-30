@@ -6,11 +6,12 @@ import { SvgXml } from 'react-native-svg';
 import { Plan } from '../model';
 import { encodePlan } from '../qr/codec';
 import { makeQrPng, saveQrPng } from '../qr/image';
-import { ui } from '../theme';
+import { useTheme } from '../theme';
 
 type Props = { plan: Plan; onBack: () => void };
 
 export default function QrShare({ plan, onBack }: Props) {
+  const { ui } = useTheme();
   const { width } = useWindowDimensions();
   const size = Math.min(width, 480) - 32;
   const [png, setPng] = useState<string | null>(null);

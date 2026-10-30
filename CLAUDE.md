@@ -20,6 +20,7 @@
 | iPhone 배포 경로 | ① Vercel 웹 배포(+홈 화면 추가) — 무료, 즉시 ② Expo Go — 개발용 ③ TestFlight/App Store — Apple 개발자 계정($99/년) 필요 |
 
 | 목표 카테고리 | `src/categories/data.ts`: 매슬로우 6단계(자기초월 포함) × 11개 카테고리 × 하위 속성, 연령대 태그(20s/30s/40s/50s). 세부 목표 칸 `Cell.cat` = 카테고리 id, 실행 과제 칸은 블록 카테고리 속성 추천. 사용자 추가 속성은 `Store.custom`, 연령대는 `Store.age`. 근거·출처는 `docs/categories.md` |
+| 테마 | `src/theme.ts`: `buildTheme(Store.theme)` → 색 토큰(bg/surface/text/primary/done/blocks[9]/on()) + `makeUi`. 화면은 `useTheme()` 로 `{ t, ui }` 사용, 색 하드코딩 금지. 테마: default · mono · signature(흰/파랑 #005A9C/빨강 #EF3E42) · custom(2~4색). 설정 화면 `ThemeSettings.tsx` |
 | 데이터 수집 제약 | Reddit 비인증 JSON 은 403, 우회 시도는 정책상 차단됨. 정량 수집이 필요하면 Reddit OAuth 앱 등록 후 공식 API 사용 |
 
 ## 폴더 구조
@@ -34,6 +35,8 @@ career-mandalart/
   src/components/CategoryPicker.tsx  세부 목표 카테고리 선택 / 실행 과제 속성 추천
   src/qr/                 QR 코덱(codec.ts), 웹 이미지 생성·읽기(image.web.ts)
 docs/categories.md        카테고리 설계 근거와 출처
+docs/hosting.md · docs/data-collection.md  무료 호스팅 비교 / 목표 데이터 수집 방법
+docs/TODO-확인.md         사용자 확인 · 결정 대기 목록
 FEATURES.md               기능 목록 & 작업 이력 (기능 추가 시 갱신)
   scripts/deploy.mjs      배포 파이프라인 (ref 별: develop→preview OTA, main→production OTA, v* 태그→스토어 빌드)
   scripts/post-receive    bare 저장소에 설치되는 훅 템플릿
@@ -68,7 +71,7 @@ npm run deploy:dry      # EAS 호출 없이 배포 파이프라인 점검
 - QR 기능: 웹에서 81칸 + 메모 + 완료 체크 왕복(생성 PNG → jsQR 디코드 → 복원) 일치 확인. 세부 목표 카테고리도 QR 에 포함(5번째 튜플). 네이티브 카메라 스캔은 미검증.
 - 카테고리 기능: 웹 375px 에서 세부 목표 카테고리 선택, 연령대 추천(★), 속성 선택 입력, 직접 추가(Store.custom) 동작 확인.
 - 미검증: 실제 iPhone 실행, 로컬 Git 훅 push, EAS update/build.
-- 환경: Git·GitHub CLI·Vercel CLI 설치·로그인 완료. Node 는 아직 **20.10 (Expo 58 은 22.13+ 필요)** — 로컬 실행 전 업그레이드 필요.
+- 환경: Git·GitHub CLI·Vercel CLI 설치·로그인 완료. Node **26.13 LTS** (Expo 58 지원) — `npm run build:web`, `npx expo start` 로컬 실행 가능.
 - Windows PowerShell 실행 정책 때문에 `vercel` 대신 `vercel.cmd` 로 호출해야 함.
 - `scripts/setup-local-git.ps1` 은 `career-mandalart/` 를 저장소 루트로 가정하고 작성됨 — 지금은 상위 폴더가 저장소이므로 사용 전 경로 수정 필요.
 

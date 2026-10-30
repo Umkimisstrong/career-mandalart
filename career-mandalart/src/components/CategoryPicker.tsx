@@ -7,6 +7,7 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import {
   AGE_BANDS, AgeBand, CATEGORIES, categoryById, MASLOW, MaslowLevel,
 } from '../categories/data';
+import { useTheme } from '../theme';
 
 const LEVELS = Object.keys(MASLOW).map(Number) as MaslowLevel[];
 
@@ -14,6 +15,9 @@ export function GoalCategoryPicker({ selected, onSelect }: {
   selected?: string;
   onSelect: (id: string | undefined) => void;
 }) {
+  const { t } = useTheme();
+  const on = { backgroundColor: t.primary, borderColor: t.primary };
+  const onText = { color: t.onPrimary };
   return (
     <View style={{ gap: 8 }}>
       <Text style={styles.title}>목표 카테고리</Text>
@@ -22,10 +26,10 @@ export function GoalCategoryPicker({ selected, onSelect }: {
           <Text style={styles.level}>{level} {MASLOW[level].label}</Text>
           <View style={[styles.wrap, { flex: 1 }]}>
             {CATEGORIES.filter(c => c.maslow === level).map(c => {
-              const on = c.id === selected;
+              const sel = c.id === selected;
               return (
-                <Pressable key={c.id} onPress={() => onSelect(on ? undefined : c.id)} style={[styles.chip, on && styles.chipOn]}>
-                  <Text style={[styles.chipText, on && styles.chipTextOn]}>{c.emoji} {c.label}</Text>
+                <Pressable key={c.id} onPress={() => onSelect(sel ? undefined : c.id)} style={[styles.chip, sel && on]}>
+                  <Text style={[styles.chipText, sel && [styles.chipTextOn, onText]]}>{c.emoji} {c.label}</Text>
                 </Pressable>
               );
             })}
@@ -45,6 +49,9 @@ export function ActionItemPicker({ initialCat, text, age, custom, onAge, onPick,
   onPick: (label: string) => void;
   onAddCustom: (catId: string, label: string) => void;
 }) {
+  const { t } = useTheme();
+  const on = { backgroundColor: t.primary, borderColor: t.primary };
+  const onText = { color: t.onPrimary };
   const [catId, setCatId] = useState(initialCat ?? CATEGORIES[0].id);
   const cat = categoryById(catId) ?? CATEGORIES[0];
   const mine = custom[cat.id] ?? [];
@@ -64,10 +71,10 @@ export function ActionItemPicker({ initialCat, text, age, custom, onAge, onPick,
         contentContainerStyle={{ gap: 6, alignItems: 'flex-start' }}
       >
         {CATEGORIES.map(c => {
-          const on = c.id === cat.id;
+          const sel = c.id === cat.id;
           return (
-            <Pressable key={c.id} onPress={() => setCatId(c.id)} style={[styles.tab, on && styles.chipOn]}>
-              <Text style={[styles.chipText, on && styles.chipTextOn]}>{c.emoji} {c.label}</Text>
+            <Pressable key={c.id} onPress={() => setCatId(c.id)} style={[styles.tab, sel && on]}>
+              <Text style={[styles.chipText, sel && [styles.chipTextOn, onText]]}>{c.emoji} {c.label}</Text>
             </Pressable>
           );
         })}
@@ -76,10 +83,10 @@ export function ActionItemPicker({ initialCat, text, age, custom, onAge, onPick,
       <View style={[styles.wrap, { alignItems: 'center' }]}>
         <Text style={styles.level}>내 연령대</Text>
         {AGE_BANDS.map(a => {
-          const on = a.id === age;
+          const sel = a.id === age;
           return (
-            <Pressable key={a.id} onPress={() => onAge(on ? undefined : a.id)} style={[styles.ageChip, on && styles.ageOn]}>
-              <Text style={[styles.ageText, on && { color: '#fff' }]}>{a.label}</Text>
+            <Pressable key={a.id} onPress={() => onAge(sel ? undefined : a.id)} style={[styles.ageChip, sel && on]}>
+              <Text style={[styles.ageText, sel && onText]}>{a.label}</Text>
             </Pressable>
           );
         })}
@@ -122,11 +129,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10, paddingVertical: 6, borderRadius: 16, borderWidth: 1,
     borderColor: '#D1D5DB', backgroundColor: '#fff',
   },
-  chipOn: { backgroundColor: '#111827', borderColor: '#111827' },
   chipText: { fontSize: 13, color: '#111827' },
-  chipTextOn: { color: '#fff', fontWeight: '700' },
+  chipTextOn: { fontWeight: '700' },
   ageChip: { paddingHorizontal: 9, paddingVertical: 4, borderRadius: 12, backgroundColor: '#E5E7EB' },
-  ageOn: { backgroundColor: '#2563EB' },
   ageText: { fontSize: 12, color: '#374151' },
   note: { fontSize: 12, color: '#1E40AF', backgroundColor: '#EFF6FF', padding: 8, borderRadius: 8 },
   item: {
