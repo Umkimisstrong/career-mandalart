@@ -2,6 +2,7 @@ import { StatusBar } from 'expo-status-bar';
 import { ReactNode, useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, Platform, View } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+import InstallBanner from './src/components/InstallBanner';
 import { Cell, newPlan, Plan, setCell, Store } from './src/model';
 import { decodePlan } from './src/qr/codec';
 import { pickQrFromImage } from './src/qr/image';
@@ -122,6 +123,7 @@ export default function App() {
     <SafeAreaProvider>
       <SafeAreaView style={{ flex: 1, backgroundColor: '#F3F4F6' }}>
         <View style={{ flex: 1, width: '100%', maxWidth: 720, alignSelf: 'center' }}>{screen}</View>
+        <InstallBanner />
         <StatusBar style="dark" />
       </SafeAreaView>
     </SafeAreaProvider>

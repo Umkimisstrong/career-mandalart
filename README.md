@@ -142,9 +142,13 @@
 ## 🚀 사용해보기
 
 ### iPhone에서 (가장 쉬운 방법)
-1. **https://career-mandalart.vercel.app** 을 **Safari**로 엽니다.
-2. 하단 **공유 버튼** → **홈 화면에 추가**를 누릅니다.
+1. **https://career-mandalart.vercel.app** 을 엽니다. 아래 QR을 카메라로 찍어도 됩니다.
+2. 화면 아래에 뜨는 안내대로 **공유 버튼** → **홈 화면에 추가**를 누릅니다.
+   - 카카오톡에서 열었다면 안내의 **Safari로 열기**를 먼저 누르세요.
 3. 홈 화면의 아이콘으로 실행하면 주소창 없이 앱처럼 동작합니다.
+
+<img src="docs/share/career-mandalart-link-qr.png" width="180" alt="career-mandalart.vercel.app QR">
+
 
 ### 개발 환경에서 실행
 필요 환경: **Node.js 22.13+**
