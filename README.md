@@ -12,6 +12,8 @@
 ![Platforms](https://img.shields.io/badge/platform-iOS%20%7C%20Android%20%7C%20Web-lightgrey)
 ![No Database](https://img.shields.io/badge/database-none-10B981)
 
+### 👉 [바로 써보기 — career-mandalart.vercel.app](https://career-mandalart.vercel.app)
+
 </div>
 
 ---
@@ -123,7 +125,7 @@
 ## 🚀 사용해보기
 
 ### iPhone에서 (가장 쉬운 방법)
-1. 배포된 웹 주소를 **Safari**로 엽니다.
+1. **https://career-mandalart.vercel.app** 을 **Safari**로 엽니다.
 2. 하단 **공유 버튼** → **홈 화면에 추가**를 누릅니다.
 3. 홈 화면의 아이콘으로 실행하면 주소창 없이 앱처럼 동작합니다.
 
@@ -158,7 +160,7 @@ npx expo start
 
 | 대상 | 방법 |
 |---|---|
-| **웹 / iPhone 홈 화면** | Vercel에 이 저장소 연결 → Root Directory를 `career-mandalart` 로 지정. 이후 push 할 때마다 자동 배포 |
+| **웹 / iPhone 홈 화면** | Vercel에 이 저장소 연결 (루트 `vercel.json` 이 하위 폴더 빌드를 지정). 이후 `main` 에 push 할 때마다 자동 배포 |
 | **iOS / Android OTA** | `git push local develop` (preview) / `git push local main` (production) — 로컬 Git 훅이 EAS Update 실행 |
 | **스토어 빌드** | `git tag v1.0.0 && git push local v1.0.0` → EAS 클라우드에서 iOS + Android 빌드 |
 

@@ -53,8 +53,12 @@ npm run deploy:dry      # EAS 호출 없이 배포 파이프라인 점검
 ## 현재 상태 (2026-10-30)
 - 완료: 앱 4개 화면, 로컬 저장, JSON 백업/복원, EAS/로컬 Git 배포 스크립트, Vercel 설정, PWA 메타 주입.
 - 검증: tsc 통과, 웹 번들 빌드 성공, 375px 모바일 뷰에서 편집·완료·저장·진행률 동작 확인.
-- 미검증: 실제 iPhone 실행, Git 훅 실제 push, EAS update/build, Vercel 실제 배포.
-- 환경 이슈: 이 PC 는 **Node 20.10 (Expo 58 은 22.13+ 필요)**, **Git 미설치**. 둘 다 설치해야 로컬 실행/배포 가능.
+- GitHub: https://github.com/Umkimisstrong/career-mandalart (public, 저장소 루트 = 이 폴더)
+- Vercel: https://career-mandalart.vercel.app — GitHub `main` push 시 자동 배포. 루트 `vercel.json` 이 `career-mandalart/` 하위 폴더를 빌드하도록 지정 (Vercel 프로젝트 Root Directory 는 비워둠).
+- 미검증: 실제 iPhone 실행, 로컬 Git 훅 push, EAS update/build.
+- 환경: Git·GitHub CLI·Vercel CLI 설치·로그인 완료. Node 는 아직 **20.10 (Expo 58 은 22.13+ 필요)** — 로컬 실행 전 업그레이드 필요.
+- Windows PowerShell 실행 정책 때문에 `vercel` 대신 `vercel.cmd` 로 호출해야 함.
+- `scripts/setup-local-git.ps1` 은 `career-mandalart/` 를 저장소 루트로 가정하고 작성됨 — 지금은 상위 폴더가 저장소이므로 사용 전 경로 수정 필요.
 
 ## 다음 할 일 후보
 - Node 22 / Git 설치 → `npm run setup:git` → `eas init`
