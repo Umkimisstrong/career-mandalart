@@ -2,8 +2,8 @@
 // iOS 는 웹사이트가 아이콘을 자동으로 만들 수 없어서 공유 버튼 위치를 짚어주는 방식이 표준이다.
 //  - iPhone/iPad Safari·Chrome : 공유 → 홈 화면에 추가 안내 (하단 화살표)
 //  - 카카오톡·인스타그램 등 인앱 브라우저 : 홈 화면 추가가 불가능하므로 Safari 로 열도록 안내
-//  - Android Chrome : 설치 프롬프트(beforeinstallprompt)가 오면 「앱 설치」 버튼, 오기 전 · 다른 브라우저는 메뉴 안내
-//  - Android 카카오톡 · 인앱 브라우저 : 설치가 안 되므로 Chrome 으로 열도록 안내
+//  - Android : 설치 프롬프트(beforeinstallprompt, Chrome · 삼성 인터넷 · Edge)가 오면 「앱 설치」 버튼, 아니면 브라우저 메뉴 안내
+//  - Android 카카오톡 · 인앱 브라우저 : 설치가 안 되므로 폰의 기본 브라우저(Chrome 이 아니어도 됨)로 열도록 안내
 // 이미 홈 화면 앱으로 실행 중이거나, 닫은 지 7일이 안 됐으면 보이지 않는다.
 import { useEffect, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
@@ -70,7 +70,7 @@ export default function InstallBanner() {
   };
 
   const openInSafari = () => {
-    // 카카오톡 인앱 브라우저 전용 스킴: 기본 브라우저(iPhone 은 Safari, Android 는 보통 Chrome)로 현재 주소를 연다
+    // 카카오톡 인앱 브라우저 전용 스킴: 폰의 기본 브라우저(iPhone 은 Safari, Android 는 삼성 인터넷 · Chrome 등)로 현재 주소를 연다
     window.location.href = `kakaotalk://web/openExternal?url=${encodeURIComponent(window.location.href)}`;
   };
 
@@ -133,21 +133,21 @@ export default function InstallBanner() {
           <View style={styles.steps}>
             <Text style={styles.step}>
               <Text style={styles.num}>1 </Text>
-              오른쪽 위 <Text style={styles.bold}>⋮</Text> 메뉴를 누르고
+              브라우저 메뉴(<Text style={styles.bold}>⋮</Text> 또는 <Text style={styles.bold}>≡</Text>)를 누르고
             </Text>
             <Text style={styles.step}>
               <Text style={styles.num}>2 </Text>
               「<Text style={styles.bold}>앱 설치</Text>」 또는 「<Text style={styles.bold}>홈 화면에 추가</Text>」를 선택하세요
             </Text>
-            <Text style={styles.hint}>삼성 인터넷: 아래 ≡ 메뉴 → 현재 페이지 추가 → 홈 화면</Text>
+            <Text style={styles.hint}>삼성 인터넷: 아래 ≡ → 현재 페이지 추가 → 홈 화면 · 웨일: ≡ → 홈 화면에 추가</Text>
           </View>
         )}
 
         {mode === 'android-kakao' && (
           <View style={styles.steps}>
-            <Text style={styles.step}>카카오톡 안에서는 앱을 설치할 수 없어요. Chrome 으로 열어주세요.</Text>
+            <Text style={styles.step}>카카오톡 안에서는 앱을 설치할 수 없어요. 휴대폰의 기본 브라우저로 열어주세요.</Text>
             <Pressable style={styles.btn} onPress={openInSafari}>
-              <Text style={styles.btnText}>Chrome으로 열기</Text>
+              <Text style={styles.btnText}>기본 브라우저로 열기</Text>
             </Pressable>
           </View>
         )}
@@ -156,7 +156,7 @@ export default function InstallBanner() {
           <View style={styles.steps}>
             <Text style={styles.step}>
               이 앱 안의 브라우저에서는 설치할 수 없어요. 오른쪽 위 「⋮」 메뉴에서
-              「<Text style={styles.bold}>다른 브라우저로 열기</Text>」(Chrome)를 눌러주세요.
+              「<Text style={styles.bold}>다른 브라우저로 열기</Text>」를 눌러주세요. (삼성 인터넷 · Chrome · 웨일 등 아무 브라우저나 괜찮아요)
             </Text>
           </View>
         )}
