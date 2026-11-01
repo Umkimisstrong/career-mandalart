@@ -21,6 +21,7 @@
 
 | 목표 카테고리 | **3단계.** 1레벨 `src/categories/data.ts` 매슬로우 6단계 × 11개 카테고리(가운데 9칸) → 2레벨 `tree.ts` SUBS 세부 카테고리(ages · kw=키워드 자산 근거, 바깥 블록 빈 칸에 `guideSub` 로 기본 안내) → 3레벨 행동(`행동/기본단위`) + `units.ts` 단위(시간: 언제·얼마나·언제까지 / 장소: 어디서·어디로 / 수량: 숫자+단위 최대 3) → `composeText` 로 칸 문장 자동 완성. 선택은 `Cell.spec`(ActionSpec)에 저장, QR 에는 문장만. 연령대 태그 10s~90s (9단계). **템플릿** `src/categories/templates.ts`: 연령대별 81칸 9종(`"sub:행동 @언제 ~얼마나 #수량 ^까지 &어디서 =어디로"` → `parseAction` → `planFromTemplate`), 화면 `src/screens/Templates.tsx`, 근거 `docs/templates.md`. 핵심 · 세부 목표 칸 `Cell.cat` = 카테고리 id (칸 편집 창은 카테고리 선택이 내용 입력보다 위), 실행 과제 칸은 블록 카테고리 속성 추천. 사용자 추가 속성은 `Store.custom`, 연령대는 `Store.age`. 근거·출처는 `docs/categories.md` |
 | 테마 | `src/theme.ts`: `buildTheme(Store.theme)` → 색 토큰(bg/surface/text/primary/done/blocks[9]/on()) + `makeUi`. 화면은 `useTheme()` 로 `{ t, ui }` 사용, 색 하드코딩 금지. 테마: default · northstar(밤하늘 · 금빛) · mono · signature(흰/파랑 #005A9C/빨강 #EF3E42) · custom(2~4색). 설정 화면 `ThemeSettings.tsx` |
+| 반복 점검 · 알림 | `src/routine.ts`: 실행 과제 `Cell.routine`(freq daily · weekdays · weekly · monthly, days, time 'HH:MM', start) + `Cell.log`(체크한 기간 키: 일 = 날짜, 주 = 그 주 월요일, 월 = 'YYYY-MM'). `routineStats`(연속 · 달성률 · 놓친 전 기간), `routineItems`, `dayGrid`, `upcoming`. 화면 `src/screens/Today.tsx`(오늘의 점검), 칸 편집 ⑤ `src/components/RoutinePicker.tsx`. 알림 `src/notify.ts`(expo-notifications 로컬 알림, 35일 · 최대 60개 예약, 체크한 기간 제외) / `notify.web.ts`(열려 있을 때 알림 · 앱 배지) + `src/ics.ts`(캘린더 반복 일정 + VALARM). `Store.notify` = 알림 켬. routine · log 는 QR 에 담지 않음(JSON 백업에는 포함) |
 | 호스팅 | Vercel 무료 플랜만 사용, 자체 도메인 없음 (사용자 결정 2026-11-01) |
 | 키워드 자산 | **카테고리의 베이스 데이터.** `keyword-assets/` (README · dictionary.ko.json 검수 사전 · v1/keywords.json). 빌드: `node research/build-keyword-assets.mjs` → 앱용 `src/categories/keywordWeights.json` (연령대별 카테고리 비율 · 한국어 키워드). 원문 미저장, 버전 폴더로 관리 |
 | 키워드 조사 | `research/collect-keywords.mjs` (HN Algolia · Mastodon 공개 API, 원문 미저장 · 집계만) → `research/output/keywords.json`, 보고서 `docs/research/keywords-2026-11.md` |
@@ -34,7 +35,8 @@ career-mandalart/
   src/model.ts            데이터 모델, 좌표 규칙, 진행률, 샘플 데이터
   src/storage.ts          AsyncStorage 저장/로드, JSON 내보내기/가져오기
   src/theme.ts            공통 스타일, 블록 색상
-  src/screens/            PlanList, Overview(81칸), BlockEditor(3x3 + 칸 편집 모달), Backup, QrShare, QrScan
+  src/screens/            PlanList, Overview(81칸), BlockEditor(3x3 + 칸 편집 모달), Today(오늘의 점검), Backup, QrShare, QrScan
+  src/routine.ts · notify(.web).ts · ics.ts  반복 점검 계산 · 알림 · 캘린더 파일
   src/categories/data.ts  목표 카테고리 데이터셋
   src/components/CategoryPicker.tsx  세부 목표 카테고리 선택 / 실행 과제 속성 추천
   src/qr/                 QR 코덱(codec.ts), 웹 이미지 생성·읽기(image.web.ts)

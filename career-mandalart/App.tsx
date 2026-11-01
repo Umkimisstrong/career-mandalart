@@ -3,7 +3,8 @@ import { ReactNode, useEffect, useMemo, useRef, useState } from 'react';
 import { ActivityIndicator, Platform, View } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import InstallBanner from './src/components/InstallBanner';
-import { Cell, newPlan, ohtaniPlan, Plan, setCell, Store } from './src/model';
+import { Cell, getCell, newPlan, ohtaniPlan, Plan, setCell, Store } from './src/model';
+import { syncReminders } from './src/notify';
 import { decodePlan } from './src/qr/codec';
 import { pickQrFromImage } from './src/qr/image';
 import About from './src/screens/About';
@@ -16,6 +17,8 @@ import QrShare from './src/screens/QrShare';
 import Story from './src/screens/Story';
 import Templates from './src/screens/Templates';
 import ThemeSettings from './src/screens/ThemeSettings';
+import Today from './src/screens/Today';
+import { routineItems, toggleKey } from './src/routine';
 import { loadStore, saveStore } from './src/storage';
 import { buildTheme, isDark, ThemeProvider } from './src/theme';
 
@@ -27,6 +30,7 @@ type Route =
   | { name: 'story' }
   | { name: 'about' }
   | { name: 'templates' }
+  | { name: 'today' }
   | { name: 'qr'; id: string }
   | { name: 'plan'; id: string; block: number | null };
 
@@ -48,6 +52,21 @@ export default function App() {
 
   const updatePlan = (id: string, fn: (p: Plan) => Plan) =>
     setStore(s => s && { ...s, plans: s.plans.map(p => (p.id === id ? fn(p) : p)) });
+
+  // 반복 점검 칸의 기간 체크를 켜고 끈다
+  const toggleRoutine = (id: string, b: number, c: number, key: string) =>
+    updatePlan(id, p => setCell(p, b, c, { log: toggleKey(getCell(p, b, c).log, key) }));
+
+  // 반복 점검이 바뀌면 알림 · 배지를 다시 맞춘다 (자주 바뀌니 잠깐 모았다가)
+  useEffect(() => {
+    if (!store) return;
+    const timer = setTimeout(() => {
+      const items = routineItems(store.plans);
+      const remaining = items.filter(i => i.scope === 'day' && i.dueToday && !i.stats.checked).length;
+      syncReminders(items, !!store.notify, remaining).catch(() => {});
+    }, 800);
+    return () => clearTimeout(timer);
+  }, [store?.plans, store?.notify]);
 
   // QR 에서 복원한 청사진을 목록에 추가하고 바로 펼친다
   const importPlan = (plan: Plan) => {
@@ -86,11 +105,23 @@ export default function App() {
           onStory={() => setRoute({ name: 'story' })}
           onAbout={() => setRoute({ name: 'about' })}
           onTemplates={() => setRoute({ name: 'templates' })}
+          onToday={() => setRoute({ name: 'today' })}
           notice={notice}
         />
       );
     } else if (route.name === 'backup') {
       screen = <Backup store={store} onBack={() => setRoute({ name: 'list' })} onImport={setStore} />;
+    } else if (route.name === 'today') {
+      screen = (
+        <Today
+          plans={store.plans}
+          notify={!!store.notify}
+          onBack={() => setRoute({ name: 'list' })}
+          onToggle={toggleRoutine}
+          onOpenBlock={(id, block) => setRoute({ name: 'plan', id, block })}
+          onNotify={on => setStore(s => s && { ...s, notify: on })}
+        />
+      );
     } else if (route.name === 'templates') {
       screen = (
         <Templates

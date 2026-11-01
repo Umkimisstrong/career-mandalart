@@ -8,7 +8,9 @@ import { AgeBand, categoryById } from '../categories/data';
 import { guideSub } from '../categories/tree';
 import { composeText } from '../categories/units';
 import { ActionBuilder, GoalCategoryPicker } from '../components/CategoryPicker';
-import { ActionSpec, CENTER, Cell, cellRole, getCell, Plan, progress } from '../model';
+import RoutinePicker from '../components/RoutinePicker';
+import { ActionSpec, CENTER, Cell, cellRole, getCell, Plan, progress, Routine } from '../model';
+import { routineLabel, routineStats } from '../routine';
 import { useTheme } from '../theme';
 
 type Props = {
@@ -85,6 +87,14 @@ export default function BlockEditor({
                   {v.text || (guide ? `+ ${guide.label}` : '+ 입력')}
                 </Text>
                 {v.done && <Text style={[styles.check, { color: t.doneBorder }]}>✓</Text>}
+                {isAction && v.routine && !v.done && (() => {
+                  const st = routineStats(v.routine, v.log);
+                  return (
+                    <Text style={[styles.loop, { color: st.checked ? t.doneBorder : t.sub }]} numberOfLines={1}>
+                      {st.checked ? '✓' : '🔁'}{st.streak > 1 ? ` 🔥${st.streak}` : ''}
+                    </Text>
+                  );
+                })()}
               </Pressable>
             );
           })}
@@ -151,6 +161,7 @@ function CellEditor({ role, cell, blockCat, guide, age, custom, onAge, onAddCust
   const [note, setNote] = useState(cell.note);
   const [done, setDone] = useState(cell.done);
   const [cat, setCat] = useState(cell.cat);
+  const [routine, setRoutine] = useState<Routine | undefined>(cell.routine);
   // 실행 과제: 저장된 선택을 복원하고, 빈 칸이면 블록의 안내 세부 카테고리로 시작
   const [spec, setSpec] = useState<ActionSpec>(
     cell.spec ?? (cell.text ? {} : { cat: blockCat, sub: guide }),
@@ -204,16 +215,22 @@ function CellEditor({ role, cell, blockCat, guide, age, custom, onAge, onAddCust
             placeholder="메모 · 기한 · 측정 기준 (선택)"
             style={[ui.input, { minHeight: 80 }]}
           />
+          {role === 'action' && <RoutinePicker routine={routine} when={spec.when} onChange={setRoutine} />}
           {role === 'action' && (
             <Pressable style={[ui.btn, done && { backgroundColor: t.done, borderColor: t.doneBorder }]} onPress={() => setDone(!done)}>
-              <Text style={ui.btnText}>{done ? '✓ 완료됨' : '완료로 표시'}</Text>
+              <Text style={ui.btnText}>{done ? '✓ 과제 완료됨' : '과제 전체를 완료로 표시'}</Text>
             </Pressable>
+          )}
+          {role === 'action' && routine && (
+            <Text style={[ui.sub, { marginTop: -6 }]}>
+              주기마다의 체크는 「오늘의 점검」에서 합니다 ({routineLabel(routine)}). 과제 전체를 완료하면 점검 목록에서 빠집니다.
+            </Text>
           )}
           <View style={{ flexDirection: 'row', gap: 8 }}>
             <Pressable style={[ui.btn, { flex: 1 }]} onPress={onClose}><Text style={ui.btnText}>취소</Text></Pressable>
             <Pressable
               style={[ui.btnPrimary, { flex: 1 }]}
-              onPress={() => onSave({ text: text.trim(), note, done, ...(role !== 'action' ? { cat } : { spec }) })}
+              onPress={() => onSave({ text: text.trim(), note, done, ...(role !== 'action' ? { cat } : { spec, routine }) })}
             >
               <Text style={ui.btnPrimaryText}>저장</Text>
             </Pressable>
@@ -233,6 +250,7 @@ const styles = StyleSheet.create({
   role: { position: 'absolute', top: 6, left: 8, fontSize: 9 },
   txt: { fontSize: 14, textAlign: 'center' },
   check: { position: 'absolute', bottom: 6, right: 8, fontWeight: '800' },
+  loop: { position: 'absolute', bottom: 5, left: 8, fontSize: 10, fontWeight: '700' },
   mini: { flexDirection: 'row', flexWrap: 'wrap', gap: 4 },
   miniCell: { width: 40, height: 40, borderRadius: 6, alignItems: 'center', justifyContent: 'center', opacity: 0.6 },
   miniActive: { opacity: 1, borderWidth: 2 },

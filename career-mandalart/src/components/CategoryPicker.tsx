@@ -22,7 +22,7 @@ const keywordsOf = (id: string) => (WEIGHTS.keywords as Record<string, string[]>
 
 const LEVELS = Object.keys(MASLOW).map(Number) as MaslowLevel[];
 
-function useChip() {
+export function useChip() {
   const { t } = useTheme();
   const base = { backgroundColor: t.surface, borderColor: t.border };
   const on = { backgroundColor: t.primary, borderColor: t.primary };

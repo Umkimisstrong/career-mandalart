@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Alert, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { APP_NAME, APP_NAME_EN, APP_TAGLINE_EN } from '../brand';
 import { CENTER, Plan, progress } from '../model';
+import { routineItems } from '../routine';
 import { THEME_LABELS, useTheme } from '../theme';
 
 type Props = {
@@ -15,6 +16,7 @@ type Props = {
   onStory: () => void;
   onAbout: () => void;
   onTemplates: () => void;
+  onToday: () => void;
   notice?: string;
 };
 
@@ -29,9 +31,14 @@ function confirm(message: string, onYes: () => void) {
   ]);
 }
 
-export default function PlanList({ plans, onOpen, onCreate, onDelete, onBackup, onScanQr, onTheme, onStory, onAbout, onTemplates, notice }: Props) {
+export default function PlanList({ plans, onOpen, onCreate, onDelete, onBackup, onScanQr, onTheme, onStory, onAbout, onTemplates, onToday, notice }: Props) {
   const { t, ui } = useTheme();
   const [title, setTitle] = useState('');
+  // 오늘의 점검 요약 — 반복 점검 칸이 하나라도 있으면 목록 맨 위에 보인다
+  const items = routineItems(plans);
+  const today = items.filter(i => i.scope === 'day' && i.dueToday);
+  const left = items.filter(i => i.dueToday && !i.stats.checked).length;
+  const missed = items.filter(i => i.stats.missedPrev).length;
 
   const create = () => {
     onCreate(title.trim() || '새 청사진');
@@ -58,6 +65,20 @@ export default function PlanList({ plans, onOpen, onCreate, onDelete, onBackup, 
           <Text style={[styles.themeText, { color: t.text }]}>{THEME_LABELS[t.id].label}</Text>
         </Pressable>
       </View>
+
+      <Pressable onPress={onToday} style={[styles.story, { backgroundColor: t.surface, borderColor: missed ? t.accent : t.primary, borderWidth: 2 }]}>
+        <Text style={[styles.storyStar, { color: t.primary }]}>{items.length && !left ? '✅' : '📋'}</Text>
+        <View style={{ flex: 1 }}>
+          <Text style={[styles.storyTitle, { color: t.text }]}>
+            오늘의 점검{items.length ? ` · 오늘 ${today.filter(i => i.stats.checked).length}/${today.length}` : ''}
+          </Text>
+          <Text style={[styles.storySub, { color: missed ? t.accent : t.sub }]}>
+            {!items.length ? '실행 과제에 매일 · 매주 · 매월 반복 점검과 알림을 걸어 보세요'
+              : missed ? `놓친 기록 ${missed}개 · 남은 점검 ${left}개` : left ? `남은 점검 ${left}개` : '이번 기간 점검을 모두 마쳤어요'}
+          </Text>
+        </View>
+        <Text style={{ color: t.sub, fontSize: 18 }}>›</Text>
+      </Pressable>
 
       <Pressable onPress={onStory} style={[styles.story, { backgroundColor: t.surface, borderColor: t.border }]}>
         <Text style={[styles.storyStar, { color: t.primary }]}>★</Text>

@@ -18,6 +18,22 @@ export type Cell = {
   cat?: string;
   // 실행 과제 칸: 고른 세부 카테고리 · 행동 · 단위 (다시 편집할 때 복원용, 화면에는 text 를 쓴다)
   spec?: ActionSpec;
+  // 실행 과제 칸: 반복 점검 주기 · 알림 (src/routine.ts). done 은 과제 전체 완료, log 는 주기마다의 체크
+  routine?: Routine;
+  // 체크한 기간 키 목록 — 매일 · 요일: 'YYYY-MM-DD', 매주: 그 주 월요일 'YYYY-MM-DD', 매월: 'YYYY-MM'
+  log?: string[];
+};
+
+// daily 매일 · weekdays 고른 요일마다 · weekly 주 1회 · monthly 월 1회
+export type Freq = 'daily' | 'weekdays' | 'weekly' | 'monthly';
+export type Routine = {
+  freq: Freq;
+  // weekdays: 점검할 요일들 / weekly: 알림 요일 하나 (0=일 … 6=토) / monthly: 알림 날짜 하나 (1~31)
+  days?: number[];
+  // 알림 시각 'HH:MM' — 없으면 알림 없이 점검만
+  time?: string;
+  // 시작일 'YYYY-MM-DD' — 이전 기간은 놓친 것으로 세지 않는다
+  start: string;
 };
 
 // 2레벨(세부 카테고리) · 3레벨(행동) 선택과 단위 — src/categories/tree.ts, units.ts
@@ -50,6 +66,8 @@ export type Store = {
   age?: AgeBand;
   // 화면 테마 (src/theme.ts)
   theme?: ThemeSetting;
+  // 반복 점검 알림을 켰는지 (네이티브: 로컬 알림 예약, 웹: 앱 아이콘 배지 · 열려 있을 때 알림)
+  notify?: boolean;
 };
 
 const emptyCell = (): Cell => ({ text: '', note: '', done: false });
