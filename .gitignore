@@ -1,1 +1,13 @@
 research/output/*.log
+
+# ── 개인 설정 · 정보 (이 PC 전용, 공개 저장소에 올리지 않음) ──
+# 개인 청사진 · 산출물
+my-goals/
+# Claude Code 개인 설정 (로컬 미리보기 launch.json, settings.local.json 등)
+.claude/
+# 이 PC 전용 AI 컨텍스트
+CLAUDE.local.md
+*.local.md
+# 비밀 값
+.env
+.env.*
