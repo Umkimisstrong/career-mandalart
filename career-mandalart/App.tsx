@@ -14,6 +14,7 @@ import PlanList from './src/screens/PlanList';
 import QrScan from './src/screens/QrScan';
 import QrShare from './src/screens/QrShare';
 import Story from './src/screens/Story';
+import Templates from './src/screens/Templates';
 import ThemeSettings from './src/screens/ThemeSettings';
 import { loadStore, saveStore } from './src/storage';
 import { buildTheme, isDark, ThemeProvider } from './src/theme';
@@ -25,6 +26,7 @@ type Route =
   | { name: 'theme' }
   | { name: 'story' }
   | { name: 'about' }
+  | { name: 'templates' }
   | { name: 'qr'; id: string }
   | { name: 'plan'; id: string; block: number | null };
 
@@ -83,11 +85,23 @@ export default function App() {
           onTheme={() => setRoute({ name: 'theme' })}
           onStory={() => setRoute({ name: 'story' })}
           onAbout={() => setRoute({ name: 'about' })}
+          onTemplates={() => setRoute({ name: 'templates' })}
           notice={notice}
         />
       );
     } else if (route.name === 'backup') {
       screen = <Backup store={store} onBack={() => setRoute({ name: 'list' })} onImport={setStore} />;
+    } else if (route.name === 'templates') {
+      screen = (
+        <Templates
+          age={store.age}
+          onBack={() => setRoute({ name: 'list' })}
+          onUse={(p, age) => {
+            setStore(s => s && { ...s, plans: [...s.plans, p], age: s.age ?? age });
+            setRoute({ name: 'plan', id: p.id, block: null });
+          }}
+        />
+      );
     } else if (route.name === 'about') {
       screen = <About onBack={() => setRoute({ name: 'list' })} onStory={() => setRoute({ name: 'story' })} />;
     } else if (route.name === 'story') {

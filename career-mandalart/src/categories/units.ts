@@ -29,11 +29,19 @@ export const QTY_MAX = 3;
 // 직접 입력한 날짜 등은 "까지"를 붙여 준다
 const untilText = (s: string) => (/(까지|안에|내|전)$/.test(s) ? s : `${s}까지`);
 
+// 받침이 있으면 "으로", 없거나 ㄹ 받침이면 "로" (한글이 아니면 "(으)로")
+function ro(word: string) {
+  const code = word.charCodeAt(word.length - 1) - 0xac00;
+  if (code < 0 || code > 11171) return `${word}(으)로`;
+  const jong = code % 28;
+  return `${word}${jong === 0 || jong === 8 ? '로' : '으로'}`;
+}
+
 export function composeText(spec: ActionSpec): string {
   const head = [
     spec.when,
     spec.where && `${spec.where}에서`,
-    spec.whereTo && `${spec.whereTo}(으)로`,
+    spec.whereTo && ro(spec.whereTo),
     spec.act,
   ].filter(Boolean).join(' ');
   const tail = [

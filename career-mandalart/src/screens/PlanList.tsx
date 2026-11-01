@@ -14,6 +14,7 @@ type Props = {
   onTheme: () => void;
   onStory: () => void;
   onAbout: () => void;
+  onTemplates: () => void;
   notice?: string;
 };
 
@@ -28,7 +29,7 @@ function confirm(message: string, onYes: () => void) {
   ]);
 }
 
-export default function PlanList({ plans, onOpen, onCreate, onDelete, onBackup, onScanQr, onTheme, onStory, onAbout, notice }: Props) {
+export default function PlanList({ plans, onOpen, onCreate, onDelete, onBackup, onScanQr, onTheme, onStory, onAbout, onTemplates, notice }: Props) {
   const { t, ui } = useTheme();
   const [title, setTitle] = useState('');
 
@@ -65,6 +66,15 @@ export default function PlanList({ plans, onOpen, onCreate, onDelete, onBackup, 
           <Text style={[styles.storySub, { color: t.sub }]}>이 앱이 시작된 이야기 보기</Text>
         </View>
         <Text style={{ color: t.sub, fontSize: 18 }}>›</Text>
+      </Pressable>
+
+      <Pressable onPress={onTemplates} style={[styles.story, { backgroundColor: t.primary, borderColor: t.primary }]}>
+        <Text style={[styles.storyStar, { color: t.onPrimary }]}>✨</Text>
+        <View style={{ flex: 1 }}>
+          <Text style={[styles.storyTitle, { color: t.onPrimary }]}>템플릿으로 81칸 채우기</Text>
+          <Text style={[styles.storySub, { color: t.onPrimary, opacity: 0.85 }]}>10대 ~ 90대 연령대별 청사진으로 바로 시작</Text>
+        </View>
+        <Text style={{ color: t.onPrimary, fontSize: 18 }}>›</Text>
       </Pressable>
 
       <View style={styles.newRow}>

@@ -15,8 +15,9 @@ import { useTheme } from '../theme';
 import WEIGHTS from '../categories/keywordWeights.json';
 
 // 키워드 자산(keyword-assets) 기반: 카테고리를 이야기한 글의 비율(%) — 연령대를 고르면 그 연령대 기준
+// 수집 자료에 없는 연령대(10대 · 60대 이상)는 전체 비율을 쓴다
 const weightOf = (id: string, age?: AgeBand) =>
-  (age ? (WEIGHTS.byAge as Record<string, Record<string, number>>)[age]?.[id] : (WEIGHTS.total as Record<string, number>)[id]) ?? 0;
+  (age && (WEIGHTS.byAge as Record<string, Record<string, number>>)[age]?.[id]) ?? (WEIGHTS.total as Record<string, number>)[id] ?? 0;
 const keywordsOf = (id: string) => (WEIGHTS.keywords as Record<string, string[]>)[id] ?? [];
 
 const LEVELS = Object.keys(MASLOW).map(Number) as MaslowLevel[];

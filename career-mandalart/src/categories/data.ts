@@ -4,12 +4,19 @@
 // Kasser & Ryan Aspiration Index(내재적/외재적 목표)에 매핑된다.
 // ages 는 그 연령대에서 특히 많이 언급·중시되는 항목 표시 — 근거는 docs/categories.md 의 출처 키 참고.
 
-export type AgeBand = '20s' | '30s' | '40s' | '50s';
+// 10대 ~ 90대. 키워드 자산 · 설문 근거는 20~50대가 가장 두텁고, 10대 · 60대 이상은 발달 단계 이론과
+// WHO 건강한 노화 기준으로 보완했다 (docs/templates.md).
+export type AgeBand = '10s' | '20s' | '30s' | '40s' | '50s' | '60s' | '70s' | '80s' | '90s';
 export const AGE_BANDS: { id: AgeBand; label: string }[] = [
+  { id: '10s', label: '10대' },
   { id: '20s', label: '20대' },
   { id: '30s', label: '30대' },
   { id: '40s', label: '40대' },
-  { id: '50s', label: '50대+' },
+  { id: '50s', label: '50대' },
+  { id: '60s', label: '60대' },
+  { id: '70s', label: '70대' },
+  { id: '80s', label: '80대' },
+  { id: '90s', label: '90대+' },
 ];
 
 export type MaslowLevel = 1 | 2 | 3 | 4 | 5 | 6;
