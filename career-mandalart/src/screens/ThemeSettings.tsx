@@ -12,7 +12,7 @@ type Props = {
   onChange: (setting: ThemeSetting) => void;
 };
 
-const ORDER: ThemeId[] = ['default', 'mono', 'signature', 'custom'];
+const ORDER: ThemeId[] = ['default', 'northstar', 'mono', 'signature', 'custom'];
 const IDX = [0, 1, 2, 3, 4, 5, 6, 7, 8];
 
 export default function ThemeSettings({ setting, onBack, onChange }: Props) {

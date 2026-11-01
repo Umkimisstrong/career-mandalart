@@ -8,6 +8,12 @@ import {
   AGE_BANDS, AgeBand, CATEGORIES, categoryById, MASLOW, MaslowLevel,
 } from '../categories/data';
 import { useTheme } from '../theme';
+import WEIGHTS from '../categories/keywordWeights.json';
+
+// 키워드 자산(keyword-assets) 기반: 카테고리를 이야기한 글의 비율(%) — 연령대를 고르면 그 연령대 기준
+const weightOf = (id: string, age?: AgeBand) =>
+  (age ? (WEIGHTS.byAge as Record<string, Record<string, number>>)[age]?.[id] : (WEIGHTS.total as Record<string, number>)[id]) ?? 0;
+const keywordsOf = (id: string) => (WEIGHTS.keywords as Record<string, string[]>)[id] ?? [];
 
 const LEVELS = Object.keys(MASLOW).map(Number) as MaslowLevel[];
 
@@ -20,10 +26,10 @@ export function GoalCategoryPicker({ selected, onSelect }: {
   const onText = { color: t.onPrimary };
   return (
     <View style={{ gap: 8 }}>
-      <Text style={styles.title}>목표 카테고리</Text>
+      <Text style={[styles.title, { color: t.text }]}>목표 카테고리</Text>
       {LEVELS.map(level => (
         <View key={level} style={styles.levelRow}>
-          <Text style={styles.level}>{level} {MASLOW[level].label}</Text>
+          <Text style={[styles.level, { color: t.sub }]}>{level} {MASLOW[level].label}</Text>
           <View style={[styles.wrap, { flex: 1 }]}>
             {CATEGORIES.filter(c => c.maslow === level).map(c => {
               const sel = c.id === selected;
@@ -57,12 +63,17 @@ export function ActionItemPicker({ initialCat, text, age, custom, onAge, onPick,
   const mine = custom[cat.id] ?? [];
   const rec = (ages?: AgeBand[]) => !!age && !!ages?.includes(age);
   const items = [...cat.items].sort((a, b) => Number(rec(b.ages)) - Number(rec(a.ages)));
+  // 블록 카테고리를 맨 앞에, 나머지는 사람들이 많이 이야기한 순서로
+  const tabs = [...CATEGORIES].sort((a, b) =>
+    Number(b.id === initialCat) - Number(a.id === initialCat) || weightOf(b.id, age) - weightOf(a.id, age));
+  const words = keywordsOf(cat.id);
+  const pct = Math.round(weightOf(cat.id, age));
   const trimmed = text.trim();
   const canAdd = !!trimmed && !mine.includes(trimmed) && !cat.items.some(i => i.label === trimmed);
 
   return (
     <View style={{ gap: 10 }}>
-      <Text style={styles.title}>추천 실행 과제</Text>
+      <Text style={[styles.title, { color: t.text }]}>추천 실행 과제</Text>
 
       <ScrollView
         horizontal
@@ -70,7 +81,7 @@ export function ActionItemPicker({ initialCat, text, age, custom, onAge, onPick,
         style={{ flexGrow: 0 }}
         contentContainerStyle={{ gap: 6, alignItems: 'flex-start' }}
       >
-        {CATEGORIES.map(c => {
+        {tabs.map(c => {
           const sel = c.id === cat.id;
           return (
             <Pressable key={c.id} onPress={() => setCatId(c.id)} style={[styles.tab, sel && on]}>
@@ -81,7 +92,7 @@ export function ActionItemPicker({ initialCat, text, age, custom, onAge, onPick,
       </ScrollView>
 
       <View style={[styles.wrap, { alignItems: 'center' }]}>
-        <Text style={styles.level}>내 연령대</Text>
+        <Text style={[styles.level, { color: t.sub }]}>내 연령대</Text>
         {AGE_BANDS.map(a => {
           const sel = a.id === age;
           return (
@@ -93,6 +104,12 @@ export function ActionItemPicker({ initialCat, text, age, custom, onAge, onPick,
       </View>
 
       {!!age && !!cat.ageNotes?.[age] && <Text style={styles.note}>💡 {cat.ageNotes[age]}</Text>}
+
+      {words.length > 0 && (
+        <Text style={[styles.words, { color: t.sub }]}>
+          🔎 {age ? `${AGE_BANDS.find(a => a.id === age)?.label} 글의 ${pct}%` : `목표 이야기의 ${pct}%`}가 이 영역을 언급 · 자주 쓴 말: {words.join(' · ')}
+        </Text>
+      )}
 
       <View style={styles.wrap}>
         {items.map(i => (
@@ -133,6 +150,7 @@ const styles = StyleSheet.create({
   chipTextOn: { fontWeight: '700' },
   ageChip: { paddingHorizontal: 9, paddingVertical: 4, borderRadius: 12, backgroundColor: '#E5E7EB' },
   ageText: { fontSize: 12, color: '#374151' },
+  words: { fontSize: 12, lineHeight: 18 },
   note: { fontSize: 12, color: '#1E40AF', backgroundColor: '#EFF6FF', padding: 8, borderRadius: 8 },
   item: {
     paddingHorizontal: 10, paddingVertical: 7, borderRadius: 8, backgroundColor: '#fff',

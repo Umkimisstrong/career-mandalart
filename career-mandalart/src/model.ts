@@ -98,6 +98,28 @@ export function isStore(v: unknown): v is Store {
   );
 }
 
+// 오타니 쇼헤이가 하나마키히가시고 1학년 때 세운 목표 달성표의 뼈대.
+// 중심 목표 · 8개 세부 목표는 보도로 확인된 내용이고, 실행 과제는 공개적으로 전해지는 일상 실천만 넣었다.
+// 나머지 칸은 비워 두어 사용자가 자기 방식으로 채워 보게 한다.
+export function ohtaniPlan(): Plan {
+  let p = newPlan('오타니 쇼헤이의 81칸 (고교 1학년)');
+  p = setCell(p, CENTER, CENTER, { text: '8구단 드래프트 1순위' });
+  const goals: [number, string, string][] = [
+    [0, '몸 만들기', 'health'],
+    [1, '제구', 'career'],
+    [2, '구위', 'career'],
+    [3, '멘탈', 'mindset'],
+    [5, '160km/h', 'career'],
+    [6, '인간성', 'relationship'],
+    [7, '운', 'mindset'],
+    [8, '변화구', 'career'],
+  ];
+  goals.forEach(([b, text, cat]) => { p = setCell(p, CENTER, b, { text, cat }); });
+  ['인사하기', '휴지 줍기'].forEach((t, i) => { p = setCell(p, 7, i, { text: t }); });
+  ['감사', '배려', '예의'].forEach((t, i) => { p = setCell(p, 6, i, { text: t }); });
+  return p;
+}
+
 export function samplePlan(): Plan {
   let p = newPlan('나의 커리어 청사진');
   const goals = ['전문성', '리더십', '네트워크', '건강', '', '재무', '브랜딩', '학습', '마인드셋'];

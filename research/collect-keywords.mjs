@@ -112,6 +112,8 @@ const result = { generatedAt: new Date().toISOString(), sources: {}, seeds: {}, 
 const ageCat = { '20s': new Map(), '30s': new Map(), '40s': new Map(), '50s': new Map() };
 const ageCount = { '20s': 0, '30s': 0, '40s': 0, '50s': 0 };
 const allCat = new Map();
+// 카테고리별로 함께 등장한 단어 — 키워드 자산(keyword-assets)의 원천
+const catUni = {}, catBi = {}, catDocs = new Map();
 let total = 0;
 
 for (const [seed, cfg] of Object.entries(SEEDS)) {
@@ -130,7 +132,11 @@ for (const [seed, cfg] of Object.entries(SEEDS)) {
     new Set(u).forEach(w => inc(uni, w));
     new Set(b).forEach(w => inc(bi, w));
     const c = categorize(d.text);
-    c.forEach(x => { inc(cats, x); inc(allCat, x); });
+    c.forEach(x => {
+      inc(cats, x); inc(allCat, x); inc(catDocs, x);
+      new Set(u).forEach(w => inc(catUni[x] ??= new Map(), w));
+      new Set(b).forEach(w => inc(catBi[x] ??= new Map(), w));
+    });
     const a = ageBand(d.text);
     if (a) { ageCount[a]++; c.forEach(x => inc(ageCat[a], x)); }
   }
@@ -165,6 +171,9 @@ for (const a of Object.keys(ageCat)) {
     categories: top(ageCat[a], 11).map(([k, v]) => [k, v, ageCount[a] ? +(v / ageCount[a] * 100).toFixed(1) : 0]),
   };
 }
+result.byCategory = Object.fromEntries([...catDocs.keys()].map(k => [k, {
+  docs: catDocs.get(k), topWords: top(catUni[k], 60), topBigrams: top(catBi[k], 40),
+}]));
 result.totals = { docs: total, categories: top(allCat, 11).map(([k, v]) => [k, v, +(v / total * 100).toFixed(1)]) };
 result.sources = {
   hn: 'https://hn.algolia.com/api (Hacker News 공개 검색 API, 인증 없음)',

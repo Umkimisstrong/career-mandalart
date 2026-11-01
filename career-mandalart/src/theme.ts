@@ -2,12 +2,13 @@
 //  - default   기본 파스텔
 //  - mono      흑 / 백
 //  - signature 만다라트 시그니처 (흰색 · 파란색 · 붉은색)
+//  - northstar 북극성 — 밤하늘 남색 위의 금빛 별
 //  - custom    사용자가 고른 2~4가지 색 섞기
 import { createContext, useContext, useMemo } from 'react';
 import { StyleSheet } from 'react-native';
 import { CENTER } from './model';
 
-export type ThemeId = 'default' | 'mono' | 'signature' | 'custom';
+export type ThemeId = 'default' | 'northstar' | 'mono' | 'signature' | 'custom';
 export type ThemeSetting = { id: ThemeId; colors?: string[] };
 
 export type Theme = {
@@ -31,6 +32,7 @@ export type Theme = {
 
 export const THEME_LABELS: Record<ThemeId, { label: string; desc: string }> = {
   default: { label: '기본', desc: '부드러운 파스텔' },
+  northstar: { label: '북극성', desc: '밤하늘 남색 · 금빛 별' },
   mono: { label: '흑 / 백', desc: '군더더기 없는 모노톤' },
   signature: { label: '만다라트 시그니처', desc: '흰색 · 파란색 · 붉은색' },
   custom: { label: '나만의 색 섞기', desc: '2~4가지 색을 골라 조합' },
@@ -58,7 +60,7 @@ export function mix(a: string, b: string, ratio: number) {
   return `#${toHex(r1 + (r2 - r1) * ratio)}${toHex(g1 + (g2 - g1) * ratio)}${toHex(b1 + (b2 - b1) * ratio)}`;
 }
 
-function luminance(hex: string) {
+export function luminance(hex: string) {
   const [r, g, b] = rgb(hex).map(v => {
     const c = v / 255;
     return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
@@ -68,9 +70,13 @@ function luminance(hex: string) {
 
 const onColor = (dark: string) => (color: string) => (luminance(color) > 0.4 ? dark : '#FFFFFF');
 
+// 어두운 배경 테마인지 (상태 표시줄 색 등에 사용)
+export const isDark = (t: Theme) => luminance(t.bg) < 0.2;
+
 // ---- 테마 정의 ----
 function base(id: ThemeId, t: Omit<Theme, 'id' | 'on'>): Theme {
-  return { id, ...t, on: onColor(t.text) };
+  // 밝은 칸 위 글자는 진한색 — 어두운 테마라도 본문 글자색(밝은색)을 쓰면 안 보이므로 고정 남색 사용
+  return { id, ...t, on: onColor(luminance(t.text) < 0.2 ? t.text : '#0B1026') };
 }
 
 function custom(colors: string[]): Theme {
@@ -104,6 +110,26 @@ function custom(colors: string[]): Theme {
 
 export function buildTheme(setting?: ThemeSetting): Theme {
   switch (setting?.id) {
+    case 'northstar': {
+      const gold = '#F5C451';
+      const deep = '#24386E';
+      const mid = '#34508F';
+      return base('northstar', {
+        bg: '#0B1026',
+        surface: '#141B36',
+        text: '#EEF1FA',
+        sub: '#9AA3C2',
+        border: '#2A335A',
+        primary: gold,
+        onPrimary: '#0B1026',
+        accent: gold,
+        done: '#1F2B52',
+        doneBorder: gold,
+        doneText: gold,
+        // 가운데 금빛 북극성, 둘레는 별자리처럼 짙고 옅은 남색이 번갈아
+        blocks: [deep, mid, deep, mid, gold, mid, deep, mid, deep],
+      });
+    }
     case 'mono':
       return base('mono', {
         bg: '#FFFFFF',

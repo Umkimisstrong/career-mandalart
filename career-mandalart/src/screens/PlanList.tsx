@@ -11,6 +11,7 @@ type Props = {
   onBackup: () => void;
   onScanQr: () => void;
   onTheme: () => void;
+  onStory: () => void;
   notice?: string;
 };
 
@@ -25,7 +26,7 @@ function confirm(message: string, onYes: () => void) {
   ]);
 }
 
-export default function PlanList({ plans, onOpen, onCreate, onDelete, onBackup, onScanQr, onTheme, notice }: Props) {
+export default function PlanList({ plans, onOpen, onCreate, onDelete, onBackup, onScanQr, onTheme, onStory, notice }: Props) {
   const { t, ui } = useTheme();
   const [title, setTitle] = useState('');
 
@@ -50,6 +51,15 @@ export default function PlanList({ plans, onOpen, onCreate, onDelete, onBackup, 
           <Text style={[styles.themeText, { color: t.text }]}>{THEME_LABELS[t.id].label}</Text>
         </Pressable>
       </View>
+
+      <Pressable onPress={onStory} style={[styles.story, { backgroundColor: t.surface, borderColor: t.border }]}>
+        <Text style={[styles.storyStar, { color: t.primary }]}>★</Text>
+        <View style={{ flex: 1 }}>
+          <Text style={[styles.storyTitle, { color: t.text }]}>16살 오타니가 81칸에 적은 꿈</Text>
+          <Text style={[styles.storySub, { color: t.sub }]}>이 앱이 시작된 이야기 보기</Text>
+        </View>
+        <Text style={{ color: t.sub, fontSize: 18 }}>›</Text>
+      </Pressable>
 
       <View style={styles.newRow}>
         <TextInput
@@ -103,6 +113,10 @@ export default function PlanList({ plans, onOpen, onCreate, onDelete, onBackup, 
 const styles = StyleSheet.create({
   wrap: { padding: 16, gap: 12 },
   newRow: { flexDirection: 'row', gap: 8, marginVertical: 8 },
+  story: { flexDirection: 'row', alignItems: 'center', gap: 12, padding: 14, borderRadius: 14, borderWidth: 1 },
+  storyStar: { fontSize: 24 },
+  storyTitle: { fontSize: 15, fontWeight: '700' },
+  storySub: { fontSize: 12, marginTop: 2 },
   titleRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 12 },
   themeBtn: { borderWidth: 1, borderRadius: 12, paddingHorizontal: 10, paddingVertical: 8, alignItems: 'center', gap: 4 },
   swatchRow: { flexDirection: 'row', gap: 3 },

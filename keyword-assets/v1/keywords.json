@@ -1,0 +1,1665 @@
+{
+  "version": "v1",
+  "builtAt": "2026-11-01T06:41:34.400Z",
+  "collectedAt": "2026-11-01T06:36:40.839Z",
+  "sources": {
+    "hn": "https://hn.algolia.com/api (Hacker News 공개 검색 API, 인증 없음)",
+    "mastodon": "https://mastodon.social/api/v1/timelines/tag/<tag> (공개 해시태그 타임라인, 인증 없음)"
+  },
+  "totals": {
+    "docs": 12433,
+    "ageDocs": {
+      "20s": 586,
+      "30s": 393,
+      "40s": 339,
+      "50s": 169
+    }
+  },
+  "method": "공개 API 글을 11개 카테고리 키워드 사전으로 분류 → 카테고리별 특징 단어(비율 × 희소성) 추출 → 검수된 한국어 사전에 있는 단어만 채택. 원문 미저장.",
+  "seeds": {
+    "human": {
+      "ko": "인간",
+      "docs": 2390,
+      "queries": [
+        "human needs",
+        "being human",
+        "human flourishing",
+        "what makes us human"
+      ],
+      "tags": [
+        "humanity"
+      ],
+      "categoryShare": {
+        "contribution": 31.7,
+        "career": 29.2,
+        "growth": 24.1,
+        "experience": 21,
+        "mindset": 18.1,
+        "money": 16.9,
+        "health": 16.5,
+        "relationship": 14,
+        "stability": 10.7,
+        "recognition": 9.5,
+        "network": 5.1
+      },
+      "keywords": [
+        {
+          "en": "flourishing",
+          "ko": "번영",
+          "count": 596,
+          "share": 24.9
+        },
+        {
+          "en": "world",
+          "ko": "세상",
+          "count": 412,
+          "share": 17.2
+        },
+        {
+          "en": "beings",
+          "ko": "존재",
+          "count": 361,
+          "share": 15.1
+        },
+        {
+          "en": "society",
+          "ko": "사회",
+          "count": 255,
+          "share": 10.7
+        },
+        {
+          "en": "social",
+          "ko": "사회적 관계",
+          "count": 214,
+          "share": 9
+        },
+        {
+          "en": "money",
+          "ko": "돈",
+          "count": 201,
+          "share": 8.4
+        },
+        {
+          "en": "live",
+          "ko": "살아가기",
+          "count": 181,
+          "share": 7.6
+        },
+        {
+          "en": "climate change",
+          "ko": "기후 변화",
+          "count": 28,
+          "share": 1.2
+        },
+        {
+          "en": "basic income",
+          "ko": "기본소득",
+          "count": 27,
+          "share": 1.1
+        },
+        {
+          "en": "computer science",
+          "ko": "컴퓨터 과학",
+          "count": 12,
+          "share": 0.5
+        },
+        {
+          "en": "mental health",
+          "ko": "정신 건강",
+          "count": 12,
+          "share": 0.5
+        },
+        {
+          "en": "middle class",
+          "ko": "중산층",
+          "count": 11,
+          "share": 0.5
+        },
+        {
+          "en": "health care",
+          "ko": "의료",
+          "count": 10,
+          "share": 0.4
+        },
+        {
+          "en": "video games",
+          "ko": "게임",
+          "count": 10,
+          "share": 0.4
+        }
+      ]
+    },
+    "life": {
+      "ko": "삶",
+      "docs": 2611,
+      "queries": [
+        "meaning of life",
+        "life goals",
+        "good life",
+        "in life I want"
+      ],
+      "tags": [
+        "lifegoals",
+        "life"
+      ],
+      "categoryShare": {
+        "mindset": 38.7,
+        "career": 34.7,
+        "contribution": 30.5,
+        "relationship": 25.1,
+        "growth": 23.9,
+        "experience": 20.5,
+        "money": 20.5,
+        "health": 14.2,
+        "stability": 12.5,
+        "recognition": 10.8,
+        "network": 5.2
+      },
+      "keywords": [
+        {
+          "en": "live",
+          "ko": "살아가기",
+          "count": 671,
+          "share": 25.7
+        },
+        {
+          "en": "world",
+          "ko": "세상",
+          "count": 470,
+          "share": 18
+        },
+        {
+          "en": "money",
+          "ko": "돈",
+          "count": 292,
+          "share": 11.2
+        },
+        {
+          "en": "job",
+          "ko": "직업",
+          "count": 252,
+          "share": 9.7
+        },
+        {
+          "en": "living",
+          "ko": "생계",
+          "count": 221,
+          "share": 8.5
+        },
+        {
+          "en": "experience",
+          "ko": "경험",
+          "count": 197,
+          "share": 7.5
+        },
+        {
+          "en": "society",
+          "ko": "사회",
+          "count": 190,
+          "share": 7.3
+        },
+        {
+          "en": "read",
+          "ko": "독서",
+          "count": 190,
+          "share": 7.3
+        },
+        {
+          "en": "love",
+          "ko": "사랑",
+          "count": 184,
+          "share": 7
+        },
+        {
+          "en": "help",
+          "ko": "돕기",
+          "count": 183,
+          "share": 7
+        },
+        {
+          "en": "family",
+          "ko": "가족",
+          "count": 176,
+          "share": 6.7
+        },
+        {
+          "en": "free",
+          "ko": "자유",
+          "count": 173,
+          "share": 6.6
+        },
+        {
+          "en": "work hard",
+          "ko": "열심히 일하기",
+          "count": 25,
+          "share": 1
+        },
+        {
+          "en": "high school",
+          "ko": "학창 시절",
+          "count": 25,
+          "share": 1
+        },
+        {
+          "en": "video games",
+          "ko": "게임",
+          "count": 20,
+          "share": 0.8
+        }
+      ]
+    },
+    "goal": {
+      "ko": "목표",
+      "docs": 2526,
+      "queries": [
+        "my goal is",
+        "goals for next year",
+        "career goals",
+        "bucket list"
+      ],
+      "tags": [
+        "goals",
+        "bucketlist"
+      ],
+      "categoryShare": {
+        "career": 51.8,
+        "experience": 30,
+        "growth": 29.2,
+        "contribution": 21.9,
+        "money": 19.8,
+        "relationship": 19.7,
+        "mindset": 15.5,
+        "health": 14.4,
+        "recognition": 13.3,
+        "stability": 12.6,
+        "network": 7.4
+      },
+      "keywords": [
+        {
+          "en": "career",
+          "ko": "커리어",
+          "count": 628,
+          "share": 24.9
+        },
+        {
+          "en": "job",
+          "ko": "직업",
+          "count": 311,
+          "share": 12.3
+        },
+        {
+          "en": "company",
+          "ko": "회사",
+          "count": 302,
+          "share": 12
+        },
+        {
+          "en": "experience",
+          "ko": "경험",
+          "count": 287,
+          "share": 11.4
+        },
+        {
+          "en": "help",
+          "ko": "돕기",
+          "count": 250,
+          "share": 9.9
+        },
+        {
+          "en": "money",
+          "ko": "돈",
+          "count": 249,
+          "share": 9.9
+        },
+        {
+          "en": "world",
+          "ko": "세상",
+          "count": 228,
+          "share": 9
+        },
+        {
+          "en": "build",
+          "ko": "만들기",
+          "count": 222,
+          "share": 8.8
+        },
+        {
+          "en": "business",
+          "ko": "사업",
+          "count": 213,
+          "share": 8.4
+        },
+        {
+          "en": "software",
+          "ko": "소프트웨어",
+          "count": 207,
+          "share": 8.2
+        },
+        {
+          "en": "learn",
+          "ko": "배우기",
+          "count": 201,
+          "share": 8
+        },
+        {
+          "en": "bucket list",
+          "ko": "버킷리스트",
+          "count": 503,
+          "share": 19.9
+        },
+        {
+          "en": "high school",
+          "ko": "학창 시절",
+          "count": 24,
+          "share": 1
+        },
+        {
+          "en": "willing relocate",
+          "ko": "이주",
+          "count": 24,
+          "share": 1
+        },
+        {
+          "en": "skill set",
+          "ko": "역량",
+          "count": 22,
+          "share": 0.9
+        }
+      ]
+    },
+    "purpose": {
+      "ko": "목적",
+      "docs": 2463,
+      "queries": [
+        "purpose in life",
+        "sense of purpose",
+        "my purpose",
+        "find meaning"
+      ],
+      "tags": [
+        "purpose"
+      ],
+      "categoryShare": {
+        "mindset": 81.2,
+        "career": 36.7,
+        "contribution": 24.8,
+        "growth": 23.1,
+        "experience": 21,
+        "relationship": 19.2,
+        "money": 18,
+        "health": 14.7,
+        "recognition": 9.8,
+        "stability": 9.5,
+        "network": 8.9
+      },
+      "keywords": [
+        {
+          "en": "world",
+          "ko": "세상",
+          "count": 292,
+          "share": 11.9
+        },
+        {
+          "en": "meaningful",
+          "ko": "의미",
+          "count": 282,
+          "share": 11.4
+        },
+        {
+          "en": "job",
+          "ko": "직업",
+          "count": 255,
+          "share": 10.4
+        },
+        {
+          "en": "money",
+          "ko": "돈",
+          "count": 225,
+          "share": 9.1
+        },
+        {
+          "en": "live",
+          "ko": "살아가기",
+          "count": 220,
+          "share": 8.9
+        },
+        {
+          "en": "experience",
+          "ko": "경험",
+          "count": 209,
+          "share": 8.5
+        },
+        {
+          "en": "help",
+          "ko": "돕기",
+          "count": 191,
+          "share": 7.8
+        },
+        {
+          "en": "read",
+          "ko": "독서",
+          "count": 166,
+          "share": 6.7
+        },
+        {
+          "en": "meaningful work",
+          "ko": "의미 있는 일",
+          "count": 27,
+          "share": 1.1
+        },
+        {
+          "en": "high school",
+          "ko": "학창 시절",
+          "count": 20,
+          "share": 0.8
+        },
+        {
+          "en": "outside work",
+          "ko": "일 밖의 삶",
+          "count": 19,
+          "share": 0.8
+        },
+        {
+          "en": "hard work",
+          "ko": "노력",
+          "count": 14,
+          "share": 0.6
+        },
+        {
+          "en": "mental health",
+          "ko": "정신 건강",
+          "count": 13,
+          "share": 0.5
+        },
+        {
+          "en": "writing code",
+          "ko": "코드 작성",
+          "count": 11,
+          "share": 0.4
+        },
+        {
+          "en": "hours week",
+          "ko": "주당 근무시간",
+          "count": 11,
+          "share": 0.4
+        }
+      ]
+    },
+    "dream": {
+      "ko": "꿈",
+      "docs": 2443,
+      "queries": [
+        "my dream",
+        "dream job",
+        "dream life",
+        "always dreamed"
+      ],
+      "tags": [
+        "dreams"
+      ],
+      "categoryShare": {
+        "career": 51.8,
+        "experience": 24.7,
+        "growth": 23,
+        "money": 22.1,
+        "relationship": 21.5,
+        "contribution": 18.9,
+        "stability": 14.3,
+        "mindset": 14,
+        "health": 13.5,
+        "recognition": 9.4,
+        "network": 6.1
+      },
+      "keywords": [
+        {
+          "en": "job",
+          "ko": "직업",
+          "count": 754,
+          "share": 30.9
+        },
+        {
+          "en": "dreamed",
+          "ko": "꿈꿔 온 일",
+          "count": 617,
+          "share": 25.3
+        },
+        {
+          "en": "money",
+          "ko": "돈",
+          "count": 259,
+          "share": 10.6
+        },
+        {
+          "en": "company",
+          "ko": "회사",
+          "count": 246,
+          "share": 10.1
+        },
+        {
+          "en": "live",
+          "ko": "살아가기",
+          "count": 241,
+          "share": 9.9
+        },
+        {
+          "en": "world",
+          "ko": "세상",
+          "count": 240,
+          "share": 9.8
+        },
+        {
+          "en": "love",
+          "ko": "사랑",
+          "count": 208,
+          "share": 8.5
+        },
+        {
+          "en": "experience",
+          "ko": "경험",
+          "count": 206,
+          "share": 8.4
+        },
+        {
+          "en": "jobs",
+          "ko": "일자리",
+          "count": 189,
+          "share": 7.7
+        },
+        {
+          "en": "living",
+          "ko": "생계",
+          "count": 182,
+          "share": 7.4
+        },
+        {
+          "en": "pay",
+          "ko": "연봉",
+          "count": 167,
+          "share": 6.8
+        },
+        {
+          "en": "read",
+          "ko": "독서",
+          "count": 164,
+          "share": 6.7
+        },
+        {
+          "en": "help",
+          "ko": "돕기",
+          "count": 156,
+          "share": 6.4
+        },
+        {
+          "en": "hard work",
+          "ko": "노력",
+          "count": 37,
+          "share": 1.5
+        },
+        {
+          "en": "high school",
+          "ko": "학창 시절",
+          "count": 35,
+          "share": 1.4
+        }
+      ]
+    }
+  },
+  "categories": {
+    "growth": {
+      "docs": 3068,
+      "share": 24.7,
+      "byAge": {
+        "20s": 35.3,
+        "30s": 39.2,
+        "40s": 38.6,
+        "50s": 40.2
+      },
+      "keywords": [
+        {
+          "en": "learning",
+          "ko": "배움",
+          "count": 491,
+          "share": 16,
+          "score": 0.3977
+        },
+        {
+          "en": "language",
+          "ko": "외국어",
+          "count": 427,
+          "share": 13.9,
+          "score": 0.3458
+        },
+        {
+          "en": "learn",
+          "ko": "배우기",
+          "count": 682,
+          "share": 22.2,
+          "score": 0.3082
+        },
+        {
+          "en": "code",
+          "ko": "코딩",
+          "count": 304,
+          "share": 9.9,
+          "score": 0.1775
+        },
+        {
+          "en": "read",
+          "ko": "독서",
+          "count": 828,
+          "share": 27,
+          "score": 0.1455
+        },
+        {
+          "en": "course",
+          "ko": "강의",
+          "count": 327,
+          "share": 10.7,
+          "score": 0.0432
+        },
+        {
+          "en": "job",
+          "ko": "직업",
+          "count": 607,
+          "share": 19.8,
+          "score": 0.0172
+        },
+        {
+          "en": "programming language",
+          "ko": "프로그래밍 언어",
+          "count": 58,
+          "share": 1.9,
+          "score": 0.0166
+        },
+        {
+          "en": "experience",
+          "ko": "경험",
+          "count": 475,
+          "share": 15.5,
+          "score": 0.0135
+        },
+        {
+          "en": "money",
+          "ko": "돈",
+          "count": 412,
+          "share": 13.4,
+          "score": 0.0117
+        },
+        {
+          "en": "machine learning",
+          "ko": "머신러닝",
+          "count": 51,
+          "share": 1.7,
+          "score": 0.0115
+        },
+        {
+          "en": "help",
+          "ko": "돕기",
+          "count": 403,
+          "share": 13.1,
+          "score": 0.0114
+        }
+      ]
+    },
+    "health": {
+      "docs": 1821,
+      "share": 14.6,
+      "byAge": {
+        "20s": 28.7,
+        "30s": 29.3,
+        "40s": 28.6,
+        "50s": 29.6
+      },
+      "keywords": [
+        {
+          "en": "run",
+          "ko": "달리기",
+          "count": 576,
+          "share": 31.6,
+          "score": 0.786
+        },
+        {
+          "en": "running",
+          "ko": "러닝",
+          "count": 362,
+          "share": 19.9,
+          "score": 0.494
+        },
+        {
+          "en": "health",
+          "ko": "건강",
+          "count": 283,
+          "share": 15.5,
+          "score": 0.3862
+        },
+        {
+          "en": "body",
+          "ko": "몸",
+          "count": 207,
+          "share": 11.4,
+          "score": 0.2825
+        },
+        {
+          "en": "healthy",
+          "ko": "건강한 삶",
+          "count": 199,
+          "share": 10.9,
+          "score": 0.2716
+        },
+        {
+          "en": "health care",
+          "ko": "의료",
+          "count": 31,
+          "share": 1.7,
+          "score": 0.0305
+        },
+        {
+          "en": "health insurance",
+          "ko": "건강보험",
+          "count": 27,
+          "share": 1.5,
+          "score": 0.0266
+        },
+        {
+          "en": "mental health",
+          "ko": "정신 건강",
+          "count": 51,
+          "share": 2.8,
+          "score": 0.0151
+        },
+        {
+          "en": "job",
+          "ko": "직업",
+          "count": 297,
+          "share": 16.3,
+          "score": 0.0142
+        },
+        {
+          "en": "live",
+          "ko": "살아가기",
+          "count": 267,
+          "share": 14.7,
+          "score": 0.0128
+        },
+        {
+          "en": "money",
+          "ko": "돈",
+          "count": 258,
+          "share": 14.2,
+          "score": 0.0123
+        },
+        {
+          "en": "side projects",
+          "ko": "사이드 프로젝트",
+          "count": 19,
+          "share": 1,
+          "score": 0.0115
+        }
+      ]
+    },
+    "career": {
+      "docs": 5084,
+      "share": 40.9,
+      "byAge": {
+        "20s": 57.2,
+        "30s": 61.3,
+        "40s": 58.4,
+        "50s": 62.7
+      },
+      "keywords": [
+        {
+          "en": "jobs",
+          "ko": "일자리",
+          "count": 527,
+          "share": 10.4,
+          "score": 0.1857
+        },
+        {
+          "en": "companies",
+          "ko": "회사",
+          "count": 478,
+          "share": 9.4,
+          "score": 0.1685
+        },
+        {
+          "en": "software",
+          "ko": "소프트웨어",
+          "count": 483,
+          "share": 9.5,
+          "score": 0.1044
+        },
+        {
+          "en": "career",
+          "ko": "커리어",
+          "count": 935,
+          "share": 18.4,
+          "score": 0.0991
+        },
+        {
+          "en": "pay",
+          "ko": "연봉",
+          "count": 456,
+          "share": 9,
+          "score": 0.0985
+        },
+        {
+          "en": "business",
+          "ko": "사업",
+          "count": 704,
+          "share": 13.8,
+          "score": 0.096
+        },
+        {
+          "en": "job",
+          "ko": "직업",
+          "count": 1691,
+          "share": 33.3,
+          "score": 0.0289
+        },
+        {
+          "en": "company",
+          "ko": "회사",
+          "count": 955,
+          "share": 18.8,
+          "score": 0.0163
+        },
+        {
+          "en": "outside work",
+          "ko": "일 밖의 삶",
+          "count": 41,
+          "share": 0.8,
+          "score": 0.0144
+        },
+        {
+          "en": "meaningful work",
+          "ko": "의미 있는 일",
+          "count": 40,
+          "share": 0.8,
+          "score": 0.0141
+        },
+        {
+          "en": "money",
+          "ko": "돈",
+          "count": 807,
+          "share": 15.9,
+          "score": 0.0138
+        },
+        {
+          "en": "live",
+          "ko": "살아가기",
+          "count": 671,
+          "share": 13.2,
+          "score": 0.0115
+        }
+      ]
+    },
+    "recognition": {
+      "docs": 1319,
+      "share": 10.6,
+      "byAge": {
+        "20s": 16.2,
+        "30s": 15.8,
+        "40s": 15.6,
+        "50s": 20.1
+      },
+      "keywords": [
+        {
+          "en": "success",
+          "ko": "성공",
+          "count": 344,
+          "share": 26.1,
+          "score": 0.6481
+        },
+        {
+          "en": "successful",
+          "ko": "성공한 사람",
+          "count": 290,
+          "share": 22,
+          "score": 0.5463
+        },
+        {
+          "en": "known",
+          "ko": "인정받기",
+          "count": 199,
+          "share": 15.1,
+          "score": 0.3749
+        },
+        {
+          "en": "respect",
+          "ko": "존중",
+          "count": 184,
+          "share": 13.9,
+          "score": 0.3466
+        },
+        {
+          "en": "status",
+          "ko": "지위",
+          "count": 162,
+          "share": 12.3,
+          "score": 0.3052
+        },
+        {
+          "en": "personal",
+          "ko": "개인적 성취",
+          "count": 162,
+          "share": 12.3,
+          "score": 0.2201
+        },
+        {
+          "en": "motivation inspiration",
+          "ko": "동기부여",
+          "count": 22,
+          "share": 1.7,
+          "score": 0.0414
+        },
+        {
+          "en": "success mindset",
+          "ko": "성공 마인드셋",
+          "count": 22,
+          "share": 1.7,
+          "score": 0.0414
+        },
+        {
+          "en": "communication skills",
+          "ko": "소통 능력",
+          "count": 15,
+          "share": 1.1,
+          "score": 0.0204
+        },
+        {
+          "en": "job",
+          "ko": "직업",
+          "count": 284,
+          "share": 21.5,
+          "score": 0.0187
+        },
+        {
+          "en": "money",
+          "ko": "돈",
+          "count": 245,
+          "share": 18.6,
+          "score": 0.0162
+        },
+        {
+          "en": "company",
+          "ko": "회사",
+          "count": 215,
+          "share": 16.3,
+          "score": 0.0142
+        }
+      ]
+    },
+    "experience": {
+      "docs": 2914,
+      "share": 23.4,
+      "byAge": {
+        "20s": 32.6,
+        "30s": 35.9,
+        "40s": 29.2,
+        "50s": 26
+      },
+      "keywords": [
+        {
+          "en": "create",
+          "ko": "창작",
+          "count": 576,
+          "share": 19.8,
+          "score": 0.4912
+        },
+        {
+          "en": "write",
+          "ko": "글쓰기",
+          "count": 513,
+          "share": 17.6,
+          "score": 0.4375
+        },
+        {
+          "en": "writing",
+          "ko": "글쓰기",
+          "count": 477,
+          "share": 16.4,
+          "score": 0.4068
+        },
+        {
+          "en": "fun",
+          "ko": "재미",
+          "count": 381,
+          "share": 13.1,
+          "score": 0.3249
+        },
+        {
+          "en": "building",
+          "ko": "만들기",
+          "count": 299,
+          "share": 10.3,
+          "score": 0.255
+        },
+        {
+          "en": "code",
+          "ko": "코딩",
+          "count": 335,
+          "share": 11.5,
+          "score": 0.206
+        },
+        {
+          "en": "build",
+          "ko": "만들기",
+          "count": 745,
+          "share": 25.6,
+          "score": 0.0735
+        },
+        {
+          "en": "job",
+          "ko": "직업",
+          "count": 513,
+          "share": 17.6,
+          "score": 0.0153
+        },
+        {
+          "en": "money",
+          "ko": "돈",
+          "count": 431,
+          "share": 14.8,
+          "score": 0.0129
+        },
+        {
+          "en": "experience",
+          "ko": "경험",
+          "count": 428,
+          "share": 14.7,
+          "score": 0.0128
+        },
+        {
+          "en": "live",
+          "ko": "살아가기",
+          "count": 400,
+          "share": 13.7,
+          "score": 0.0119
+        },
+        {
+          "en": "help",
+          "ko": "돕기",
+          "count": 357,
+          "share": 12.3,
+          "score": 0.0107
+        }
+      ]
+    },
+    "mindset": {
+      "docs": 4176,
+      "share": 33.6,
+      "byAge": {
+        "20s": 24.2,
+        "30s": 29.8,
+        "40s": 25.7,
+        "50s": 24.9
+      },
+      "keywords": [
+        {
+          "en": "meaningful",
+          "ko": "의미",
+          "count": 443,
+          "share": 10.6,
+          "score": 0.2636
+        },
+        {
+          "en": "happy",
+          "ko": "행복",
+          "count": 605,
+          "share": 14.5,
+          "score": 0.2596
+        },
+        {
+          "en": "society",
+          "ko": "사회",
+          "count": 346,
+          "share": 8.3,
+          "score": 0.1149
+        },
+        {
+          "en": "love",
+          "ko": "사랑",
+          "count": 353,
+          "share": 8.5,
+          "score": 0.0586
+        },
+        {
+          "en": "free",
+          "ko": "자유",
+          "count": 351,
+          "share": 8.4,
+          "score": 0.0242
+        },
+        {
+          "en": "meaningful work",
+          "ko": "의미 있는 일",
+          "count": 40,
+          "share": 1,
+          "score": 0.0172
+        },
+        {
+          "en": "work-life balance",
+          "ko": "워라밸",
+          "count": 28,
+          "share": 0.7,
+          "score": 0.0167
+        },
+        {
+          "en": "job",
+          "ko": "직업",
+          "count": 605,
+          "share": 14.5,
+          "score": 0.0126
+        },
+        {
+          "en": "outside work",
+          "ko": "일 밖의 삶",
+          "count": 27,
+          "share": 0.6,
+          "score": 0.0116
+        },
+        {
+          "en": "money",
+          "ko": "돈",
+          "count": 541,
+          "share": 13,
+          "score": 0.0113
+        },
+        {
+          "en": "live",
+          "ko": "살아가기",
+          "count": 530,
+          "share": 12.7,
+          "score": 0.011
+        },
+        {
+          "en": "experience",
+          "ko": "경험",
+          "count": 454,
+          "share": 10.9,
+          "score": 0.0095
+        }
+      ]
+    },
+    "contribution": {
+      "docs": 3178,
+      "share": 25.6,
+      "byAge": {
+        "20s": 28.5,
+        "30s": 30.5,
+        "40s": 31.6,
+        "50s": 26.6
+      },
+      "keywords": [
+        {
+          "en": "society",
+          "ko": "사회",
+          "count": 681,
+          "share": 21.4,
+          "score": 0.2971
+        },
+        {
+          "en": "future",
+          "ko": "미래",
+          "count": 302,
+          "share": 9.5,
+          "score": 0.2361
+        },
+        {
+          "en": "problems",
+          "ko": "문제 해결",
+          "count": 315,
+          "share": 9.9,
+          "score": 0.1776
+        },
+        {
+          "en": "world",
+          "ko": "세상",
+          "count": 1642,
+          "share": 51.7,
+          "score": 0.045
+        },
+        {
+          "en": "help",
+          "ko": "돕기",
+          "count": 931,
+          "share": 29.3,
+          "score": 0.0255
+        },
+        {
+          "en": "climate change",
+          "ko": "기후 변화",
+          "count": 30,
+          "share": 0.9,
+          "score": 0.0235
+        },
+        {
+          "en": "live",
+          "ko": "살아가기",
+          "count": 652,
+          "share": 20.5,
+          "score": 0.0179
+        },
+        {
+          "en": "job",
+          "ko": "직업",
+          "count": 533,
+          "share": 16.8,
+          "score": 0.0146
+        },
+        {
+          "en": "money",
+          "ko": "돈",
+          "count": 498,
+          "share": 15.7,
+          "score": 0.0136
+        },
+        {
+          "en": "health care",
+          "ko": "의료",
+          "count": 22,
+          "share": 0.7,
+          "score": 0.0124
+        },
+        {
+          "en": "experience",
+          "ko": "경험",
+          "count": 419,
+          "share": 13.2,
+          "score": 0.0115
+        },
+        {
+          "en": "basic income",
+          "ko": "기본소득",
+          "count": 24,
+          "share": 0.8,
+          "score": 0.0105
+        }
+      ]
+    },
+    "money": {
+      "docs": 2422,
+      "share": 19.5,
+      "byAge": {
+        "20s": 37,
+        "30s": 34.4,
+        "40s": 35.7,
+        "50s": 36.7
+      },
+      "keywords": [
+        {
+          "en": "rich",
+          "ko": "부자",
+          "count": 287,
+          "share": 11.8,
+          "score": 0.2945
+        },
+        {
+          "en": "paid",
+          "ko": "보수",
+          "count": 286,
+          "share": 11.8,
+          "score": 0.2934
+        },
+        {
+          "en": "income",
+          "ko": "소득",
+          "count": 275,
+          "share": 11.4,
+          "score": 0.2821
+        },
+        {
+          "en": "value",
+          "ko": "가치",
+          "count": 237,
+          "share": 9.8,
+          "score": 0.2432
+        },
+        {
+          "en": "financial",
+          "ko": "재정",
+          "count": 236,
+          "share": 9.7,
+          "score": 0.2421
+        },
+        {
+          "en": "jobs",
+          "ko": "일자리",
+          "count": 286,
+          "share": 11.8,
+          "score": 0.2116
+        },
+        {
+          "en": "pay",
+          "ko": "연봉",
+          "count": 359,
+          "share": 14.8,
+          "score": 0.1628
+        },
+        {
+          "en": "society",
+          "ko": "사회",
+          "count": 242,
+          "share": 10,
+          "score": 0.1385
+        },
+        {
+          "en": "living",
+          "ko": "생계",
+          "count": 309,
+          "share": 12.8,
+          "score": 0.0884
+        },
+        {
+          "en": "business",
+          "ko": "사업",
+          "count": 303,
+          "share": 12.5,
+          "score": 0.0867
+        },
+        {
+          "en": "money",
+          "ko": "돈",
+          "count": 1226,
+          "share": 50.6,
+          "score": 0.044
+        },
+        {
+          "en": "getting paid",
+          "ko": "보수 받기",
+          "count": 27,
+          "share": 1.1,
+          "score": 0.0277
+        }
+      ]
+    },
+    "relationship": {
+      "docs": 2486,
+      "share": 20,
+      "byAge": {
+        "20s": 45.6,
+        "30s": 50.1,
+        "40s": 44.8,
+        "50s": 48.5
+      },
+      "keywords": [
+        {
+          "en": "friends",
+          "ko": "친구",
+          "count": 491,
+          "share": 19.8,
+          "score": 0.4908
+        },
+        {
+          "en": "kids",
+          "ko": "아이",
+          "count": 442,
+          "share": 17.8,
+          "score": 0.4418
+        },
+        {
+          "en": "children",
+          "ko": "자녀",
+          "count": 373,
+          "share": 15,
+          "score": 0.3728
+        },
+        {
+          "en": "family",
+          "ko": "가족",
+          "count": 587,
+          "share": 23.6,
+          "score": 0.3273
+        },
+        {
+          "en": "love",
+          "ko": "사랑",
+          "count": 799,
+          "share": 32.1,
+          "score": 0.2228
+        },
+        {
+          "en": "happy",
+          "ko": "행복",
+          "count": 243,
+          "share": 9.8,
+          "score": 0.1751
+        },
+        {
+          "en": "care",
+          "ko": "돌봄",
+          "count": 242,
+          "share": 9.7,
+          "score": 0.1744
+        },
+        {
+          "en": "social",
+          "ko": "사회적 관계",
+          "count": 277,
+          "share": 11.1,
+          "score": 0.0975
+        },
+        {
+          "en": "family members",
+          "ko": "가족 구성원",
+          "count": 23,
+          "share": 0.9,
+          "score": 0.023
+        },
+        {
+          "en": "job",
+          "ko": "직업",
+          "count": 533,
+          "share": 21.4,
+          "score": 0.0187
+        },
+        {
+          "en": "live",
+          "ko": "살아가기",
+          "count": 430,
+          "share": 17.3,
+          "score": 0.0151
+        },
+        {
+          "en": "money",
+          "ko": "돈",
+          "count": 410,
+          "share": 16.5,
+          "score": 0.0144
+        }
+      ]
+    },
+    "stability": {
+      "docs": 1485,
+      "share": 11.9,
+      "byAge": {
+        "20s": 21,
+        "30s": 29,
+        "40s": 24.2,
+        "50s": 24.3
+      },
+      "keywords": [
+        {
+          "en": "home",
+          "ko": "집",
+          "count": 493,
+          "share": 33.2,
+          "score": 0.825
+        },
+        {
+          "en": "house",
+          "ko": "주택",
+          "count": 286,
+          "share": 19.3,
+          "score": 0.4786
+        },
+        {
+          "en": "car",
+          "ko": "자동차",
+          "count": 257,
+          "share": 17.3,
+          "score": 0.43
+        },
+        {
+          "en": "security",
+          "ko": "안정",
+          "count": 200,
+          "share": 13.5,
+          "score": 0.3347
+        },
+        {
+          "en": "move",
+          "ko": "이사",
+          "count": 151,
+          "share": 10.2,
+          "score": 0.2527
+        },
+        {
+          "en": "family",
+          "ko": "가족",
+          "count": 183,
+          "share": 12.3,
+          "score": 0.1708
+        },
+        {
+          "en": "health insurance",
+          "ko": "건강보험",
+          "count": 27,
+          "share": 1.8,
+          "score": 0.0326
+        },
+        {
+          "en": "social security",
+          "ko": "사회보장",
+          "count": 17,
+          "share": 1.1,
+          "score": 0.0284
+        },
+        {
+          "en": "buy house",
+          "ko": "내 집 마련",
+          "count": 16,
+          "share": 1.1,
+          "score": 0.0268
+        },
+        {
+          "en": "real estate",
+          "ko": "부동산",
+          "count": 17,
+          "share": 1.1,
+          "score": 0.0205
+        },
+        {
+          "en": "job",
+          "ko": "직업",
+          "count": 344,
+          "share": 23.2,
+          "score": 0.0202
+        },
+        {
+          "en": "live",
+          "ko": "살아가기",
+          "count": 336,
+          "share": 22.6,
+          "score": 0.0197
+        }
+      ]
+    },
+    "network": {
+      "docs": 810,
+      "share": 6.5,
+      "byAge": {
+        "20s": 7.8,
+        "30s": 9.4,
+        "40s": 7.4,
+        "50s": 3.6
+      },
+      "keywords": [
+        {
+          "en": "community",
+          "ko": "커뮤니티",
+          "count": 370,
+          "share": 45.7,
+          "score": 1.1351
+        },
+        {
+          "en": "network",
+          "ko": "인맥",
+          "count": 222,
+          "share": 27.4,
+          "score": 0.681
+        },
+        {
+          "en": "social",
+          "ko": "사회적 관계",
+          "count": 128,
+          "share": 15.8,
+          "score": 0.1383
+        },
+        {
+          "en": "social network",
+          "ko": "소셜 네트워크",
+          "count": 26,
+          "share": 3.2,
+          "score": 0.0798
+        },
+        {
+          "en": "communication skills",
+          "ko": "소통 능력",
+          "count": 14,
+          "share": 1.7,
+          "score": 0.031
+        },
+        {
+          "en": "job",
+          "ko": "직업",
+          "count": 176,
+          "share": 21.7,
+          "score": 0.0189
+        },
+        {
+          "en": "experience",
+          "ko": "경험",
+          "count": 175,
+          "share": 21.6,
+          "score": 0.0188
+        },
+        {
+          "en": "live",
+          "ko": "살아가기",
+          "count": 135,
+          "share": 16.7,
+          "score": 0.0145
+        },
+        {
+          "en": "skill set",
+          "ko": "역량",
+          "count": 13,
+          "share": 1.6,
+          "score": 0.0141
+        },
+        {
+          "en": "company",
+          "ko": "회사",
+          "count": 127,
+          "share": 15.7,
+          "score": 0.0136
+        },
+        {
+          "en": "help",
+          "ko": "돕기",
+          "count": 124,
+          "share": 15.3,
+          "score": 0.0133
+        },
+        {
+          "en": "money",
+          "ko": "돈",
+          "count": 118,
+          "share": 14.6,
+          "score": 0.0127
+        }
+      ]
+    }
+  }
+}

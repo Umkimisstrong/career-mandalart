@@ -20,10 +20,11 @@
 | iPhone 배포 경로 | ① Vercel 웹 배포(+홈 화면 추가) — 무료, 즉시 ② Expo Go — 개발용 ③ TestFlight/App Store — Apple 개발자 계정($99/년) 필요 |
 
 | 목표 카테고리 | `src/categories/data.ts`: 매슬로우 6단계(자기초월 포함) × 11개 카테고리 × 하위 속성, 연령대 태그(20s/30s/40s/50s). 세부 목표 칸 `Cell.cat` = 카테고리 id, 실행 과제 칸은 블록 카테고리 속성 추천. 사용자 추가 속성은 `Store.custom`, 연령대는 `Store.age`. 근거·출처는 `docs/categories.md` |
-| 테마 | `src/theme.ts`: `buildTheme(Store.theme)` → 색 토큰(bg/surface/text/primary/done/blocks[9]/on()) + `makeUi`. 화면은 `useTheme()` 로 `{ t, ui }` 사용, 색 하드코딩 금지. 테마: default · mono · signature(흰/파랑 #005A9C/빨강 #EF3E42) · custom(2~4색). 설정 화면 `ThemeSettings.tsx` |
+| 테마 | `src/theme.ts`: `buildTheme(Store.theme)` → 색 토큰(bg/surface/text/primary/done/blocks[9]/on()) + `makeUi`. 화면은 `useTheme()` 로 `{ t, ui }` 사용, 색 하드코딩 금지. 테마: default · northstar(밤하늘 · 금빛) · mono · signature(흰/파랑 #005A9C/빨강 #EF3E42) · custom(2~4색). 설정 화면 `ThemeSettings.tsx` |
 | 호스팅 | Vercel 무료 플랜만 사용, 자체 도메인 없음 (사용자 결정 2026-11-01) |
+| 키워드 자산 | **카테고리의 베이스 데이터.** `keyword-assets/` (README · dictionary.ko.json 검수 사전 · v1/keywords.json). 빌드: `node research/build-keyword-assets.mjs` → 앱용 `src/categories/keywordWeights.json` (연령대별 카테고리 비율 · 한국어 키워드). 원문 미저장, 버전 폴더로 관리 |
 | 키워드 조사 | `research/collect-keywords.mjs` (HN Algolia · Mastodon 공개 API, 원문 미저장 · 집계만) → `research/output/keywords.json`, 보고서 `docs/research/keywords-2026-11.md` |
-| 앱 정체성 | "만다라트"는 대중에게 낯섦 → 새 이름 검토 중. 개인(목표 설계) + 기업(팀 성과 · 방향성) 겸용, [목적을 향해 가기 위한] 상징어. 후보는 `docs/identity.md` (추천 North Nine). 데이터 · QR 형식은 이름과 무관하게 유지 |
+| 앱 정체성 | "만다라트"는 대중에게 낯섦 → 새 이름 검토 중. 개인(목표 설계) + 기업(팀 성과 · 방향성) 겸용, [목적을 향해 가기 위한] 상징어. 후보는 `docs/identity.md` (North Nine 방향 선호, 별·북극성·지표 조합 5선: North Nine · StarMark · NineStar · Polaris Nine · North Index). 디자인 컨셉 = 북극성 · 별 (`northstar` 테마). 앱의 배경 = 오타니 쇼헤이 → `src/screens/Story.tsx` (보도 확인 사실만, `ohtaniPlan()` 예시). 데이터 · QR 형식은 이름과 무관하게 유지 |
 | 데이터 수집 제약 | Reddit 비인증 JSON 은 403, 우회 시도는 정책상 차단됨. 정량 수집이 필요하면 Reddit OAuth 앱 등록 후 공식 API 사용 |
 
 ## 폴더 구조

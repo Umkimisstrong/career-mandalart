@@ -1,0 +1,216 @@
+{
+  "_설명": "수집된 영어 키워드 → 한국어. 이 사전에 있는 단어만 키워드 자산에 들어간다. 값이 {ko, cats} 이면 해당 카테고리에서만 쓴다 (여러 영역에 섞여 나오는 단어 정리용).",
+  "learning": "배움",
+  "learn": {
+    "ko": "배우기",
+    "cats": [
+      "growth"
+    ]
+  },
+  "language": "외국어",
+  "programming language": "프로그래밍 언어",
+  "read": {
+    "ko": "독서",
+    "cats": [
+      "growth"
+    ]
+  },
+  "code": {
+    "ko": "코딩",
+    "cats": [
+      "growth",
+      "experience"
+    ]
+  },
+  "course": {
+    "ko": "강의",
+    "cats": [
+      "growth"
+    ]
+  },
+  "machine learning": "머신러닝",
+  "computer science": "컴퓨터 과학",
+  "skill set": "역량",
+  "high school": "학창 시절",
+  "run": "달리기",
+  "running": "러닝",
+  "health": "건강",
+  "healthy": "건강한 삶",
+  "body": "몸",
+  "health care": "의료",
+  "health insurance": "건강보험",
+  "mental health": "정신 건강",
+  "jobs": {
+    "ko": "일자리",
+    "cats": [
+      "career",
+      "money"
+    ]
+  },
+  "job": "직업",
+  "companies": {
+    "ko": "회사",
+    "cats": [
+      "career"
+    ]
+  },
+  "company": "회사",
+  "software": {
+    "ko": "소프트웨어",
+    "cats": [
+      "career"
+    ]
+  },
+  "software engineer": "소프트웨어 엔지니어",
+  "career": {
+    "ko": "커리어",
+    "cats": [
+      "career"
+    ]
+  },
+  "pay": {
+    "ko": "연봉",
+    "cats": [
+      "money",
+      "career"
+    ]
+  },
+  "business": {
+    "ko": "사업",
+    "cats": [
+      "career",
+      "money"
+    ]
+  },
+  "meaningful work": "의미 있는 일",
+  "outside work": "일 밖의 삶",
+  "hard work": "노력",
+  "work hard": "열심히 일하기",
+  "side projects": "사이드 프로젝트",
+  "willing relocate": "이주",
+  "hours week": "주당 근무시간",
+  "success": "성공",
+  "successful": "성공한 사람",
+  "known": "인정받기",
+  "respect": "존중",
+  "status": "지위",
+  "personal": {
+    "ko": "개인적 성취",
+    "cats": [
+      "recognition"
+    ]
+  },
+  "motivation inspiration": "동기부여",
+  "success mindset": "성공 마인드셋",
+  "create": "창작",
+  "write": "글쓰기",
+  "writing": "글쓰기",
+  "fun": "재미",
+  "building": {
+    "ko": "만들기",
+    "cats": [
+      "experience"
+    ]
+  },
+  "build": {
+    "ko": "만들기",
+    "cats": [
+      "experience"
+    ]
+  },
+  "writing code": "코드 작성",
+  "video games": "게임",
+  "bucket list": "버킷리스트",
+  "meaningful": "의미",
+  "happy": "행복",
+  "society": "사회",
+  "social": {
+    "ko": "사회적 관계",
+    "cats": [
+      "network",
+      "relationship"
+    ]
+  },
+  "free": {
+    "ko": "자유",
+    "cats": [
+      "mindset"
+    ]
+  },
+  "work-life balance": "워라밸",
+  "love": {
+    "ko": "사랑",
+    "cats": [
+      "relationship",
+      "mindset"
+    ]
+  },
+  "future": "미래",
+  "problems": {
+    "ko": "문제 해결",
+    "cats": [
+      "contribution"
+    ]
+  },
+  "climate change": "기후 변화",
+  "help": "돕기",
+  "flourishing": "번영",
+  "rich": "부자",
+  "paid": "보수",
+  "income": "소득",
+  "value": "가치",
+  "financial": "재정",
+  "money": "돈",
+  "making money": "돈 벌기",
+  "amount money": "자산",
+  "getting paid": "보수 받기",
+  "basic income": "기본소득",
+  "middle class": "중산층",
+  "cost living": "생활비",
+  "friends": "친구",
+  "kids": "아이",
+  "children": "자녀",
+  "family": {
+    "ko": "가족",
+    "cats": [
+      "relationship",
+      "stability"
+    ]
+  },
+  "care": {
+    "ko": "돌봄",
+    "cats": [
+      "relationship"
+    ]
+  },
+  "family members": "가족 구성원",
+  "home": "집",
+  "house": "주택",
+  "car": "자동차",
+  "security": "안정",
+  "move": "이사",
+  "buy house": "내 집 마련",
+  "real estate": "부동산",
+  "social security": "사회보장",
+  "community": "커뮤니티",
+  "network": "인맥",
+  "social network": "소셜 네트워크",
+  "communication skills": "소통 능력",
+  "dreamed": "꿈꿔 온 일",
+  "always dreamed": "오랜 꿈",
+  "live": "살아가기",
+  "living": {
+    "ko": "생계",
+    "cats": [
+      "money"
+    ]
+  },
+  "world": {
+    "ko": "세상",
+    "cats": [
+      "contribution"
+    ]
+  },
+  "experience": "경험",
+  "beings": "존재"
+}

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-01T05:33:30.240Z",
+  "generatedAt": "2026-11-01T06:36:40.839Z",
   "sources": {
     "hn": "https://hn.algolia.com/api (Hacker News 공개 검색 API, 인증 없음)",
     "mastodon": "https://mastodon.social/api/v1/timelines/tag/<tag> (공개 해시태그 타임라인, 인증 없음)"
@@ -7,9 +7,9 @@
   "seeds": {
     "human": {
       "ko": "인간",
-      "docs": 2419,
+      "docs": 2390,
       "sources": {
-        "hn": 2389,
+        "hn": 2360,
         "mastodon": 30
       },
       "queries": [
@@ -24,7 +24,7 @@
       "topWords": [
         [
           "flourishing",
-          595
+          596
         ],
         [
           "work",
@@ -32,200 +32,200 @@
         ],
         [
           "world",
-          409
+          412
         ],
         [
           "beings",
-          365
+          361
         ],
         [
           "problem",
-          321
+          317
         ],
         [
           "society",
-          260
-        ],
-        [
-          "believe",
-          254
-        ],
-        [
-          "there's",
-          238
+          255
         ],
         [
           "less",
-          236
+          246
+        ],
+        [
+          "believe",
+          245
         ],
         [
           "understand",
-          226
+          234
+        ],
+        [
+          "there's",
+          224
         ],
         [
           "person",
-          223
-        ],
-        [
-          "example",
-          217
-        ],
-        [
-          "best",
-          217
+          219
         ],
         [
           "system",
           216
         ],
         [
-          "between",
-          213
+          "bad",
+          216
+        ],
+        [
+          "social",
+          214
         ],
         [
           "idea",
           212
         ],
         [
-          "look",
-          212
+          "between",
+          209
         ],
         [
           "real",
-          206
+          209
         ],
         [
           "another",
-          204
+          208
         ],
         [
-          "making",
-          202
+          "look",
+          208
         ],
         [
-          "bad",
-          202
+          "best",
+          207
         ],
         [
-          "social",
-          199
+          "example",
+          206
         ],
         [
-          "everyone",
-          199
+          "money",
+          201
         ],
         [
           "far",
-          198
+          200
+        ],
+        [
+          "everyone",
+          196
+        ],
+        [
+          "reason",
+          195
+        ],
+        [
+          "making",
+          194
         ],
         [
           "hard",
           193
         ],
         [
-          "reason",
-          193
-        ],
-        [
-          "money",
-          193
-        ],
-        [
-          "live",
-          190
-        ],
-        [
-          "possible",
-          188
-        ],
-        [
-          "we're",
-          188
+          "important",
+          189
         ],
         [
           "wrong",
+          188
+        ],
+        [
+          "question",
+          188
+        ],
+        [
+          "come",
           187
         ],
         [
           "others",
-          186
+          187
         ],
         [
-          "humanity",
-          182
+          "we're",
+          185
+        ],
+        [
+          "live",
+          181
         ],
         [
           "end",
-          181
+          180
         ],
         [
-          "question",
-          181
+          "agree",
+          180
         ],
         [
-          "important",
+          "humanity",
+          180
+        ],
+        [
+          "thinking",
           179
         ],
         [
-          "come",
+          "change",
           178
         ],
         [
-          "course",
-          178
-        ],
-        [
-          "ever",
-          177
-        ],
-        [
-          "nothing",
-          177
+          "yet",
+          176
         ]
       ],
       "topBigrams": [
         [
           "difference between",
-          32
-        ],
-        [
-          "real world",
-          27
-        ],
-        [
-          "climate change",
-          27
-        ],
-        [
-          "basic income",
-          26
+          31
         ],
         [
           "vast majority",
-          25
+          28
+        ],
+        [
+          "climate change",
+          28
+        ],
+        [
+          "basic income",
+          27
         ],
         [
           "united states",
-          25
+          27
         ],
         [
           "fossil fuels",
-          22
+          25
         ],
         [
-          "silicon valley",
+          "real world",
           22
-        ],
-        [
-          "there's nothing",
-          16
         ],
         [
           "almost certainly",
-          15
+          21
         ],
         [
           "social media",
+          18
+        ],
+        [
+          "silicon valley",
+          18
+        ],
+        [
+          "there's nothing",
           15
         ],
         [
@@ -233,59 +233,31 @@
           13
         ],
         [
-          "status quo",
-          13
-        ],
-        [
-          "open source",
-          12
-        ],
-        [
-          "middle class",
-          12
-        ],
-        [
           "blog post",
           12
         ],
         [
-          "artificial intelligence",
+          "computer science",
           12
+        ],
+        [
+          "mental health",
+          12
+        ],
+        [
+          "work together",
+          11
+        ],
+        [
+          "middle class",
+          11
         ],
         [
           "short term",
-          12
-        ],
-        [
-          "free market",
-          12
-        ],
-        [
-          "far away",
-          12
-        ],
-        [
-          "high school",
           11
         ],
         [
-          "economic growth",
-          11
-        ],
-        [
-          "programming language",
-          11
-        ],
-        [
-          "video games",
-          11
-        ],
-        [
-          "side effect",
-          11
-        ],
-        [
-          "software development",
+          "physical world",
           11
         ],
         [
@@ -293,81 +265,109 @@
           11
         ],
         [
-          "mental health",
+          "free market",
           11
         ],
         [
-          "economic system",
+          "hacker news",
+          11
+        ],
+        [
+          "what's wrong",
+          11
+        ],
+        [
+          "far away",
+          11
+        ],
+        [
+          "there's reason",
           10
         ],
         [
-          "solve problems",
+          "economic growth",
+          10
+        ],
+        [
+          "health care",
+          10
+        ],
+        [
+          "video games",
+          10
+        ],
+        [
+          "artificial intelligence",
+          10
+        ],
+        [
+          "self-driving cars",
           10
         ]
       ],
       "categories": [
         [
           "contribution",
-          752,
-          31.1
+          757,
+          31.7
         ],
         [
           "career",
           698,
-          28.9
+          29.2
         ],
         [
           "growth",
-          603,
-          24.9
+          575,
+          24.1
         ],
         [
           "experience",
-          506,
-          20.9
+          501,
+          21
         ],
         [
           "mindset",
-          426,
-          17.6
+          433,
+          18.1
         ],
         [
           "money",
-          405,
-          16.7
+          404,
+          16.9
         ],
         [
           "health",
-          402,
-          16.6
+          394,
+          16.5
         ],
         [
           "relationship",
-          342,
-          14.1
+          335,
+          14
         ],
         [
           "stability",
-          251,
-          10.4
+          256,
+          10.7
         ],
         [
           "recognition",
-          241,
-          10
+          228,
+          9.5
         ],
         [
           "network",
-          113,
-          4.7
+          121,
+          5.1
         ]
       ]
     },
     "life": {
       "ko": "삶",
-      "docs": 2612,
+      "docs": 2611,
       "sources": {
-        "hn": 2386,
+        "hn": 2385,
         "mastodon": 226
       },
       "queries": [
@@ -383,197 +383,201 @@
       "topWords": [
         [
           "live",
-          719
+          671
         ],
         [
           "work",
-          551
+          581
         ],
         [
           "world",
-          506
+          470
         ],
         [
           "money",
-          270
+          292
         ],
         [
           "job",
-          240
+          252
         ],
         [
           "hard",
-          232
-        ],
-        [
-          "there's",
-          232
-        ],
-        [
-          "person",
-          231
-        ],
-        [
-          "less",
-          223
-        ],
-        [
-          "making",
-          221
-        ],
-        [
-          "living",
-          220
-        ],
-        [
-          "others",
-          219
+          246
         ],
         [
           "working",
-          219
+          240
+        ],
+        [
+          "there's",
+          238
+        ],
+        [
+          "person",
+          235
+        ],
+        [
+          "less",
+          234
+        ],
+        [
+          "making",
+          231
+        ],
+        [
+          "living",
+          221
+        ],
+        [
+          "others",
+          211
         ],
         [
           "best",
           205
         ],
         [
-          "society",
-          204
-        ],
-        [
-          "nothing",
-          194
-        ],
-        [
-          "bad",
-          193
-        ],
-        [
-          "believe",
-          192
-        ],
-        [
           "yourself",
-          191
+          203
         ],
         [
           "real",
-          191
-        ],
-        [
-          "end",
-          191
+          203
         ],
         [
           "look",
-          187
+          200
         ],
         [
-          "place",
-          186
+          "nothing",
+          199
+        ],
+        [
+          "believe",
+          198
         ],
         [
           "experience",
-          183
+          197
         ],
         [
-          "another",
-          183
+          "end",
+          197
+        ],
+        [
+          "bad",
+          192
         ],
         [
           "getting",
-          182
+          191
+        ],
+        [
+          "society",
+          190
         ],
         [
           "read",
-          182
+          190
+        ],
+        [
+          "another",
+          188
+        ],
+        [
+          "place",
+          187
         ],
         [
           "question",
-          181
+          185
         ],
         [
           "love",
-          181
+          184
         ],
         [
           "help",
-          179
-        ],
-        [
-          "idea",
-          177
-        ],
-        [
-          "important",
-          176
-        ],
-        [
-          "trying",
-          176
-        ],
-        [
-          "ever",
-          175
-        ],
-        [
-          "problem",
-          173
-        ],
-        [
-          "far",
-          171
+          183
         ],
         [
           "big",
-          169
+          182
         ],
         [
-          "family",
-          168
+          "important",
+          181
         ],
         [
-          "everyone",
-          168
+          "trying",
+          181
+        ],
+        [
+          "idea",
+          178
         ],
         [
           "come",
-          168
+          178
+        ],
+        [
+          "family",
+          176
+        ],
+        [
+          "everyone",
+          176
+        ],
+        [
+          "lives",
+          176
+        ],
+        [
+          "free",
+          173
+        ],
+        [
+          "problem",
+          171
         ]
       ],
       "topBigrams": [
         [
           "live world",
-          111
-        ],
-        [
-          "live society",
-          32
+          82
         ],
         [
           "work hard",
           25
         ],
         [
-          "difference between",
+          "high school",
           25
         ],
         [
-          "high school",
-          24
+          "nothing wrong",
+          25
         ],
         [
-          "nothing wrong",
-          23
+          "there's nothing",
+          22
         ],
         [
           "fed brid",
           22
         ],
         [
-          "there's nothing",
-          19
+          "difference between",
+          21
+        ],
+        [
+          "video games",
+          20
+        ],
+        [
+          "live society",
+          20
         ],
         [
           "ancient art",
@@ -584,7 +588,7 @@
           19
         ],
         [
-          "open source",
+          "silicon valley",
           18
         ],
         [
@@ -592,35 +596,43 @@
           18
         ],
         [
-          "silicon valley",
+          "cost living",
           17
         ],
         [
-          "cost living",
-          16
-        ],
-        [
-          "video games",
-          16
-        ],
-        [
           "hard work",
-          16
+          17
         ],
         [
           "work-life balance",
-          16
+          17
         ],
         [
           "blog post",
           15
         ],
         [
-          "health care",
-          14
+          "open source",
+          15
         ],
         [
           "social media",
+          15
+        ],
+        [
+          "computer science",
+          14
+        ],
+        [
+          "hours week",
+          14
+        ],
+        [
+          "vast majority",
+          13
+        ],
+        [
+          "amount money",
           13
         ],
         [
@@ -628,23 +640,7 @@
           13
         ],
         [
-          "vast majority",
-          12
-        ],
-        [
-          "computer science",
-          12
-        ],
-        [
           "san francisco",
-          12
-        ],
-        [
-          "standard living",
-          12
-        ],
-        [
-          "hours week",
           12
         ],
         [
@@ -652,81 +648,85 @@
           12
         ],
         [
+          "bay area",
+          12
+        ],
+        [
+          "work hours",
+          12
+        ],
+        [
           "william irvine",
           12
         ],
         [
-          "months ago",
-          11
-        ],
-        [
-          "bay area",
+          "health care",
           11
         ]
       ],
       "categories": [
         [
           "mindset",
-          1003,
-          38.4
+          1010,
+          38.7
         ],
         [
           "career",
-          867,
-          33.2
+          907,
+          34.7
         ],
         [
           "contribution",
-          831,
-          31.8
+          796,
+          30.5
         ],
         [
           "relationship",
-          647,
-          24.8
+          655,
+          25.1
         ],
         [
           "growth",
-          608,
-          23.3
+          625,
+          23.9
         ],
         [
           "experience",
-          514,
-          19.7
+          534,
+          20.5
         ],
         [
           "money",
-          503,
-          19.3
+          534,
+          20.5
         ],
         [
           "health",
-          365,
-          14
+          372,
+          14.2
         ],
         [
           "stability",
-          315,
-          12.1
+          327,
+          12.5
         ],
         [
           "recognition",
-          269,
-          10.3
+          283,
+          10.8
         ],
         [
           "network",
-          135,
+          136,
           5.2
         ]
       ]
     },
     "goal": {
       "ko": "목표",
-      "docs": 2510,
+      "docs": 2526,
       "sources": {
-        "hn": 2331,
+        "hn": 2347,
         "mastodon": 179
       },
       "queries": [
@@ -742,163 +742,163 @@
       "topWords": [
         [
           "work",
-          647
+          656
         ],
         [
           "career",
-          620
+          628
         ],
         [
           "list",
-          606
+          608
         ],
         [
           "bucket",
-          553
+          554
         ],
         [
           "working",
-          356
+          365
         ],
         [
           "job",
-          305
+          311
         ],
         [
           "company",
-          291
+          302
         ],
         [
           "experience",
-          281
+          287
         ],
         [
           "end",
-          276
+          284
         ],
         [
           "getting",
-          268
+          282
         ],
         [
           "best",
-          267
+          272
         ],
         [
           "help",
-          242
-        ],
-        [
-          "start",
-          236
+          250
         ],
         [
           "money",
-          236
+          249
         ],
         [
-          "already",
-          236
+          "start",
+          246
         ],
         [
           "making",
-          236
+          240
         ],
         [
           "hard",
-          233
+          234
         ],
         [
-          "trying",
-          219
-        ],
-        [
-          "world",
-          218
-        ],
-        [
-          "build",
-          217
-        ],
-        [
-          "another",
-          217
-        ],
-        [
-          "less",
-          213
+          "already",
+          230
         ],
         [
           "keep",
-          212
+          228
+        ],
+        [
+          "world",
+          228
+        ],
+        [
+          "trying",
+          223
+        ],
+        [
+          "another",
+          223
+        ],
+        [
+          "build",
+          222
+        ],
+        [
+          "big",
+          221
+        ],
+        [
+          "less",
+          217
+        ],
+        [
+          "try",
+          216
+        ],
+        [
+          "done",
+          216
         ],
         [
           "problem",
-          210
+          215
         ],
         [
           "there's",
-          210
+          214
         ],
         [
           "look",
-          210
+          214
+        ],
+        [
+          "far",
+          214
+        ],
+        [
+          "business",
+          213
+        ],
+        [
+          "project",
+          213
         ],
         [
           "using",
           209
         ],
         [
-          "business",
-          209
-        ],
-        [
-          "big",
-          208
-        ],
-        [
-          "project",
-          208
-        ],
-        [
           "software",
-          205
-        ],
-        [
-          "done",
-          205
-        ],
-        [
-          "far",
-          205
-        ],
-        [
-          "try",
-          203
+          207
         ],
         [
           "come",
-          202
-        ],
-        [
-          "myself",
-          198
+          204
         ],
         [
           "idea",
-          196
-        ],
-        [
-          "looking",
-          194
+          203
         ],
         [
           "learn",
-          193
+          201
+        ],
+        [
+          "myself",
+          200
         ],
         [
           "real",
-          191
+          197
+        ],
+        [
+          "possible",
+          196
         ]
       ],
       "topBigrams": [
@@ -908,27 +908,27 @@
         ],
         [
           "open source",
-          42
+          45
         ],
         [
           "list item",
           35
         ],
         [
-          "software engineers",
-          28
-        ],
-        [
           "blog post",
           27
         ],
         [
-          "willing relocate",
-          25
+          "software engineers",
+          27
         ],
         [
           "high school",
-          23
+          24
+        ],
+        [
+          "willing relocate",
+          24
         ],
         [
           "bucket lists",
@@ -940,6 +940,10 @@
         ],
         [
           "software engineer",
+          22
+        ],
+        [
+          "short term",
           22
         ],
         [
@@ -959,23 +963,19 @@
           21
         ],
         [
-          "software development",
-          20
-        ],
-        [
-          "consider myself",
-          20
-        ],
-        [
-          "short term",
-          20
-        ],
-        [
           "programming language",
+          21
+        ],
+        [
+          "software development",
           19
         ],
         [
           "machine learning",
+          19
+        ],
+        [
+          "consider myself",
           19
         ],
         [
@@ -988,6 +988,10 @@
         ],
         [
           "communication skills",
+          18
+        ],
+        [
+          "months ago",
           17
         ],
         [
@@ -995,12 +999,12 @@
           16
         ],
         [
-          "months ago",
+          "personal career",
           16
         ],
         [
-          "personal career",
-          16
+          "real world",
+          15
         ],
         [
           "hard work",
@@ -1011,81 +1015,77 @@
           15
         ],
         [
-          "mysql postgresql",
-          15
-        ],
-        [
-          "job market",
+          "web development",
           14
         ],
         [
-          "social media",
+          "computer science",
           14
         ]
       ],
       "categories": [
         [
           "career",
-          1290,
-          51.4
+          1309,
+          51.8
         ],
         [
           "experience",
-          751,
-          29.9
+          758,
+          30
         ],
         [
           "growth",
-          720,
-          28.7
+          738,
+          29.2
         ],
         [
           "contribution",
-          538,
-          21.4
+          553,
+          21.9
         ],
         [
           "money",
-          487,
-          19.4
+          499,
+          19.8
         ],
         [
           "relationship",
-          483,
-          19.2
+          497,
+          19.7
         ],
         [
           "mindset",
-          383,
-          15.3
+          392,
+          15.5
         ],
         [
           "health",
-          355,
-          14.1
+          365,
+          14.4
         ],
         [
           "recognition",
-          329,
-          13.1
+          337,
+          13.3
         ],
         [
           "stability",
-          322,
-          12.8
+          318,
+          12.6
         ],
         [
           "network",
-          181,
-          7.2
+          186,
+          7.4
         ]
       ]
     },
     "purpose": {
       "ko": "목적",
-      "docs": 2459,
+      "docs": 2463,
       "sources": {
-        "hn": 2370,
+        "hn": 2374,
         "mastodon": 89
       },
       "queries": [
@@ -1100,244 +1100,224 @@
       "topWords": [
         [
           "work",
-          640
+          601
         ],
         [
           "world",
-          329
+          292
         ],
         [
           "meaningful",
-          281
+          282
         ],
         [
           "job",
-          273
-        ],
-        [
-          "live",
-          273
-        ],
-        [
-          "there's",
-          232
+          255
         ],
         [
           "less",
-          227
+          226
         ],
         [
           "money",
-          226
-        ],
-        [
-          "working",
-          226
+          225
         ],
         [
           "problem",
-          224
+          222
         ],
         [
-          "experience",
-          221
+          "live",
+          220
         ],
         [
           "others",
-          221
+          216
         ],
         [
-          "making",
-          204
+          "there's",
+          213
+        ],
+        [
+          "experience",
+          209
         ],
         [
           "using",
-          203
+          209
+        ],
+        [
+          "look",
+          202
         ],
         [
           "another",
           201
         ],
         [
-          "look",
-          199
+          "working",
+          200
         ],
         [
-          "help",
-          197
-        ],
-        [
-          "end",
-          194
+          "making",
+          196
         ],
         [
           "real",
-          194
+          192
         ],
         [
-          "best",
+          "help",
           191
         ],
         [
-          "trying",
-          188
-        ],
-        [
-          "important",
-          187
-        ],
-        [
-          "hard",
-          187
-        ],
-        [
-          "believe",
-          183
-        ],
-        [
-          "often",
-          176
-        ],
-        [
-          "try",
-          175
-        ],
-        [
-          "understand",
-          175
-        ],
-        [
-          "idea",
-          174
-        ],
-        [
-          "reason",
-          174
-        ],
-        [
-          "person",
-          173
-        ],
-        [
-          "place",
-          170
+          "end",
+          190
         ],
         [
           "example",
-          169
+          187
         ],
         [
-          "read",
-          168
+          "trying",
+          186
         ],
         [
-          "system",
-          166
+          "best",
+          186
         ],
         [
-          "come",
-          165
+          "important",
+          180
         ],
         [
-          "big",
-          164
+          "hard",
+          178
         ],
         [
-          "far",
-          162
+          "understand",
+          177
+        ],
+        [
+          "believe",
+          172
+        ],
+        [
+          "person",
+          171
+        ],
+        [
+          "idea",
+          171
         ],
         [
           "everyone",
-          162
+          170
         ],
         [
-          "social",
-          162
+          "system",
+          170
+        ],
+        [
+          "reason",
+          167
+        ],
+        [
+          "read",
+          166
+        ],
+        [
+          "try",
+          164
         ],
         [
           "nothing",
+          162
+        ],
+        [
+          "place",
           160
+        ],
+        [
+          "getting",
+          160
+        ],
+        [
+          "often",
+          158
+        ],
+        [
+          "far",
+          157
+        ],
+        [
+          "come",
+          156
+        ],
+        [
+          "keep",
+          156
         ]
       ],
       "topBigrams": [
         [
           "difference between",
-          29
-        ],
-        [
-          "meaningful work",
-          28
+          32
         ],
         [
           "social media",
-          27
+          28
         ],
         [
-          "high school",
+          "meaningful work",
           27
         ],
         [
           "open source",
-          26
+          25
         ],
         [
           "blog posts",
           23
         ],
         [
-          "real world",
-          22
+          "vast majority",
+          21
         ],
         [
-          "vast majority",
+          "high school",
           20
         ],
         [
           "outside work",
-          18
+          19
+        ],
+        [
+          "real world",
+          16
+        ],
+        [
+          "short term",
+          16
         ],
         [
           "hard work",
-          15
+          14
         ],
         [
           "mental health",
           13
         ],
         [
+          "united states",
+          12
+        ],
+        [
           "writing code",
-          13
+          11
         ],
         [
           "almost certainly",
-          13
-        ],
-        [
-          "helping others",
-          13
-        ],
-        [
-          "computer science",
-          13
-        ],
-        [
-          "short term",
-          13
-        ],
-        [
-          "work hard",
-          12
-        ],
-        [
-          "status quo",
-          12
-        ],
-        [
-          "hacker news",
-          12
-        ],
-        [
-          "amount money",
           11
         ],
         [
@@ -1345,27 +1325,23 @@
           11
         ],
         [
-          "united states",
-          11
-        ],
-        [
-          "pay attention",
-          11
-        ],
-        [
-          "video games",
-          11
-        ],
-        [
-          "far less",
+          "whose sole",
           10
         ],
         [
-          "programming language",
+          "making money",
           10
         ],
         [
-          "big deal",
+          "amount money",
+          10
+        ],
+        [
+          "work hard",
+          10
+        ],
+        [
+          "computer science",
           10
         ],
         [
@@ -1373,69 +1349,93 @@
           10
         ],
         [
-          "keep mind",
+          "there's nothing",
           10
         ],
         [
-          "work done",
-          10
+          "less money",
+          9
+        ],
+        [
+          "helping others",
+          9
+        ],
+        [
+          "trying figure",
+          9
+        ],
+        [
+          "linux kernel",
+          9
+        ],
+        [
+          "data set",
+          9
+        ],
+        [
+          "video games",
+          9
+        ],
+        [
+          "live world",
+          9
         ]
       ],
       "categories": [
         [
           "mindset",
-          1990,
-          80.9
+          2000,
+          81.2
         ],
         [
           "career",
-          938,
-          38.1
+          905,
+          36.7
         ],
         [
           "contribution",
-          656,
-          26.7
+          611,
+          24.8
         ],
         [
           "growth",
-          592,
-          24.1
+          569,
+          23.1
         ],
         [
           "experience",
-          521,
-          21.2
+          517,
+          21
         ],
         [
           "relationship",
-          471,
+          473,
           19.2
         ],
         [
           "money",
           444,
-          18.1
+          18
         ],
         [
           "health",
-          363,
-          14.8
+          361,
+          14.7
         ],
         [
           "recognition",
-          271,
-          11
-        ],
-        [
-          "stability",
           242,
           9.8
         ],
         [
+          "stability",
+          234,
+          9.5
+        ],
+        [
           "network",
-          225,
-          9.2
+          218,
+          8.9
         ]
       ]
     },
@@ -1458,15 +1458,15 @@
       "topWords": [
         [
           "job",
-          753
+          754
         ],
         [
           "work",
-          677
+          675
         ],
         [
           "dreamed",
-          618
+          617
         ],
         [
           "working",
@@ -1474,59 +1474,59 @@
         ],
         [
           "money",
-          255
-        ],
-        [
-          "world",
-          245
+          259
         ],
         [
           "company",
-          242
+          246
         ],
         [
           "live",
-          237
+          241
+        ],
+        [
+          "world",
+          240
         ],
         [
           "less",
-          213
+          209
+        ],
+        [
+          "love",
+          208
         ],
         [
           "hard",
-          211
+          207
         ],
         [
           "making",
-          210
-        ],
-        [
-          "getting",
-          207
+          206
         ],
         [
           "experience",
           206
         ],
         [
-          "love",
-          203
+          "getting",
+          204
         ],
         [
           "best",
-          198
-        ],
-        [
-          "real",
-          191
+          199
         ],
         [
           "jobs",
-          190
+          189
         ],
         [
           "myself",
           188
+        ],
+        [
+          "real",
+          187
         ],
         [
           "start",
@@ -1534,7 +1534,7 @@
         ],
         [
           "another",
-          185
+          186
         ],
         [
           "living",
@@ -1542,50 +1542,42 @@
         ],
         [
           "try",
-          180
+          179
         ],
         [
           "there's",
-          178
+          176
         ],
         [
           "end",
-          174
-        ],
-        [
-          "big",
-          172
-        ],
-        [
-          "small",
           171
-        ],
-        [
-          "ever",
-          171
-        ],
-        [
-          "everyone",
-          170
-        ],
-        [
-          "problem",
-          169
         ],
         [
           "keep",
-          168
+          169
         ],
         [
-          "far",
-          166
+          "small",
+          167
+        ],
+        [
+          "big",
+          167
         ],
         [
           "pay",
-          165
+          167
         ],
         [
-          "read",
+          "ever",
+          166
+        ],
+        [
+          "everyone",
+          166
+        ],
+        [
+          "problem",
           165
         ],
         [
@@ -1593,28 +1585,36 @@
           164
         ],
         [
-          "stuff",
-          158
+          "read",
+          164
+        ],
+        [
+          "far",
+          163
         ],
         [
           "done",
-          158
-        ],
-        [
-          "away",
           157
         ],
         [
           "help",
+          156
+        ],
+        [
+          "stuff",
           155
         ],
         [
-          "look",
-          152
+          "away",
+          155
         ],
         [
-          "software",
-          152
+          "bad",
+          154
+        ],
+        [
+          "come",
+          153
         ]
       ],
       "topBigrams": [
@@ -1624,7 +1624,7 @@
         ],
         [
           "high school",
-          34
+          35
         ],
         [
           "open source",
@@ -1635,19 +1635,19 @@
           25
         ],
         [
-          "software engineer",
-          23
-        ],
-        [
           "san francisco",
           23
         ],
         [
-          "silicon valley",
-          19
+          "software engineer",
+          22
         ],
         [
           "computer science",
+          21
+        ],
+        [
+          "silicon valley",
           19
         ],
         [
@@ -1655,15 +1655,19 @@
           19
         ],
         [
-          "programming language",
-          17
-        ],
-        [
           "write blog",
           17
         ],
         [
+          "programming language",
+          16
+        ],
+        [
           "lucid dreaming",
+          16
+        ],
+        [
+          "poor kids",
           16
         ],
         [
@@ -1731,10 +1735,6 @@
           15
         ],
         [
-          "poor kids",
-          15
-        ],
-        [
           "ones working",
           15
         ]
@@ -1742,57 +1742,57 @@
       "categories": [
         [
           "career",
-          1260,
-          51.6
+          1265,
+          51.8
         ],
         [
           "experience",
-          609,
-          24.9
+          604,
+          24.7
         ],
         [
           "growth",
-          565,
-          23.1
+          561,
+          23
         ],
         [
           "money",
-          538,
-          22
+          541,
+          22.1
         ],
         [
           "relationship",
-          519,
-          21.2
+          526,
+          21.5
         ],
         [
           "contribution",
-          465,
-          19
+          461,
+          18.9
         ],
         [
           "stability",
-          346,
-          14.2
+          350,
+          14.3
         ],
         [
           "mindset",
-          344,
-          14.1
+          341,
+          14
         ],
         [
           "health",
-          328,
-          13.4
+          329,
+          13.5
         ],
         [
           "recognition",
-          230,
+          229,
           9.4
         ],
         [
           "network",
-          150,
+          149,
           6.1
         ]
       ]
@@ -1800,237 +1800,237 @@
   },
   "byAge": {
     "20s": {
-      "docs": 511,
+      "docs": 586,
       "categories": [
         [
           "career",
-          308,
-          60.3
+          335,
+          57.2
         ],
         [
           "relationship",
-          234,
-          45.8
+          267,
+          45.6
         ],
         [
           "money",
-          192,
-          37.6
+          217,
+          37
         ],
         [
           "growth",
-          184,
-          36
+          207,
+          35.3
         ],
         [
           "experience",
-          167,
-          32.7
-        ],
-        [
-          "contribution",
-          148,
-          29
+          191,
+          32.6
         ],
         [
           "health",
-          144,
-          28.2
+          168,
+          28.7
+        ],
+        [
+          "contribution",
+          167,
+          28.5
         ],
         [
           "mindset",
-          129,
-          25.2
+          142,
+          24.2
         ],
         [
           "stability",
-          107,
-          20.9
+          123,
+          21
         ],
         [
           "recognition",
-          80,
-          15.7
+          95,
+          16.2
         ],
         [
           "network",
-          40,
+          46,
           7.8
         ]
       ]
     },
     "30s": {
-      "docs": 359,
+      "docs": 393,
       "categories": [
         [
           "career",
-          221,
-          61.6
+          241,
+          61.3
         ],
         [
           "relationship",
-          191,
-          53.2
+          197,
+          50.1
         ],
         [
           "growth",
-          144,
-          40.1
-        ],
-        [
-          "money",
-          126,
-          35.1
+          154,
+          39.2
         ],
         [
           "experience",
-          123,
-          34.3
+          141,
+          35.9
+        ],
+        [
+          "money",
+          135,
+          34.4
         ],
         [
           "contribution",
-          115,
-          32
+          120,
+          30.5
         ],
         [
           "mindset",
-          108,
-          30.1
+          117,
+          29.8
         ],
         [
           "health",
-          102,
-          28.4
+          115,
+          29.3
         ],
         [
           "stability",
-          101,
-          28.1
+          114,
+          29
         ],
         [
           "recognition",
-          63,
-          17.5
+          62,
+          15.8
         ],
         [
           "network",
           37,
-          10.3
+          9.4
         ]
       ]
     },
     "40s": {
-      "docs": 298,
+      "docs": 339,
       "categories": [
         [
           "career",
-          176,
-          59.1
+          198,
+          58.4
         ],
         [
           "relationship",
-          135,
-          45.3
+          152,
+          44.8
         ],
         [
           "growth",
-          115,
+          131,
           38.6
         ],
         [
           "money",
-          107,
-          35.9
+          121,
+          35.7
         ],
         [
           "contribution",
-          91,
-          30.5
+          107,
+          31.6
         ],
         [
           "experience",
-          87,
+          99,
           29.2
         ],
         [
           "health",
-          83,
-          27.9
+          97,
+          28.6
         ],
         [
           "mindset",
-          82,
-          27.5
+          87,
+          25.7
         ],
         [
           "stability",
-          73,
-          24.5
+          82,
+          24.2
         ],
         [
           "recognition",
-          43,
-          14.4
+          53,
+          15.6
         ],
         [
           "network",
-          23,
-          7.7
+          25,
+          7.4
         ]
       ]
     },
     "50s": {
-      "docs": 166,
+      "docs": 169,
       "categories": [
         [
           "career",
-          103,
-          62
+          106,
+          62.7
         ],
         [
           "relationship",
-          80,
-          48.2
+          82,
+          48.5
         ],
         [
           "growth",
-          67,
-          40.4
+          68,
+          40.2
         ],
         [
           "money",
-          61,
+          62,
           36.7
         ],
         [
           "health",
-          44,
-          26.5
+          50,
+          29.6
         ],
         [
           "contribution",
-          43,
-          25.9
+          45,
+          26.6
         ],
         [
           "experience",
-          42,
-          25.3
+          44,
+          26
         ],
         [
           "mindset",
-          41,
-          24.7
+          42,
+          24.9
         ],
         [
           "stability",
-          40,
-          24.1
+          41,
+          24.3
         ],
         [
           "recognition",
-          32,
-          19.3
+          34,
+          20.1
         ],
         [
           "network",
@@ -2041,63 +2041,4542 @@
     }
   },
   "totals": {
-    "docs": 12443,
+    "docs": 12433,
     "categories": [
       [
         "career",
-        5053,
-        40.6
+        5084,
+        40.9
       ],
       [
         "mindset",
-        4146,
-        33.3
+        4176,
+        33.6
       ],
       [
         "contribution",
-        3242,
-        26.1
+        3178,
+        25.6
       ],
       [
         "growth",
-        3088,
-        24.8
+        3068,
+        24.7
       ],
       [
         "experience",
-        2901,
-        23.3
+        2914,
+        23.4
       ],
       [
         "relationship",
-        2462,
-        19.8
+        2486,
+        20
       ],
       [
         "money",
-        2377,
-        19.1
+        2422,
+        19.5
       ],
       [
         "health",
-        1813,
+        1821,
         14.6
       ],
       [
         "stability",
-        1476,
+        1485,
         11.9
       ],
       [
         "recognition",
-        1340,
-        10.8
+        1319,
+        10.6
       ],
       [
         "network",
-        804,
+        810,
         6.5
       ]
     ]
+  },
+  "byCategory": {
+    "growth": {
+      "docs": 3068,
+      "topWords": [
+        [
+          "work",
+          1057
+        ],
+        [
+          "read",
+          828
+        ],
+        [
+          "learn",
+          682
+        ],
+        [
+          "world",
+          619
+        ],
+        [
+          "job",
+          607
+        ],
+        [
+          "working",
+          496
+        ],
+        [
+          "learning",
+          491
+        ],
+        [
+          "experience",
+          475
+        ],
+        [
+          "best",
+          452
+        ],
+        [
+          "less",
+          431
+        ],
+        [
+          "problem",
+          430
+        ],
+        [
+          "language",
+          427
+        ],
+        [
+          "another",
+          417
+        ],
+        [
+          "getting",
+          415
+        ],
+        [
+          "hard",
+          414
+        ],
+        [
+          "money",
+          412
+        ],
+        [
+          "making",
+          409
+        ],
+        [
+          "help",
+          403
+        ],
+        [
+          "end",
+          385
+        ],
+        [
+          "there's",
+          385
+        ],
+        [
+          "start",
+          382
+        ],
+        [
+          "live",
+          380
+        ],
+        [
+          "real",
+          379
+        ],
+        [
+          "career",
+          378
+        ],
+        [
+          "others",
+          368
+        ],
+        [
+          "come",
+          360
+        ],
+        [
+          "understand",
+          358
+        ],
+        [
+          "try",
+          354
+        ],
+        [
+          "look",
+          353
+        ],
+        [
+          "far",
+          344
+        ],
+        [
+          "idea",
+          343
+        ],
+        [
+          "already",
+          343
+        ],
+        [
+          "trying",
+          343
+        ],
+        [
+          "company",
+          340
+        ],
+        [
+          "important",
+          338
+        ],
+        [
+          "person",
+          337
+        ],
+        [
+          "example",
+          328
+        ],
+        [
+          "course",
+          327
+        ],
+        [
+          "keep",
+          325
+        ],
+        [
+          "everyone",
+          322
+        ],
+        [
+          "ever",
+          320
+        ],
+        [
+          "system",
+          319
+        ],
+        [
+          "believe",
+          315
+        ],
+        [
+          "big",
+          314
+        ],
+        [
+          "build",
+          314
+        ],
+        [
+          "often",
+          314
+        ],
+        [
+          "possible",
+          313
+        ],
+        [
+          "change",
+          312
+        ],
+        [
+          "done",
+          308
+        ],
+        [
+          "love",
+          308
+        ],
+        [
+          "looking",
+          306
+        ],
+        [
+          "code",
+          304
+        ],
+        [
+          "bad",
+          304
+        ],
+        [
+          "high",
+          303
+        ],
+        [
+          "using",
+          303
+        ],
+        [
+          "level",
+          303
+        ],
+        [
+          "myself",
+          301
+        ],
+        [
+          "become",
+          299
+        ],
+        [
+          "reason",
+          298
+        ],
+        [
+          "nothing",
+          298
+        ]
+      ],
+      "topBigrams": [
+        [
+          "bucket list",
+          92
+        ],
+        [
+          "high school",
+          60
+        ],
+        [
+          "programming language",
+          58
+        ],
+        [
+          "machine learning",
+          51
+        ],
+        [
+          "computer science",
+          50
+        ],
+        [
+          "open source",
+          46
+        ],
+        [
+          "difference between",
+          41
+        ],
+        [
+          "real world",
+          39
+        ],
+        [
+          "blog post",
+          37
+        ],
+        [
+          "software engineer",
+          34
+        ],
+        [
+          "social media",
+          33
+        ],
+        [
+          "software development",
+          33
+        ],
+        [
+          "vast majority",
+          31
+        ],
+        [
+          "video games",
+          31
+        ],
+        [
+          "hard work",
+          30
+        ],
+        [
+          "work hard",
+          28
+        ],
+        [
+          "skill set",
+          28
+        ],
+        [
+          "united states",
+          27
+        ],
+        [
+          "software engineers",
+          27
+        ],
+        [
+          "willing relocate",
+          27
+        ],
+        [
+          "silicon valley",
+          26
+        ],
+        [
+          "there's nothing",
+          25
+        ],
+        [
+          "hacker news",
+          25
+        ],
+        [
+          "live world",
+          24
+        ],
+        [
+          "nothing wrong",
+          24
+        ],
+        [
+          "san francisco",
+          23
+        ],
+        [
+          "writing code",
+          23
+        ],
+        [
+          "web development",
+          22
+        ],
+        [
+          "software engineering",
+          22
+        ],
+        [
+          "consider myself",
+          21
+        ],
+        [
+          "higher education",
+          20
+        ],
+        [
+          "middle class",
+          20
+        ],
+        [
+          "short term",
+          20
+        ],
+        [
+          "side projects",
+          20
+        ],
+        [
+          "grad school",
+          19
+        ],
+        [
+          "public school",
+          19
+        ],
+        [
+          "education system",
+          19
+        ],
+        [
+          "months ago",
+          19
+        ],
+        [
+          "programming languages",
+          19
+        ],
+        [
+          "working towards",
+          18
+        ]
+      ]
+    },
+    "health": {
+      "docs": 1821,
+      "topWords": [
+        [
+          "work",
+          627
+        ],
+        [
+          "run",
+          576
+        ],
+        [
+          "world",
+          365
+        ],
+        [
+          "running",
+          362
+        ],
+        [
+          "working",
+          308
+        ],
+        [
+          "job",
+          297
+        ],
+        [
+          "health",
+          283
+        ],
+        [
+          "less",
+          283
+        ],
+        [
+          "problem",
+          269
+        ],
+        [
+          "live",
+          267
+        ],
+        [
+          "end",
+          259
+        ],
+        [
+          "money",
+          258
+        ],
+        [
+          "best",
+          254
+        ],
+        [
+          "keep",
+          252
+        ],
+        [
+          "system",
+          246
+        ],
+        [
+          "hard",
+          245
+        ],
+        [
+          "making",
+          242
+        ],
+        [
+          "getting",
+          238
+        ],
+        [
+          "there's",
+          237
+        ],
+        [
+          "real",
+          235
+        ],
+        [
+          "another",
+          234
+        ],
+        [
+          "experience",
+          231
+        ],
+        [
+          "look",
+          225
+        ],
+        [
+          "start",
+          223
+        ],
+        [
+          "far",
+          223
+        ],
+        [
+          "try",
+          222
+        ],
+        [
+          "help",
+          221
+        ],
+        [
+          "come",
+          220
+        ],
+        [
+          "person",
+          219
+        ],
+        [
+          "using",
+          211
+        ],
+        [
+          "important",
+          210
+        ],
+        [
+          "body",
+          207
+        ],
+        [
+          "trying",
+          206
+        ],
+        [
+          "change",
+          206
+        ],
+        [
+          "free",
+          205
+        ],
+        [
+          "example",
+          204
+        ],
+        [
+          "possible",
+          202
+        ],
+        [
+          "company",
+          202
+        ],
+        [
+          "bad",
+          201
+        ],
+        [
+          "healthy",
+          199
+        ],
+        [
+          "believe",
+          197
+        ],
+        [
+          "idea",
+          197
+        ],
+        [
+          "ever",
+          197
+        ],
+        [
+          "course",
+          196
+        ],
+        [
+          "already",
+          196
+        ],
+        [
+          "big",
+          195
+        ],
+        [
+          "quite",
+          193
+        ],
+        [
+          "between",
+          190
+        ],
+        [
+          "often",
+          190
+        ],
+        [
+          "small",
+          187
+        ],
+        [
+          "nothing",
+          186
+        ],
+        [
+          "everyone",
+          185
+        ],
+        [
+          "problems",
+          184
+        ],
+        [
+          "build",
+          184
+        ],
+        [
+          "living",
+          184
+        ],
+        [
+          "others",
+          184
+        ],
+        [
+          "read",
+          183
+        ],
+        [
+          "place",
+          183
+        ],
+        [
+          "reason",
+          183
+        ],
+        [
+          "myself",
+          183
+        ]
+      ],
+      "topBigrams": [
+        [
+          "mental health",
+          51
+        ],
+        [
+          "bucket list",
+          45
+        ],
+        [
+          "open source",
+          34
+        ],
+        [
+          "health care",
+          31
+        ],
+        [
+          "short term",
+          27
+        ],
+        [
+          "health insurance",
+          27
+        ],
+        [
+          "social media",
+          26
+        ],
+        [
+          "real world",
+          24
+        ],
+        [
+          "high school",
+          24
+        ],
+        [
+          "difference between",
+          23
+        ],
+        [
+          "computer science",
+          21
+        ],
+        [
+          "hard work",
+          21
+        ],
+        [
+          "united states",
+          20
+        ],
+        [
+          "there's nothing",
+          19
+        ],
+        [
+          "side projects",
+          19
+        ],
+        [
+          "live world",
+          18
+        ],
+        [
+          "work hard",
+          17
+        ],
+        [
+          "vast majority",
+          16
+        ],
+        [
+          "hours week",
+          15
+        ],
+        [
+          "silicon valley",
+          15
+        ],
+        [
+          "software development",
+          15
+        ],
+        [
+          "amount money",
+          15
+        ],
+        [
+          "cost living",
+          15
+        ],
+        [
+          "differences between",
+          14
+        ],
+        [
+          "keep mind",
+          13
+        ],
+        [
+          "far less",
+          13
+        ],
+        [
+          "blog post",
+          13
+        ],
+        [
+          "almost certainly",
+          12
+        ],
+        [
+          "programming language",
+          12
+        ],
+        [
+          "solving problems",
+          12
+        ],
+        [
+          "work hours",
+          12
+        ],
+        [
+          "software engineer",
+          12
+        ],
+        [
+          "san francisco",
+          12
+        ],
+        [
+          "middle class",
+          11
+        ],
+        [
+          "tech industry",
+          11
+        ],
+        [
+          "hacker news",
+          11
+        ],
+        [
+          "health issues",
+          11
+        ],
+        [
+          "lose weight",
+          11
+        ],
+        [
+          "multiple times",
+          11
+        ],
+        [
+          "positive impact",
+          11
+        ]
+      ]
+    },
+    "career": {
+      "docs": 5084,
+      "topWords": [
+        [
+          "work",
+          2964
+        ],
+        [
+          "job",
+          1691
+        ],
+        [
+          "working",
+          970
+        ],
+        [
+          "company",
+          955
+        ],
+        [
+          "career",
+          935
+        ],
+        [
+          "world",
+          808
+        ],
+        [
+          "money",
+          807
+        ],
+        [
+          "hard",
+          707
+        ],
+        [
+          "business",
+          704
+        ],
+        [
+          "live",
+          671
+        ],
+        [
+          "experience",
+          662
+        ],
+        [
+          "less",
+          654
+        ],
+        [
+          "best",
+          652
+        ],
+        [
+          "getting",
+          643
+        ],
+        [
+          "making",
+          640
+        ],
+        [
+          "end",
+          609
+        ],
+        [
+          "problem",
+          605
+        ],
+        [
+          "there's",
+          595
+        ],
+        [
+          "another",
+          587
+        ],
+        [
+          "start",
+          586
+        ],
+        [
+          "help",
+          559
+        ],
+        [
+          "look",
+          553
+        ],
+        [
+          "real",
+          544
+        ],
+        [
+          "big",
+          537
+        ],
+        [
+          "try",
+          531
+        ],
+        [
+          "trying",
+          528
+        ],
+        [
+          "jobs",
+          527
+        ],
+        [
+          "person",
+          521
+        ],
+        [
+          "keep",
+          519
+        ],
+        [
+          "everyone",
+          515
+        ],
+        [
+          "come",
+          509
+        ],
+        [
+          "done",
+          506
+        ],
+        [
+          "bad",
+          502
+        ],
+        [
+          "others",
+          496
+        ],
+        [
+          "important",
+          494
+        ],
+        [
+          "far",
+          490
+        ],
+        [
+          "software",
+          483
+        ],
+        [
+          "companies",
+          478
+        ],
+        [
+          "idea",
+          471
+        ],
+        [
+          "nothing",
+          470
+        ],
+        [
+          "build",
+          467
+        ],
+        [
+          "small",
+          461
+        ],
+        [
+          "place",
+          458
+        ],
+        [
+          "change",
+          456
+        ],
+        [
+          "pay",
+          456
+        ],
+        [
+          "already",
+          456
+        ],
+        [
+          "myself",
+          455
+        ],
+        [
+          "understand",
+          454
+        ],
+        [
+          "love",
+          454
+        ],
+        [
+          "using",
+          448
+        ],
+        [
+          "ever",
+          444
+        ],
+        [
+          "free",
+          439
+        ],
+        [
+          "often",
+          439
+        ],
+        [
+          "yourself",
+          434
+        ],
+        [
+          "system",
+          431
+        ],
+        [
+          "looking",
+          430
+        ],
+        [
+          "course",
+          427
+        ],
+        [
+          "believe",
+          424
+        ],
+        [
+          "learn",
+          423
+        ],
+        [
+          "possible",
+          422
+        ]
+      ],
+      "topBigrams": [
+        [
+          "bucket list",
+          119
+        ],
+        [
+          "hard work",
+          89
+        ],
+        [
+          "open source",
+          87
+        ],
+        [
+          "high school",
+          79
+        ],
+        [
+          "software engineer",
+          62
+        ],
+        [
+          "work hard",
+          61
+        ],
+        [
+          "difference between",
+          59
+        ],
+        [
+          "computer science",
+          51
+        ],
+        [
+          "silicon valley",
+          50
+        ],
+        [
+          "vast majority",
+          48
+        ],
+        [
+          "software development",
+          47
+        ],
+        [
+          "there's nothing",
+          43
+        ],
+        [
+          "blog post",
+          43
+        ],
+        [
+          "real world",
+          42
+        ],
+        [
+          "software engineers",
+          41
+        ],
+        [
+          "san francisco",
+          41
+        ],
+        [
+          "hours week",
+          41
+        ],
+        [
+          "outside work",
+          41
+        ],
+        [
+          "meaningful work",
+          40
+        ],
+        [
+          "nothing wrong",
+          40
+        ],
+        [
+          "machine learning",
+          39
+        ],
+        [
+          "social media",
+          39
+        ],
+        [
+          "middle class",
+          38
+        ],
+        [
+          "short term",
+          37
+        ],
+        [
+          "united states",
+          36
+        ],
+        [
+          "video games",
+          34
+        ],
+        [
+          "writing code",
+          33
+        ],
+        [
+          "hacker news",
+          33
+        ],
+        [
+          "software engineering",
+          33
+        ],
+        [
+          "making money",
+          33
+        ],
+        [
+          "amount money",
+          32
+        ],
+        [
+          "willing relocate",
+          32
+        ],
+        [
+          "programming language",
+          31
+        ],
+        [
+          "tech companies",
+          31
+        ],
+        [
+          "work hours",
+          31
+        ],
+        [
+          "work together",
+          30
+        ],
+        [
+          "basic income",
+          30
+        ],
+        [
+          "side project",
+          30
+        ],
+        [
+          "grad school",
+          30
+        ],
+        [
+          "keep mind",
+          30
+        ]
+      ]
+    },
+    "recognition": {
+      "docs": 1319,
+      "topWords": [
+        [
+          "work",
+          513
+        ],
+        [
+          "success",
+          344
+        ],
+        [
+          "world",
+          299
+        ],
+        [
+          "successful",
+          290
+        ],
+        [
+          "job",
+          284
+        ],
+        [
+          "working",
+          263
+        ],
+        [
+          "money",
+          245
+        ],
+        [
+          "another",
+          221
+        ],
+        [
+          "best",
+          217
+        ],
+        [
+          "hard",
+          215
+        ],
+        [
+          "company",
+          215
+        ],
+        [
+          "less",
+          209
+        ],
+        [
+          "experience",
+          208
+        ],
+        [
+          "getting",
+          202
+        ],
+        [
+          "problem",
+          201
+        ],
+        [
+          "making",
+          201
+        ],
+        [
+          "known",
+          199
+        ],
+        [
+          "career",
+          198
+        ],
+        [
+          "come",
+          197
+        ],
+        [
+          "others",
+          197
+        ],
+        [
+          "live",
+          194
+        ],
+        [
+          "far",
+          189
+        ],
+        [
+          "real",
+          189
+        ],
+        [
+          "respect",
+          184
+        ],
+        [
+          "important",
+          183
+        ],
+        [
+          "end",
+          182
+        ],
+        [
+          "person",
+          182
+        ],
+        [
+          "business",
+          182
+        ],
+        [
+          "start",
+          179
+        ],
+        [
+          "keep",
+          178
+        ],
+        [
+          "look",
+          177
+        ],
+        [
+          "trying",
+          175
+        ],
+        [
+          "done",
+          175
+        ],
+        [
+          "big",
+          172
+        ],
+        [
+          "there's",
+          170
+        ],
+        [
+          "help",
+          167
+        ],
+        [
+          "yourself",
+          165
+        ],
+        [
+          "course",
+          164
+        ],
+        [
+          "everyone",
+          164
+        ],
+        [
+          "understand",
+          164
+        ],
+        [
+          "build",
+          163
+        ],
+        [
+          "nothing",
+          163
+        ],
+        [
+          "status",
+          162
+        ],
+        [
+          "personal",
+          162
+        ],
+        [
+          "place",
+          161
+        ],
+        [
+          "wrong",
+          161
+        ],
+        [
+          "system",
+          160
+        ],
+        [
+          "between",
+          159
+        ],
+        [
+          "myself",
+          157
+        ],
+        [
+          "reason",
+          156
+        ],
+        [
+          "already",
+          156
+        ],
+        [
+          "believe",
+          155
+        ],
+        [
+          "example",
+          155
+        ],
+        [
+          "read",
+          155
+        ],
+        [
+          "idea",
+          154
+        ],
+        [
+          "change",
+          154
+        ],
+        [
+          "ever",
+          154
+        ],
+        [
+          "bad",
+          152
+        ],
+        [
+          "try",
+          152
+        ],
+        [
+          "software",
+          149
+        ]
+      ],
+      "topBigrams": [
+        [
+          "status quo",
+          42
+        ],
+        [
+          "high school",
+          28
+        ],
+        [
+          "open source",
+          26
+        ],
+        [
+          "bucket list",
+          26
+        ],
+        [
+          "united states",
+          23
+        ],
+        [
+          "difference between",
+          23
+        ],
+        [
+          "computer science",
+          23
+        ],
+        [
+          "nothing wrong",
+          22
+        ],
+        [
+          "motivation inspiration",
+          22
+        ],
+        [
+          "inspiration success",
+          22
+        ],
+        [
+          "success mindset",
+          22
+        ],
+        [
+          "hard work",
+          20
+        ],
+        [
+          "real world",
+          18
+        ],
+        [
+          "short term",
+          18
+        ],
+        [
+          "software engineers",
+          18
+        ],
+        [
+          "software engineer",
+          17
+        ],
+        [
+          "writing code",
+          17
+        ],
+        [
+          "silicon valley",
+          16
+        ],
+        [
+          "software developers",
+          15
+        ],
+        [
+          "above average",
+          15
+        ],
+        [
+          "skill set",
+          15
+        ],
+        [
+          "communication skills",
+          15
+        ],
+        [
+          "social status",
+          14
+        ],
+        [
+          "mental health",
+          14
+        ],
+        [
+          "video games",
+          14
+        ],
+        [
+          "there's nothing",
+          14
+        ],
+        [
+          "live world",
+          14
+        ],
+        [
+          "work hard",
+          14
+        ],
+        [
+          "mysql postgresql",
+          14
+        ],
+        [
+          "willing relocate",
+          14
+        ],
+        [
+          "actively looking",
+          14
+        ],
+        [
+          "consider myself",
+          14
+        ],
+        [
+          "software development",
+          13
+        ],
+        [
+          "programming language",
+          13
+        ],
+        [
+          "games industry",
+          13
+        ],
+        [
+          "san francisco",
+          12
+        ],
+        [
+          "successful company",
+          12
+        ],
+        [
+          "location remote",
+          12
+        ],
+        [
+          "timezones preferred",
+          12
+        ],
+        [
+          "preferred willing",
+          12
+        ]
+      ]
+    },
+    "experience": {
+      "docs": 2914,
+      "topWords": [
+        [
+          "work",
+          1042
+        ],
+        [
+          "build",
+          745
+        ],
+        [
+          "world",
+          600
+        ],
+        [
+          "create",
+          576
+        ],
+        [
+          "write",
+          513
+        ],
+        [
+          "job",
+          513
+        ],
+        [
+          "working",
+          501
+        ],
+        [
+          "writing",
+          477
+        ],
+        [
+          "money",
+          431
+        ],
+        [
+          "experience",
+          428
+        ],
+        [
+          "hard",
+          426
+        ],
+        [
+          "best",
+          404
+        ],
+        [
+          "live",
+          400
+        ],
+        [
+          "problem",
+          394
+        ],
+        [
+          "fun",
+          381
+        ],
+        [
+          "end",
+          380
+        ],
+        [
+          "another",
+          376
+        ],
+        [
+          "trying",
+          373
+        ],
+        [
+          "making",
+          371
+        ],
+        [
+          "less",
+          366
+        ],
+        [
+          "start",
+          365
+        ],
+        [
+          "real",
+          363
+        ],
+        [
+          "help",
+          357
+        ],
+        [
+          "getting",
+          354
+        ],
+        [
+          "there's",
+          354
+        ],
+        [
+          "look",
+          351
+        ],
+        [
+          "company",
+          351
+        ],
+        [
+          "idea",
+          345
+        ],
+        [
+          "try",
+          343
+        ],
+        [
+          "read",
+          341
+        ],
+        [
+          "understand",
+          340
+        ],
+        [
+          "big",
+          337
+        ],
+        [
+          "using",
+          336
+        ],
+        [
+          "code",
+          335
+        ],
+        [
+          "software",
+          328
+        ],
+        [
+          "important",
+          328
+        ],
+        [
+          "far",
+          323
+        ],
+        [
+          "love",
+          322
+        ],
+        [
+          "come",
+          321
+        ],
+        [
+          "small",
+          316
+        ],
+        [
+          "learn",
+          313
+        ],
+        [
+          "others",
+          312
+        ],
+        [
+          "done",
+          312
+        ],
+        [
+          "person",
+          310
+        ],
+        [
+          "myself",
+          308
+        ],
+        [
+          "system",
+          305
+        ],
+        [
+          "keep",
+          303
+        ],
+        [
+          "place",
+          301
+        ],
+        [
+          "building",
+          299
+        ],
+        [
+          "possible",
+          294
+        ],
+        [
+          "stuff",
+          293
+        ],
+        [
+          "free",
+          292
+        ],
+        [
+          "everyone",
+          290
+        ],
+        [
+          "ever",
+          289
+        ],
+        [
+          "change",
+          287
+        ],
+        [
+          "between",
+          284
+        ],
+        [
+          "career",
+          284
+        ],
+        [
+          "example",
+          282
+        ],
+        [
+          "course",
+          280
+        ],
+        [
+          "already",
+          280
+        ]
+      ],
+      "topBigrams": [
+        [
+          "bucket list",
+          124
+        ],
+        [
+          "open source",
+          64
+        ],
+        [
+          "difference between",
+          49
+        ],
+        [
+          "hard work",
+          44
+        ],
+        [
+          "writing code",
+          43
+        ],
+        [
+          "computer science",
+          42
+        ],
+        [
+          "real world",
+          37
+        ],
+        [
+          "social media",
+          37
+        ],
+        [
+          "high school",
+          35
+        ],
+        [
+          "software engineer",
+          35
+        ],
+        [
+          "blog post",
+          33
+        ],
+        [
+          "programming language",
+          31
+        ],
+        [
+          "machine learning",
+          30
+        ],
+        [
+          "software development",
+          30
+        ],
+        [
+          "san francisco",
+          29
+        ],
+        [
+          "write code",
+          28
+        ],
+        [
+          "video games",
+          27
+        ],
+        [
+          "live world",
+          27
+        ],
+        [
+          "software engineers",
+          27
+        ],
+        [
+          "vast majority",
+          26
+        ],
+        [
+          "blog posts",
+          26
+        ],
+        [
+          "willing relocate",
+          26
+        ],
+        [
+          "work hard",
+          25
+        ],
+        [
+          "middle class",
+          25
+        ],
+        [
+          "side project",
+          23
+        ],
+        [
+          "software developers",
+          22
+        ],
+        [
+          "hours week",
+          22
+        ],
+        [
+          "hacker news",
+          22
+        ],
+        [
+          "silicon valley",
+          21
+        ],
+        [
+          "nothing wrong",
+          20
+        ],
+        [
+          "software engineering",
+          20
+        ],
+        [
+          "skill set",
+          20
+        ],
+        [
+          "ancient art",
+          20
+        ],
+        [
+          "art stoic",
+          20
+        ],
+        [
+          "write blog",
+          20
+        ],
+        [
+          "united states",
+          19
+        ],
+        [
+          "video game",
+          19
+        ],
+        [
+          "consider myself",
+          19
+        ],
+        [
+          "side projects",
+          19
+        ],
+        [
+          "stoic joy",
+          19
+        ]
+      ]
+    },
+    "mindset": {
+      "docs": 4176,
+      "topWords": [
+        [
+          "work",
+          1219
+        ],
+        [
+          "world",
+          699
+        ],
+        [
+          "happy",
+          605
+        ],
+        [
+          "job",
+          605
+        ],
+        [
+          "money",
+          541
+        ],
+        [
+          "live",
+          530
+        ],
+        [
+          "working",
+          488
+        ],
+        [
+          "less",
+          476
+        ],
+        [
+          "experience",
+          454
+        ],
+        [
+          "others",
+          449
+        ],
+        [
+          "there's",
+          447
+        ],
+        [
+          "meaningful",
+          443
+        ],
+        [
+          "hard",
+          443
+        ],
+        [
+          "problem",
+          442
+        ],
+        [
+          "another",
+          440
+        ],
+        [
+          "making",
+          428
+        ],
+        [
+          "end",
+          418
+        ],
+        [
+          "person",
+          415
+        ],
+        [
+          "look",
+          414
+        ],
+        [
+          "best",
+          410
+        ],
+        [
+          "help",
+          409
+        ],
+        [
+          "real",
+          405
+        ],
+        [
+          "everyone",
+          394
+        ],
+        [
+          "believe",
+          388
+        ],
+        [
+          "important",
+          387
+        ],
+        [
+          "trying",
+          382
+        ],
+        [
+          "idea",
+          373
+        ],
+        [
+          "understand",
+          371
+        ],
+        [
+          "come",
+          371
+        ],
+        [
+          "nothing",
+          369
+        ],
+        [
+          "try",
+          367
+        ],
+        [
+          "getting",
+          366
+        ],
+        [
+          "far",
+          362
+        ],
+        [
+          "love",
+          353
+        ],
+        [
+          "free",
+          351
+        ],
+        [
+          "bad",
+          349
+        ],
+        [
+          "read",
+          347
+        ],
+        [
+          "society",
+          346
+        ],
+        [
+          "example",
+          344
+        ],
+        [
+          "question",
+          343
+        ],
+        [
+          "company",
+          342
+        ],
+        [
+          "keep",
+          340
+        ],
+        [
+          "change",
+          339
+        ],
+        [
+          "often",
+          338
+        ],
+        [
+          "big",
+          338
+        ],
+        [
+          "ever",
+          334
+        ],
+        [
+          "living",
+          332
+        ],
+        [
+          "system",
+          331
+        ],
+        [
+          "place",
+          327
+        ],
+        [
+          "possible",
+          326
+        ],
+        [
+          "social",
+          326
+        ],
+        [
+          "reason",
+          326
+        ],
+        [
+          "course",
+          324
+        ],
+        [
+          "already",
+          323
+        ],
+        [
+          "yourself",
+          322
+        ],
+        [
+          "myself",
+          321
+        ],
+        [
+          "yet",
+          317
+        ],
+        [
+          "start",
+          316
+        ],
+        [
+          "between",
+          314
+        ],
+        [
+          "lives",
+          314
+        ]
+      ],
+      "topBigrams": [
+        [
+          "bucket list",
+          53
+        ],
+        [
+          "social media",
+          49
+        ],
+        [
+          "open source",
+          45
+        ],
+        [
+          "difference between",
+          44
+        ],
+        [
+          "high school",
+          43
+        ],
+        [
+          "meaningful work",
+          40
+        ],
+        [
+          "vast majority",
+          40
+        ],
+        [
+          "blog post",
+          38
+        ],
+        [
+          "there's nothing",
+          36
+        ],
+        [
+          "united states",
+          32
+        ],
+        [
+          "work hard",
+          32
+        ],
+        [
+          "hard work",
+          30
+        ],
+        [
+          "silicon valley",
+          29
+        ],
+        [
+          "work-life balance",
+          28
+        ],
+        [
+          "computer science",
+          28
+        ],
+        [
+          "real world",
+          27
+        ],
+        [
+          "hours week",
+          27
+        ],
+        [
+          "software engineers",
+          27
+        ],
+        [
+          "outside work",
+          27
+        ],
+        [
+          "blog posts",
+          27
+        ],
+        [
+          "machine learning",
+          26
+        ],
+        [
+          "mental health",
+          26
+        ],
+        [
+          "nothing wrong",
+          26
+        ],
+        [
+          "short term",
+          26
+        ],
+        [
+          "video games",
+          25
+        ],
+        [
+          "live world",
+          25
+        ],
+        [
+          "writing code",
+          25
+        ],
+        [
+          "software engineer",
+          25
+        ],
+        [
+          "amount money",
+          24
+        ],
+        [
+          "tech companies",
+          21
+        ],
+        [
+          "consider myself",
+          20
+        ],
+        [
+          "san francisco",
+          20
+        ],
+        [
+          "making money",
+          20
+        ],
+        [
+          "big picture",
+          20
+        ],
+        [
+          "ancient art",
+          20
+        ],
+        [
+          "art stoic",
+          20
+        ],
+        [
+          "almost certainly",
+          19
+        ],
+        [
+          "tech industry",
+          19
+        ],
+        [
+          "side project",
+          19
+        ],
+        [
+          "stoic joy",
+          19
+        ]
+      ]
+    },
+    "contribution": {
+      "docs": 3178,
+      "topWords": [
+        [
+          "world",
+          1642
+        ],
+        [
+          "work",
+          1042
+        ],
+        [
+          "help",
+          931
+        ],
+        [
+          "society",
+          681
+        ],
+        [
+          "live",
+          652
+        ],
+        [
+          "job",
+          533
+        ],
+        [
+          "money",
+          498
+        ],
+        [
+          "working",
+          482
+        ],
+        [
+          "less",
+          463
+        ],
+        [
+          "problem",
+          454
+        ],
+        [
+          "hard",
+          431
+        ],
+        [
+          "others",
+          427
+        ],
+        [
+          "experience",
+          419
+        ],
+        [
+          "real",
+          417
+        ],
+        [
+          "best",
+          416
+        ],
+        [
+          "look",
+          413
+        ],
+        [
+          "making",
+          412
+        ],
+        [
+          "end",
+          403
+        ],
+        [
+          "another",
+          396
+        ],
+        [
+          "important",
+          393
+        ],
+        [
+          "everyone",
+          391
+        ],
+        [
+          "believe",
+          388
+        ],
+        [
+          "understand",
+          385
+        ],
+        [
+          "there's",
+          384
+        ],
+        [
+          "come",
+          381
+        ],
+        [
+          "person",
+          375
+        ],
+        [
+          "far",
+          371
+        ],
+        [
+          "getting",
+          371
+        ],
+        [
+          "system",
+          369
+        ],
+        [
+          "start",
+          360
+        ],
+        [
+          "idea",
+          358
+        ],
+        [
+          "change",
+          357
+        ],
+        [
+          "ever",
+          352
+        ],
+        [
+          "try",
+          351
+        ],
+        [
+          "big",
+          347
+        ],
+        [
+          "bad",
+          343
+        ],
+        [
+          "nothing",
+          342
+        ],
+        [
+          "keep",
+          338
+        ],
+        [
+          "possible",
+          334
+        ],
+        [
+          "living",
+          334
+        ],
+        [
+          "trying",
+          330
+        ],
+        [
+          "social",
+          330
+        ],
+        [
+          "done",
+          329
+        ],
+        [
+          "example",
+          326
+        ],
+        [
+          "company",
+          326
+        ],
+        [
+          "place",
+          324
+        ],
+        [
+          "course",
+          324
+        ],
+        [
+          "become",
+          318
+        ],
+        [
+          "yourself",
+          317
+        ],
+        [
+          "reason",
+          316
+        ],
+        [
+          "problems",
+          315
+        ],
+        [
+          "build",
+          314
+        ],
+        [
+          "between",
+          312
+        ],
+        [
+          "often",
+          311
+        ],
+        [
+          "already",
+          310
+        ],
+        [
+          "free",
+          309
+        ],
+        [
+          "yet",
+          303
+        ],
+        [
+          "future",
+          302
+        ],
+        [
+          "business",
+          302
+        ],
+        [
+          "read",
+          300
+        ]
+      ],
+      "topBigrams": [
+        [
+          "live world",
+          102
+        ],
+        [
+          "real world",
+          77
+        ],
+        [
+          "bucket list",
+          66
+        ],
+        [
+          "high school",
+          49
+        ],
+        [
+          "social media",
+          44
+        ],
+        [
+          "difference between",
+          39
+        ],
+        [
+          "open source",
+          39
+        ],
+        [
+          "computer science",
+          35
+        ],
+        [
+          "united states",
+          35
+        ],
+        [
+          "blog post",
+          33
+        ],
+        [
+          "hard work",
+          32
+        ],
+        [
+          "vast majority",
+          30
+        ],
+        [
+          "climate change",
+          30
+        ],
+        [
+          "video games",
+          28
+        ],
+        [
+          "there's nothing",
+          28
+        ],
+        [
+          "live society",
+          28
+        ],
+        [
+          "mental health",
+          27
+        ],
+        [
+          "silicon valley",
+          27
+        ],
+        [
+          "nothing wrong",
+          26
+        ],
+        [
+          "work hard",
+          25
+        ],
+        [
+          "basic income",
+          24
+        ],
+        [
+          "machine learning",
+          24
+        ],
+        [
+          "software development",
+          24
+        ],
+        [
+          "helping others",
+          23
+        ],
+        [
+          "health care",
+          22
+        ],
+        [
+          "amount money",
+          22
+        ],
+        [
+          "short term",
+          22
+        ],
+        [
+          "software engineer",
+          22
+        ],
+        [
+          "status quo",
+          21
+        ],
+        [
+          "standard living",
+          20
+        ],
+        [
+          "hacker news",
+          20
+        ],
+        [
+          "help others",
+          20
+        ],
+        [
+          "tech companies",
+          20
+        ],
+        [
+          "positive impact",
+          19
+        ],
+        [
+          "hours week",
+          19
+        ],
+        [
+          "modern world",
+          19
+        ],
+        [
+          "solving problems",
+          19
+        ],
+        [
+          "tech industry",
+          18
+        ],
+        [
+          "keep mind",
+          18
+        ],
+        [
+          "san francisco",
+          18
+        ]
+      ]
+    },
+    "money": {
+      "docs": 2422,
+      "topWords": [
+        [
+          "money",
+          1226
+        ],
+        [
+          "work",
+          1023
+        ],
+        [
+          "job",
+          640
+        ],
+        [
+          "world",
+          490
+        ],
+        [
+          "working",
+          484
+        ],
+        [
+          "live",
+          444
+        ],
+        [
+          "making",
+          401
+        ],
+        [
+          "company",
+          394
+        ],
+        [
+          "less",
+          391
+        ],
+        [
+          "hard",
+          380
+        ],
+        [
+          "getting",
+          367
+        ],
+        [
+          "pay",
+          359
+        ],
+        [
+          "real",
+          319
+        ],
+        [
+          "there's",
+          318
+        ],
+        [
+          "problem",
+          313
+        ],
+        [
+          "end",
+          312
+        ],
+        [
+          "living",
+          309
+        ],
+        [
+          "business",
+          303
+        ],
+        [
+          "big",
+          301
+        ],
+        [
+          "career",
+          300
+        ],
+        [
+          "another",
+          298
+        ],
+        [
+          "keep",
+          297
+        ],
+        [
+          "everyone",
+          295
+        ],
+        [
+          "best",
+          295
+        ],
+        [
+          "rich",
+          287
+        ],
+        [
+          "jobs",
+          286
+        ],
+        [
+          "paid",
+          286
+        ],
+        [
+          "far",
+          285
+        ],
+        [
+          "come",
+          281
+        ],
+        [
+          "look",
+          281
+        ],
+        [
+          "others",
+          280
+        ],
+        [
+          "bad",
+          280
+        ],
+        [
+          "income",
+          275
+        ],
+        [
+          "free",
+          274
+        ],
+        [
+          "person",
+          274
+        ],
+        [
+          "experience",
+          273
+        ],
+        [
+          "start",
+          271
+        ],
+        [
+          "help",
+          268
+        ],
+        [
+          "change",
+          267
+        ],
+        [
+          "try",
+          267
+        ],
+        [
+          "small",
+          266
+        ],
+        [
+          "idea",
+          265
+        ],
+        [
+          "system",
+          262
+        ],
+        [
+          "nothing",
+          260
+        ],
+        [
+          "important",
+          259
+        ],
+        [
+          "ever",
+          258
+        ],
+        [
+          "family",
+          256
+        ],
+        [
+          "possible",
+          252
+        ],
+        [
+          "high",
+          250
+        ],
+        [
+          "companies",
+          249
+        ],
+        [
+          "already",
+          249
+        ],
+        [
+          "trying",
+          247
+        ],
+        [
+          "done",
+          244
+        ],
+        [
+          "society",
+          242
+        ],
+        [
+          "build",
+          241
+        ],
+        [
+          "place",
+          241
+        ],
+        [
+          "away",
+          239
+        ],
+        [
+          "value",
+          237
+        ],
+        [
+          "believe",
+          236
+        ],
+        [
+          "financial",
+          236
+        ]
+      ],
+      "topBigrams": [
+        [
+          "amount money",
+          50
+        ],
+        [
+          "hard work",
+          48
+        ],
+        [
+          "making money",
+          47
+        ],
+        [
+          "bucket list",
+          47
+        ],
+        [
+          "middle class",
+          44
+        ],
+        [
+          "basic income",
+          43
+        ],
+        [
+          "open source",
+          41
+        ],
+        [
+          "silicon valley",
+          41
+        ],
+        [
+          "high school",
+          34
+        ],
+        [
+          "vast majority",
+          30
+        ],
+        [
+          "real world",
+          28
+        ],
+        [
+          "difference between",
+          28
+        ],
+        [
+          "work hard",
+          28
+        ],
+        [
+          "getting paid",
+          27
+        ],
+        [
+          "cost living",
+          27
+        ],
+        [
+          "computer science",
+          25
+        ],
+        [
+          "short term",
+          24
+        ],
+        [
+          "united states",
+          24
+        ],
+        [
+          "nothing wrong",
+          23
+        ],
+        [
+          "blog post",
+          23
+        ],
+        [
+          "live world",
+          23
+        ],
+        [
+          "minimum wage",
+          22
+        ],
+        [
+          "san francisco",
+          22
+        ],
+        [
+          "blog posts",
+          22
+        ],
+        [
+          "standard living",
+          21
+        ],
+        [
+          "hours week",
+          21
+        ],
+        [
+          "social media",
+          21
+        ],
+        [
+          "software development",
+          21
+        ],
+        [
+          "real estate",
+          20
+        ],
+        [
+          "side projects",
+          20
+        ],
+        [
+          "less money",
+          20
+        ],
+        [
+          "money pay",
+          19
+        ],
+        [
+          "wall street",
+          19
+        ],
+        [
+          "there's nothing",
+          19
+        ],
+        [
+          "rich kids",
+          19
+        ],
+        [
+          "credit card",
+          19
+        ],
+        [
+          "opportunity cost",
+          18
+        ],
+        [
+          "status quo",
+          18
+        ],
+        [
+          "mental health",
+          18
+        ],
+        [
+          "spend money",
+          18
+        ]
+      ]
+    },
+    "relationship": {
+      "docs": 2486,
+      "topWords": [
+        [
+          "work",
+          864
+        ],
+        [
+          "love",
+          799
+        ],
+        [
+          "family",
+          587
+        ],
+        [
+          "job",
+          533
+        ],
+        [
+          "world",
+          497
+        ],
+        [
+          "friends",
+          491
+        ],
+        [
+          "kids",
+          442
+        ],
+        [
+          "live",
+          430
+        ],
+        [
+          "money",
+          410
+        ],
+        [
+          "working",
+          408
+        ],
+        [
+          "children",
+          373
+        ],
+        [
+          "hard",
+          352
+        ],
+        [
+          "less",
+          347
+        ],
+        [
+          "another",
+          334
+        ],
+        [
+          "experience",
+          332
+        ],
+        [
+          "best",
+          327
+        ],
+        [
+          "others",
+          327
+        ],
+        [
+          "getting",
+          324
+        ],
+        [
+          "making",
+          311
+        ],
+        [
+          "help",
+          308
+        ],
+        [
+          "person",
+          308
+        ],
+        [
+          "there's",
+          306
+        ],
+        [
+          "career",
+          304
+        ],
+        [
+          "come",
+          302
+        ],
+        [
+          "try",
+          299
+        ],
+        [
+          "end",
+          298
+        ],
+        [
+          "living",
+          298
+        ],
+        [
+          "keep",
+          297
+        ],
+        [
+          "real",
+          292
+        ],
+        [
+          "myself",
+          286
+        ],
+        [
+          "idea",
+          285
+        ],
+        [
+          "important",
+          283
+        ],
+        [
+          "everyone",
+          282
+        ],
+        [
+          "ever",
+          281
+        ],
+        [
+          "look",
+          280
+        ],
+        [
+          "start",
+          279
+        ],
+        [
+          "social",
+          277
+        ],
+        [
+          "far",
+          277
+        ],
+        [
+          "problem",
+          274
+        ],
+        [
+          "company",
+          271
+        ],
+        [
+          "high",
+          266
+        ],
+        [
+          "nothing",
+          266
+        ],
+        [
+          "big",
+          265
+        ],
+        [
+          "trying",
+          264
+        ],
+        [
+          "believe",
+          258
+        ],
+        [
+          "understand",
+          255
+        ],
+        [
+          "read",
+          253
+        ],
+        [
+          "yourself",
+          252
+        ],
+        [
+          "bad",
+          250
+        ],
+        [
+          "free",
+          246
+        ],
+        [
+          "become",
+          246
+        ],
+        [
+          "school",
+          243
+        ],
+        [
+          "happy",
+          243
+        ],
+        [
+          "business",
+          242
+        ],
+        [
+          "place",
+          242
+        ],
+        [
+          "care",
+          242
+        ],
+        [
+          "personal",
+          240
+        ],
+        [
+          "thinking",
+          239
+        ],
+        [
+          "small",
+          238
+        ],
+        [
+          "away",
+          237
+        ]
+      ],
+      "topBigrams": [
+        [
+          "bucket list",
+          100
+        ],
+        [
+          "high school",
+          75
+        ],
+        [
+          "social media",
+          38
+        ],
+        [
+          "middle class",
+          36
+        ],
+        [
+          "hard work",
+          36
+        ],
+        [
+          "work hard",
+          30
+        ],
+        [
+          "relationship between",
+          29
+        ],
+        [
+          "computer science",
+          29
+        ],
+        [
+          "open source",
+          29
+        ],
+        [
+          "difference between",
+          28
+        ],
+        [
+          "love hear",
+          26
+        ],
+        [
+          "real world",
+          26
+        ],
+        [
+          "video games",
+          26
+        ],
+        [
+          "silicon valley",
+          25
+        ],
+        [
+          "mental health",
+          25
+        ],
+        [
+          "cost living",
+          25
+        ],
+        [
+          "vast majority",
+          24
+        ],
+        [
+          "there's nothing",
+          23
+        ],
+        [
+          "family members",
+          23
+        ],
+        [
+          "nothing wrong",
+          23
+        ],
+        [
+          "blog posts",
+          21
+        ],
+        [
+          "united states",
+          20
+        ],
+        [
+          "willing relocate",
+          20
+        ],
+        [
+          "consider myself",
+          20
+        ],
+        [
+          "hours week",
+          19
+        ],
+        [
+          "rich kids",
+          19
+        ],
+        [
+          "software engineers",
+          19
+        ],
+        [
+          "software developers",
+          18
+        ],
+        [
+          "live world",
+          18
+        ],
+        [
+          "family friends",
+          18
+        ],
+        [
+          "software engineer",
+          18
+        ],
+        [
+          "keep mind",
+          17
+        ],
+        [
+          "found myself",
+          17
+        ],
+        [
+          "writing code",
+          17
+        ],
+        [
+          "making money",
+          17
+        ],
+        [
+          "amount money",
+          17
+        ],
+        [
+          "games industry",
+          17
+        ],
+        [
+          "skill set",
+          17
+        ],
+        [
+          "write blog",
+          17
+        ],
+        [
+          "public school",
+          16
+        ]
+      ]
+    },
+    "stability": {
+      "docs": 1485,
+      "topWords": [
+        [
+          "work",
+          513
+        ],
+        [
+          "home",
+          493
+        ],
+        [
+          "job",
+          344
+        ],
+        [
+          "live",
+          336
+        ],
+        [
+          "house",
+          286
+        ],
+        [
+          "money",
+          282
+        ],
+        [
+          "working",
+          279
+        ],
+        [
+          "world",
+          272
+        ],
+        [
+          "car",
+          257
+        ],
+        [
+          "making",
+          226
+        ],
+        [
+          "less",
+          226
+        ],
+        [
+          "company",
+          212
+        ],
+        [
+          "living",
+          206
+        ],
+        [
+          "hard",
+          204
+        ],
+        [
+          "problem",
+          204
+        ],
+        [
+          "security",
+          200
+        ],
+        [
+          "big",
+          198
+        ],
+        [
+          "come",
+          196
+        ],
+        [
+          "another",
+          196
+        ],
+        [
+          "getting",
+          195
+        ],
+        [
+          "end",
+          194
+        ],
+        [
+          "experience",
+          192
+        ],
+        [
+          "there's",
+          191
+        ],
+        [
+          "everyone",
+          190
+        ],
+        [
+          "place",
+          188
+        ],
+        [
+          "real",
+          184
+        ],
+        [
+          "family",
+          183
+        ],
+        [
+          "person",
+          180
+        ],
+        [
+          "keep",
+          178
+        ],
+        [
+          "pay",
+          177
+        ],
+        [
+          "small",
+          176
+        ],
+        [
+          "system",
+          175
+        ],
+        [
+          "help",
+          171
+        ],
+        [
+          "best",
+          171
+        ],
+        [
+          "nothing",
+          168
+        ],
+        [
+          "far",
+          164
+        ],
+        [
+          "done",
+          164
+        ],
+        [
+          "bad",
+          164
+        ],
+        [
+          "already",
+          164
+        ],
+        [
+          "start",
+          163
+        ],
+        [
+          "ever",
+          162
+        ],
+        [
+          "anyone",
+          162
+        ],
+        [
+          "look",
+          160
+        ],
+        [
+          "build",
+          157
+        ],
+        [
+          "between",
+          157
+        ],
+        [
+          "try",
+          157
+        ],
+        [
+          "high",
+          156
+        ],
+        [
+          "course",
+          155
+        ],
+        [
+          "others",
+          155
+        ],
+        [
+          "free",
+          154
+        ],
+        [
+          "social",
+          153
+        ],
+        [
+          "care",
+          153
+        ],
+        [
+          "idea",
+          153
+        ],
+        [
+          "move",
+          151
+        ],
+        [
+          "away",
+          150
+        ],
+        [
+          "business",
+          150
+        ],
+        [
+          "trying",
+          150
+        ],
+        [
+          "possible",
+          149
+        ],
+        [
+          "myself",
+          146
+        ],
+        [
+          "reason",
+          145
+        ]
+      ],
+      "topBigrams": [
+        [
+          "bucket list",
+          60
+        ],
+        [
+          "difference between",
+          28
+        ],
+        [
+          "health insurance",
+          27
+        ],
+        [
+          "high school",
+          24
+        ],
+        [
+          "silicon valley",
+          22
+        ],
+        [
+          "san francisco",
+          20
+        ],
+        [
+          "social media",
+          20
+        ],
+        [
+          "open source",
+          19
+        ],
+        [
+          "cost living",
+          18
+        ],
+        [
+          "social security",
+          17
+        ],
+        [
+          "come home",
+          17
+        ],
+        [
+          "real estate",
+          17
+        ],
+        [
+          "software development",
+          17
+        ],
+        [
+          "middle class",
+          16
+        ],
+        [
+          "work hard",
+          16
+        ],
+        [
+          "buy house",
+          16
+        ],
+        [
+          "software engineer",
+          16
+        ],
+        [
+          "united states",
+          15
+        ],
+        [
+          "status quo",
+          15
+        ],
+        [
+          "almost certainly",
+          14
+        ],
+        [
+          "amount money",
+          14
+        ],
+        [
+          "job security",
+          14
+        ],
+        [
+          "machine learning",
+          14
+        ],
+        [
+          "stay home",
+          14
+        ],
+        [
+          "bay area",
+          13
+        ],
+        [
+          "real world",
+          13
+        ],
+        [
+          "blog post",
+          13
+        ],
+        [
+          "mental health",
+          13
+        ],
+        [
+          "there's nothing",
+          12
+        ],
+        [
+          "live world",
+          12
+        ],
+        [
+          "hours week",
+          12
+        ],
+        [
+          "video games",
+          11
+        ],
+        [
+          "higher level",
+          11
+        ],
+        [
+          "couple months",
+          11
+        ],
+        [
+          "months ago",
+          11
+        ],
+        [
+          "vast majority",
+          11
+        ],
+        [
+          "minimum wage",
+          11
+        ],
+        [
+          "six months",
+          11
+        ],
+        [
+          "nothing wrong",
+          11
+        ],
+        [
+          "computer science",
+          11
+        ]
+      ]
+    },
+    "network": {
+      "docs": 810,
+      "topWords": [
+        [
+          "community",
+          370
+        ],
+        [
+          "work",
+          333
+        ],
+        [
+          "network",
+          222
+        ],
+        [
+          "job",
+          176
+        ],
+        [
+          "experience",
+          175
+        ],
+        [
+          "world",
+          174
+        ],
+        [
+          "working",
+          143
+        ],
+        [
+          "live",
+          135
+        ],
+        [
+          "problem",
+          131
+        ],
+        [
+          "another",
+          131
+        ],
+        [
+          "social",
+          128
+        ],
+        [
+          "best",
+          128
+        ],
+        [
+          "company",
+          127
+        ],
+        [
+          "hard",
+          126
+        ],
+        [
+          "help",
+          124
+        ],
+        [
+          "others",
+          120
+        ],
+        [
+          "making",
+          119
+        ],
+        [
+          "getting",
+          118
+        ],
+        [
+          "look",
+          118
+        ],
+        [
+          "money",
+          118
+        ],
+        [
+          "there's",
+          114
+        ],
+        [
+          "person",
+          112
+        ],
+        [
+          "real",
+          112
+        ],
+        [
+          "end",
+          111
+        ],
+        [
+          "start",
+          110
+        ],
+        [
+          "build",
+          110
+        ],
+        [
+          "less",
+          109
+        ],
+        [
+          "looking",
+          108
+        ],
+        [
+          "come",
+          105
+        ],
+        [
+          "big",
+          102
+        ],
+        [
+          "love",
+          102
+        ],
+        [
+          "career",
+          102
+        ],
+        [
+          "everyone",
+          101
+        ],
+        [
+          "understand",
+          101
+        ],
+        [
+          "set",
+          100
+        ],
+        [
+          "place",
+          99
+        ],
+        [
+          "myself",
+          99
+        ],
+        [
+          "often",
+          99
+        ],
+        [
+          "believe",
+          98
+        ],
+        [
+          "software",
+          98
+        ],
+        [
+          "system",
+          97
+        ],
+        [
+          "far",
+          96
+        ],
+        [
+          "small",
+          95
+        ],
+        [
+          "try",
+          95
+        ],
+        [
+          "bad",
+          94
+        ],
+        [
+          "idea",
+          94
+        ],
+        [
+          "trying",
+          93
+        ],
+        [
+          "nothing",
+          92
+        ],
+        [
+          "example",
+          92
+        ],
+        [
+          "important",
+          91
+        ],
+        [
+          "wrong",
+          91
+        ],
+        [
+          "they're",
+          90
+        ],
+        [
+          "change",
+          90
+        ],
+        [
+          "found",
+          89
+        ],
+        [
+          "keep",
+          89
+        ],
+        [
+          "pay",
+          88
+        ],
+        [
+          "possible",
+          88
+        ],
+        [
+          "become",
+          88
+        ],
+        [
+          "free",
+          88
+        ],
+        [
+          "already",
+          87
+        ]
+      ],
+      "topBigrams": [
+        [
+          "social network",
+          26
+        ],
+        [
+          "writing code",
+          17
+        ],
+        [
+          "software engineers",
+          17
+        ],
+        [
+          "open source",
+          17
+        ],
+        [
+          "social media",
+          16
+        ],
+        [
+          "high school",
+          16
+        ],
+        [
+          "consider myself",
+          15
+        ],
+        [
+          "software developers",
+          15
+        ],
+        [
+          "games industry",
+          14
+        ],
+        [
+          "communication skills",
+          14
+        ],
+        [
+          "above average",
+          14
+        ],
+        [
+          "bucket list",
+          14
+        ],
+        [
+          "difference between",
+          13
+        ],
+        [
+          "computer science",
+          13
+        ],
+        [
+          "actively looking",
+          13
+        ],
+        [
+          "willing relocate",
+          13
+        ],
+        [
+          "skill set",
+          13
+        ],
+        [
+          "love chat",
+          13
+        ],
+        [
+          "community college",
+          12
+        ],
+        [
+          "software engineer",
+          12
+        ],
+        [
+          "location remote",
+          12
+        ],
+        [
+          "timezones preferred",
+          12
+        ],
+        [
+          "preferred willing",
+          12
+        ],
+        [
+          "relocate depends",
+          12
+        ],
+        [
+          "strong bias",
+          12
+        ],
+        [
+          "eu-schengen locations",
+          12
+        ],
+        [
+          "locations technologies",
+          12
+        ],
+        [
+          "technologies java",
+          12
+        ],
+        [
+          "variants thereof",
+          12
+        ],
+        [
+          "aws lambda",
+          12
+        ],
+        [
+          "lambda serverless",
+          12
+        ],
+        [
+          "serverless gce",
+          12
+        ],
+        [
+          "gce kubernetes",
+          12
+        ],
+        [
+          "kubernetes redis",
+          12
+        ],
+        [
+          "redis mysql",
+          12
+        ],
+        [
+          "mysql postgresql",
+          12
+        ],
+        [
+          "postgresql dynamodb",
+          12
+        ],
+        [
+          "dynamodb resume",
+          12
+        ],
+        [
+          "resume links",
+          12
+        ],
+        [
+          "links repo",
+          12
+        ]
+      ]
+    }
   }
 }

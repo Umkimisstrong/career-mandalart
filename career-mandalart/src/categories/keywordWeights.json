@@ -1,0 +1,160 @@
+{
+  "version": "v1",
+  "total": {
+    "growth": 24.7,
+    "health": 14.6,
+    "career": 40.9,
+    "recognition": 10.6,
+    "experience": 23.4,
+    "mindset": 33.6,
+    "contribution": 25.6,
+    "money": 19.5,
+    "relationship": 20,
+    "stability": 11.9,
+    "network": 6.5
+  },
+  "byAge": {
+    "20s": {
+      "growth": 35.3,
+      "health": 28.7,
+      "career": 57.2,
+      "recognition": 16.2,
+      "experience": 32.6,
+      "mindset": 24.2,
+      "contribution": 28.5,
+      "money": 37,
+      "relationship": 45.6,
+      "stability": 21,
+      "network": 7.8
+    },
+    "30s": {
+      "growth": 39.2,
+      "health": 29.3,
+      "career": 61.3,
+      "recognition": 15.8,
+      "experience": 35.9,
+      "mindset": 29.8,
+      "contribution": 30.5,
+      "money": 34.4,
+      "relationship": 50.1,
+      "stability": 29,
+      "network": 9.4
+    },
+    "40s": {
+      "growth": 38.6,
+      "health": 28.6,
+      "career": 58.4,
+      "recognition": 15.6,
+      "experience": 29.2,
+      "mindset": 25.7,
+      "contribution": 31.6,
+      "money": 35.7,
+      "relationship": 44.8,
+      "stability": 24.2,
+      "network": 7.4
+    },
+    "50s": {
+      "growth": 40.2,
+      "health": 29.6,
+      "career": 62.7,
+      "recognition": 20.1,
+      "experience": 26,
+      "mindset": 24.9,
+      "contribution": 26.6,
+      "money": 36.7,
+      "relationship": 48.5,
+      "stability": 24.3,
+      "network": 3.6
+    }
+  },
+  "keywords": {
+    "growth": [
+      "배움",
+      "외국어",
+      "배우기",
+      "코딩",
+      "독서",
+      "강의"
+    ],
+    "health": [
+      "달리기",
+      "러닝",
+      "건강",
+      "몸",
+      "건강한 삶",
+      "의료"
+    ],
+    "career": [
+      "일자리",
+      "회사",
+      "소프트웨어",
+      "커리어",
+      "연봉",
+      "사업"
+    ],
+    "recognition": [
+      "성공",
+      "성공한 사람",
+      "인정받기",
+      "존중",
+      "지위",
+      "개인적 성취"
+    ],
+    "experience": [
+      "창작",
+      "글쓰기",
+      "재미",
+      "만들기",
+      "코딩",
+      "직업"
+    ],
+    "mindset": [
+      "의미",
+      "행복",
+      "사회",
+      "사랑",
+      "자유",
+      "의미 있는 일"
+    ],
+    "contribution": [
+      "사회",
+      "미래",
+      "문제 해결",
+      "세상",
+      "돕기",
+      "기후 변화"
+    ],
+    "money": [
+      "부자",
+      "보수",
+      "소득",
+      "가치",
+      "재정",
+      "일자리"
+    ],
+    "relationship": [
+      "친구",
+      "아이",
+      "자녀",
+      "가족",
+      "사랑",
+      "행복"
+    ],
+    "stability": [
+      "집",
+      "주택",
+      "자동차",
+      "안정",
+      "이사",
+      "가족"
+    ],
+    "network": [
+      "커뮤니티",
+      "인맥",
+      "사회적 관계",
+      "소셜 네트워크",
+      "소통 능력",
+      "직업"
+    ]
+  }
+}

@@ -3,7 +3,7 @@ import { ReactNode, useEffect, useMemo, useRef, useState } from 'react';
 import { ActivityIndicator, Platform, View } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import InstallBanner from './src/components/InstallBanner';
-import { Cell, newPlan, Plan, setCell, Store } from './src/model';
+import { Cell, newPlan, ohtaniPlan, Plan, setCell, Store } from './src/model';
 import { decodePlan } from './src/qr/codec';
 import { pickQrFromImage } from './src/qr/image';
 import Backup from './src/screens/Backup';
@@ -12,15 +12,17 @@ import Overview from './src/screens/Overview';
 import PlanList from './src/screens/PlanList';
 import QrScan from './src/screens/QrScan';
 import QrShare from './src/screens/QrShare';
+import Story from './src/screens/Story';
 import ThemeSettings from './src/screens/ThemeSettings';
 import { loadStore, saveStore } from './src/storage';
-import { buildTheme, ThemeProvider } from './src/theme';
+import { buildTheme, isDark, ThemeProvider } from './src/theme';
 
 type Route =
   | { name: 'list' }
   | { name: 'backup' }
   | { name: 'scan' }
   | { name: 'theme' }
+  | { name: 'story' }
   | { name: 'qr'; id: string }
   | { name: 'plan'; id: string; block: number | null };
 
@@ -77,11 +79,23 @@ export default function App() {
           onBackup={() => setRoute({ name: 'backup' })}
           onScanQr={scanQr}
           onTheme={() => setRoute({ name: 'theme' })}
+          onStory={() => setRoute({ name: 'story' })}
           notice={notice}
         />
       );
     } else if (route.name === 'backup') {
       screen = <Backup store={store} onBack={() => setRoute({ name: 'list' })} onImport={setStore} />;
+    } else if (route.name === 'story') {
+      screen = (
+        <Story
+          onBack={() => setRoute({ name: 'list' })}
+          onStart={() => {
+            const p = ohtaniPlan();
+            setStore(s => s && { ...s, plans: [...s.plans, p] });
+            setRoute({ name: 'plan', id: p.id, block: null });
+          }}
+        />
+      );
     } else if (route.name === 'theme') {
       screen = (
         <ThemeSettings
@@ -138,7 +152,7 @@ export default function App() {
         <SafeAreaView style={{ flex: 1, backgroundColor: theme.bg }}>
           <View style={{ flex: 1, width: '100%', maxWidth: 720, alignSelf: 'center' }}>{screen}</View>
           <InstallBanner />
-          <StatusBar style="dark" />
+          <StatusBar style={isDark(theme) ? 'light' : 'dark'} />
         </SafeAreaView>
       </SafeAreaProvider>
     </ThemeProvider>
