@@ -173,6 +173,8 @@ function CellEditor({ role, cell, blockCat, guide, age, custom, onAge, onAddCust
   return (
     <Modal transparent animationType="slide" onRequestClose={onClose}>
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={styles.backdrop}>
+        {/* 시트 바깥(어두운 배경)을 누르면 취소와 같이 닫는다 */}
+        <Pressable style={StyleSheet.absoluteFill} onPress={onClose} accessibilityLabel="편집 닫기" />
         <ScrollView style={[styles.sheetScroll, { backgroundColor: t.bg }]} contentContainerStyle={styles.sheet} keyboardShouldPersistTaps="handled">
           <Text style={[styles.sheetTitle, { color: t.text }]}>{ROLE_LABEL[role]}</Text>
           {/* 카테고리를 먼저 고르고, 그 아래에서 내용을 입력한다 */}

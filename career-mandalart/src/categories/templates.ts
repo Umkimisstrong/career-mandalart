@@ -420,7 +420,7 @@ export const TEMPLATES: Template[] = [
       ] },
       { cat: 'stability', text: '돌봄 · 안전', actions: [
         'care:돌봄 서비스 신청하기 ^이번 달까지', 'care:비상 호출기 갖추기 ^이번 주까지', 'care:집 안전 손잡이 설치하기 ^이번 달까지',
-        'care:가까운 병원 정리하기 #2곳', 'legacy:유언장 쓰기 ^3개월 안에', 'legacy:사전연명의료의향서 쓰기 ^3개월 안에',
+        'care:가까운 병원 정리하기 #2곳', 'legacy:유언장 쓰기 ^3개월 안에', 'legacy:소중한 물건 이야기 남기기 #10개',
         'tidy:추억 물건 정리하기 @매월 #5개', 'legacy:가족 자산 목록 정리하기 ^3개월 안에',
       ] },
       { cat: 'relationship', text: '가족', actions: [
