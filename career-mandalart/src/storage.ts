@@ -29,7 +29,7 @@ export function exportJson(store: Store): string {
 // 붙여넣은 JSON 을 검증해 기존 계획과 병합(같은 id 는 덮어씀)
 export function importJson(current: Store, text: string): Store {
   const parsed = JSON.parse(text);
-  if (!isStore(parsed)) throw new Error('만다라트 백업 형식이 아닙니다.');
+  if (!isStore(parsed)) throw new Error('구도 백업 형식이 아닙니다.');
   const byId = new Map(current.plans.map(p => [p.id, p]));
   parsed.plans.forEach(p => byId.set(p.id, p));
   // 사용자 카테고리 항목도 합치고, 연령대 설정은 현재 기기 것을 유지

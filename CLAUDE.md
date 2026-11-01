@@ -1,6 +1,6 @@
 # 01. Career — 프로젝트 요약 (AI 컨텍스트)
 
-이 폴더는 **커리어 만다라트** 앱 프로젝트다. AI 는 작업 전에 이 파일과 `career-mandalart/AGENTS.md`, `career-mandalart/README.md` 를 읽는다.
+이 폴더는 **구도 GUDO · Nine Ways** (옛 이름 커리어 만다라트) 앱 프로젝트다. 저장소 · Vercel · 저장 키 · bundle id 는 옛 이름(`career-mandalart`) 유지. AI 는 작업 전에 이 파일과 `career-mandalart/AGENTS.md`, `career-mandalart/README.md` 를 읽는다.
 
 ## 목적
 오타니 쇼헤이의 만다라트(9×9 목표 달성표)처럼 개인이 커리어 청사진을 설계·기획·추적하는 모바일 앱.
@@ -24,7 +24,7 @@
 | 호스팅 | Vercel 무료 플랜만 사용, 자체 도메인 없음 (사용자 결정 2026-11-01) |
 | 키워드 자산 | **카테고리의 베이스 데이터.** `keyword-assets/` (README · dictionary.ko.json 검수 사전 · v1/keywords.json). 빌드: `node research/build-keyword-assets.mjs` → 앱용 `src/categories/keywordWeights.json` (연령대별 카테고리 비율 · 한국어 키워드). 원문 미저장, 버전 폴더로 관리 |
 | 키워드 조사 | `research/collect-keywords.mjs` (HN Algolia · Mastodon 공개 API, 원문 미저장 · 집계만) → `research/output/keywords.json`, 보고서 `docs/research/keywords-2026-11.md` |
-| 앱 정체성 | "만다라트"는 대중에게 낯섦 → 새 이름 검토 중. 개인(목표 설계) + 기업(팀 성과 · 방향성) 겸용, [목적을 향해 가기 위한] 상징어. 후보는 `docs/identity.md` (North Nine 방향 선호, 별·북극성·지표 조합 5선: North Nine · StarMark · NineStar · Polaris Nine · North Index). 디자인 컨셉 = 북극성 · 별 (`northstar` 테마). 앱의 배경 = 오타니 쇼헤이 → `src/screens/Story.tsx` (보도 확인 사실만, `ohtaniPlan()` 예시). 데이터 · QR 형식은 이름과 무관하게 유지 |
+| 앱 정체성 | **이름 확정: 구도 GUDO · Nine Ways** — 九道(9개의 길) · 求道(길을 구한다) · 構圖(짜임). 이름 · 한영 설명은 `src/brand.ts`, 소개 화면 `src/screens/About.tsx`. (경위) "만다라트"는 대중에게 낯섦 → 개인(목표 설계) + 기업(팀 성과 · 방향성) 겸용, [목적을 향해 가기 위한] 상징어. 후보는 `docs/identity.md` (North Nine 방향 선호, 별·북극성·지표 조합 5선: North Nine · StarMark · NineStar · Polaris Nine · North Index). 디자인 컨셉 = 북극성 · 별 (`northstar` 테마). 앱의 배경 = 오타니 쇼헤이 → `src/screens/Story.tsx` (보도 확인 사실만, `ohtaniPlan()` 예시). 데이터 · QR 형식은 이름과 무관하게 유지 |
 | 데이터 수집 제약 | Reddit 비인증 JSON 은 403, 우회 시도는 정책상 차단됨. 정량 수집이 필요하면 Reddit OAuth 앱 등록 후 공식 API 사용 |
 
 ## 폴더 구조

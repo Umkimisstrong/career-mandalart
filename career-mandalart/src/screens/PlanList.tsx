@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Alert, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { APP_NAME, APP_NAME_EN, APP_TAGLINE_EN } from '../brand';
 import { CENTER, Plan, progress } from '../model';
 import { THEME_LABELS, useTheme } from '../theme';
 
@@ -12,6 +13,7 @@ type Props = {
   onScanQr: () => void;
   onTheme: () => void;
   onStory: () => void;
+  onAbout: () => void;
   notice?: string;
 };
 
@@ -26,7 +28,7 @@ function confirm(message: string, onYes: () => void) {
   ]);
 }
 
-export default function PlanList({ plans, onOpen, onCreate, onDelete, onBackup, onScanQr, onTheme, onStory, notice }: Props) {
+export default function PlanList({ plans, onOpen, onCreate, onDelete, onBackup, onScanQr, onTheme, onStory, onAbout, notice }: Props) {
   const { t, ui } = useTheme();
   const [title, setTitle] = useState('');
 
@@ -39,8 +41,12 @@ export default function PlanList({ plans, onOpen, onCreate, onDelete, onBackup, 
     <ScrollView contentContainerStyle={styles.wrap}>
       <View style={styles.titleRow}>
         <View style={{ flex: 1 }}>
-          <Text style={ui.h1}>커리어 만다라트</Text>
-          <Text style={ui.sub}>핵심 목표 1 · 세부 목표 8 · 실행 과제 64</Text>
+          <Pressable onPress={onAbout} hitSlop={6}>
+            <Text style={ui.h1}>
+              {APP_NAME} <Text style={[styles.nameEn, { color: t.accent }]}>{APP_NAME_EN} · {APP_TAGLINE_EN}</Text>
+            </Text>
+            <Text style={ui.sub}>九道 · 求道 · 構圖 — 아홉 갈래 길로 목적을 설계하다 <Text style={{ color: t.accent }}>ⓘ</Text></Text>
+          </Pressable>
         </View>
         <Pressable onPress={onTheme} style={[styles.themeBtn, { borderColor: t.border, backgroundColor: t.surface }]} hitSlop={6}>
           <View style={styles.swatchRow}>
@@ -117,6 +123,7 @@ const styles = StyleSheet.create({
   storyStar: { fontSize: 24 },
   storyTitle: { fontSize: 15, fontWeight: '700' },
   storySub: { fontSize: 12, marginTop: 2 },
+  nameEn: { fontSize: 13, fontWeight: '700', letterSpacing: 1 },
   titleRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 12 },
   themeBtn: { borderWidth: 1, borderRadius: 12, paddingHorizontal: 10, paddingVertical: 8, alignItems: 'center', gap: 4 },
   swatchRow: { flexDirection: 'row', gap: 3 },

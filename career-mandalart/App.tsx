@@ -6,6 +6,7 @@ import InstallBanner from './src/components/InstallBanner';
 import { Cell, newPlan, ohtaniPlan, Plan, setCell, Store } from './src/model';
 import { decodePlan } from './src/qr/codec';
 import { pickQrFromImage } from './src/qr/image';
+import About from './src/screens/About';
 import Backup from './src/screens/Backup';
 import BlockEditor from './src/screens/BlockEditor';
 import Overview from './src/screens/Overview';
@@ -23,6 +24,7 @@ type Route =
   | { name: 'scan' }
   | { name: 'theme' }
   | { name: 'story' }
+  | { name: 'about' }
   | { name: 'qr'; id: string }
   | { name: 'plan'; id: string; block: number | null };
 
@@ -80,11 +82,14 @@ export default function App() {
           onScanQr={scanQr}
           onTheme={() => setRoute({ name: 'theme' })}
           onStory={() => setRoute({ name: 'story' })}
+          onAbout={() => setRoute({ name: 'about' })}
           notice={notice}
         />
       );
     } else if (route.name === 'backup') {
       screen = <Backup store={store} onBack={() => setRoute({ name: 'list' })} onImport={setStore} />;
+    } else if (route.name === 'about') {
+      screen = <About onBack={() => setRoute({ name: 'list' })} onStory={() => setRoute({ name: 'story' })} />;
     } else if (route.name === 'story') {
       screen = (
         <Story

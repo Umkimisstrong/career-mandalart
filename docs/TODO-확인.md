@@ -32,7 +32,9 @@ _최종 갱신: 2026-10-30_
 | 웹 클립 프로필 | 🗑️ 제외 (관리 대상 아님) |
 
 ### 남은 결정
-- [ ] **앱 이름** — North Nine 방향. 별 · 북극성 · 지표 조합 5선: North Nine · StarMark · NineStar · Polaris Nine · North Index → [identity.md](identity.md#3-1-별--북극성--지표-조합-후보-5선-2026-11-01)
+- [x] **앱 이름** — **구도 GUDO · Nine Ways** 로 확정 (2026-11-01). 九道 · 求道 · 構圖 세 가지 뜻, 앱 안 「구도란?」 화면에 한/영 설명 → [identity.md](identity.md)
+- [ ] 「만다라트 시그니처」 테마 이름 — 그대로 둘지, 「구도 시그니처」로 바꿀지
+- [ ] GitHub 저장소 · Vercel 주소(`career-mandalart`) 이름 변경 여부 — 바꾸면 기존 링크 · 홈 화면 앱이 끊길 수 있어 보류
 - [ ] **조사 결과 반영 여부** — 연령대 추천 · 안내 문구 개선 6가지 ([보고서 5장](research/keywords-2026-11.md))
 - [ ] 아이콘 · 로고 — 이름 확정 후
 

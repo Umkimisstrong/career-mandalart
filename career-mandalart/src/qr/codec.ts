@@ -58,7 +58,7 @@ export function isPlanQr(text: string) {
 
 // 스캔한 QR 을 새 청사진으로 복원 (항상 새 id 로 만들어 기존 계획을 덮어쓰지 않음)
 export function decodePlan(text: string): Plan {
-  if (!isPlanQr(text)) throw new Error('커리어 만다라트 QR 이 아닙니다.');
+  if (!isPlanQr(text)) throw new Error('구도 QR 이 아닙니다.');
   let packed: Packed;
   try {
     packed = JSON.parse(strFromU8(inflateSync(base45Decode(text.slice(PREFIX.length)))));

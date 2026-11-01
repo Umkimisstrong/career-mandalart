@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "커리어 만다라트",
+    "name": "구도 GUDO",
     "slug": "career-mandalart",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -30,7 +30,7 @@
       [
         "expo-camera",
         {
-          "cameraPermission": "만다라트 QR 코드를 읽어 청사진을 불러오기 위해 카메라를 사용합니다."
+          "cameraPermission": "구도 QR 코드를 읽어 청사진을 불러오기 위해 카메라를 사용합니다."
         }
       ]
     ]

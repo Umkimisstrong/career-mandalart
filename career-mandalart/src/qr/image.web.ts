@@ -24,7 +24,7 @@ export async function makeQrPng(text: string, title: string): Promise<string> {
   ctx.fillText(title, canvas.width / 2, QR_SIZE + PAD + 64, canvas.width - PAD * 2);
   ctx.fillStyle = '#6B7280';
   ctx.font = '28px -apple-system, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif';
-  ctx.fillText('커리어 만다라트 · QR로 불러오기', canvas.width / 2, QR_SIZE + PAD + 108);
+  ctx.fillText('구도 GUDO · QR로 불러오기', canvas.width / 2, QR_SIZE + PAD + 108);
   return canvas.toDataURL('image/png');
 }
 

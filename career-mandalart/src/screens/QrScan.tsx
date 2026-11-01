@@ -1,4 +1,4 @@
-// 네이티브(iOS/Android) 전용: 카메라로 만다라트 QR 을 비춰 읽는다. 웹은 사진 선택(pickQrFromImage)을 쓴다.
+// 네이티브(iOS/Android) 전용: 카메라로 구도 QR 을 비춰 읽는다. 웹은 사진 선택(pickQrFromImage)을 쓴다.
 import { useRef, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { CameraView, useCameraPermissions } from 'expo-camera';
@@ -11,13 +11,13 @@ type Props = { onBack: () => void; onImport: (plan: Plan) => void };
 export default function QrScan({ onBack, onImport }: Props) {
   const { ui } = useTheme();
   const [permission, requestPermission] = useCameraPermissions();
-  const [msg, setMsg] = useState('만다라트 QR 을 화면 가운데에 맞춰주세요.');
+  const [msg, setMsg] = useState('구도 QR 을 화면 가운데에 맞춰주세요.');
   const handled = useRef(false);
 
   const onScanned = ({ data }: { data: string }) => {
     if (handled.current) return;
     if (!isPlanQr(data)) {
-      setMsg('커리어 만다라트 QR 이 아닙니다.');
+      setMsg('구도 QR 이 아닙니다.');
       return;
     }
     try {

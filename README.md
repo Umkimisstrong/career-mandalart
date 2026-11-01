@@ -1,8 +1,9 @@
 <div align="center">
 
-# 🎯 Career Mandalart · 커리어 만다라트
+# ★ 구도 GUDO · Nine Ways
 
-**오타니 쇼헤이의 만다라트로, 나의 커리어 청사진을 설계하세요.**
+**아홉 갈래 길로 목적을 설계하는 81칸 목표 지도**<br>
+*One purpose, nine ways — an 81-cell goal map.*
 
 하나의 꿈을 8개의 방향으로, 8개의 방향을 64개의 실행으로.
 
@@ -18,7 +19,17 @@
 
 ---
 
-## 만다라트란?
+## 구도(GUDO)란? · What does GUDO mean?
+
+"구도"라는 한 소리에 세 가지 뜻을 담았습니다. *One sound, three meanings in Korean.*
+
+| | 뜻 | Meaning |
+|:-:|---|---|
+| **九道**<br>아홉 길 | **9개의 길** — 하나의 목적을 가운데 두고, 그곳에 닿는 여덟 갈래 길과 그 길을 걷는 방법을 그립니다. | **Nine Ways** — One purpose at the center, eight paths leading to it, and eight steps on each path. |
+| **求道**<br>길을 구함 | **길을 구한다** — 동양에서 "도를 구한다"는 것은 정답을 받는 일이 아니라, 매일의 수행으로 스스로 길을 찾아가는 일입니다. | **Seeking the Way** — In Eastern thought, the Way is not handed to you; you find it through daily practice. |
+| **構圖**<br>짜임 | **짜임** — 그림의 구도처럼, 목표와 행동이 한 장 안에서 어떻게 짜여 있는지 한눈에 봅니다. 개인의 계획도, 팀의 방향도. | **Composition** — Like a painting's composition, see how goals and actions fit together on one page — for a person or a team. |
+
+## 만다라트 방식 · The Mandal-Art method
 
 만다라트(Mandal-Art)는 9×9 격자에 목표를 쪼개어 적는 목표 설계 기법입니다.
 오타니 쇼헤이가 고등학교 1학년 때 **"8개 구단 드래프트 1순위"** 라는 꿈을 이 표로 설계한 것으로 유명합니다.

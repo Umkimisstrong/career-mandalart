@@ -7,13 +7,15 @@ import { join } from 'node:path';
 const dist = process.argv[2] ?? 'dist';
 const app = JSON.parse(readFileSync('app.json', 'utf8')).expo;
 const theme = '#F3F4F6';
+// 링크 미리보기(카카오톡 · 메시지)용 소개 — 한국어 + 영문
+const description = '九道 아홉 갈래 길 · 求道 길을 구하다 · 構圖 목표의 짜임 — One purpose, nine ways: an 81-cell goal map.';
 
 copyFileSync('assets/icon.png', join(dist, 'apple-touch-icon.png'));
 copyFileSync('assets/icon.png', join(dist, 'icon-512.png'));
 
 writeFileSync(join(dist, 'manifest.json'), JSON.stringify({
   name: app.name,
-  short_name: '만다라트',
+  short_name: '구도',
   start_url: '/',
   display: 'standalone',
   background_color: theme,
@@ -25,8 +27,11 @@ const head = [
   '<meta name="apple-mobile-web-app-capable" content="yes">',
   '<meta name="mobile-web-app-capable" content="yes">',
   '<meta name="apple-mobile-web-app-status-bar-style" content="default">',
-  `<meta name="apple-mobile-web-app-title" content="만다라트">`,
+  `<meta name="apple-mobile-web-app-title" content="구도">`,
   `<meta name="theme-color" content="${theme}">`,
+  `<meta name="description" content="${description}">`,
+  `<meta property="og:title" content="${app.name} · Nine Ways">`,
+  `<meta property="og:description" content="${description}">`,
   '<link rel="apple-touch-icon" href="/apple-touch-icon.png">',
   '<link rel="manifest" href="/manifest.json">',
 ].join('\n    ');
