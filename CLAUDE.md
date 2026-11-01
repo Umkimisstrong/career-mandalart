@@ -19,7 +19,7 @@
 | 사용자 기기 | 사용자는 **iPhone** 사용. 다른 사람에게도 보여주고 싶어함 |
 | iPhone 배포 경로 | ① Vercel 웹 배포(+홈 화면 추가) — 무료, 즉시 ② Expo Go — 개발용 ③ TestFlight/App Store — Apple 개발자 계정($99/년) 필요 |
 
-| 목표 카테고리 | `src/categories/data.ts`: 매슬로우 6단계(자기초월 포함) × 11개 카테고리 × 하위 속성, 연령대 태그(20s/30s/40s/50s). 세부 목표 칸 `Cell.cat` = 카테고리 id, 실행 과제 칸은 블록 카테고리 속성 추천. 사용자 추가 속성은 `Store.custom`, 연령대는 `Store.age`. 근거·출처는 `docs/categories.md` |
+| 목표 카테고리 | `src/categories/data.ts`: 매슬로우 6단계(자기초월 포함) × 11개 카테고리 × 하위 속성, 연령대 태그(20s/30s/40s/50s). 핵심 · 세부 목표 칸 `Cell.cat` = 카테고리 id (칸 편집 창은 카테고리 선택이 내용 입력보다 위), 실행 과제 칸은 블록 카테고리 속성 추천. 사용자 추가 속성은 `Store.custom`, 연령대는 `Store.age`. 근거·출처는 `docs/categories.md` |
 | 테마 | `src/theme.ts`: `buildTheme(Store.theme)` → 색 토큰(bg/surface/text/primary/done/blocks[9]/on()) + `makeUi`. 화면은 `useTheme()` 로 `{ t, ui }` 사용, 색 하드코딩 금지. 테마: default · northstar(밤하늘 · 금빛) · mono · signature(흰/파랑 #005A9C/빨강 #EF3E42) · custom(2~4색). 설정 화면 `ThemeSettings.tsx` |
 | 호스팅 | Vercel 무료 플랜만 사용, 자체 도메인 없음 (사용자 결정 2026-11-01) |
 | 키워드 자산 | **카테고리의 베이스 데이터.** `keyword-assets/` (README · dictionary.ko.json 검수 사전 · v1/keywords.json). 빌드: `node research/build-keyword-assets.mjs` → 앱용 `src/categories/keywordWeights.json` (연령대별 카테고리 비율 · 한국어 키워드). 원문 미저장, 버전 폴더로 관리 |

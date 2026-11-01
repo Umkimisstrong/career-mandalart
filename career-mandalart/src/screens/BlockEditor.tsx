@@ -66,7 +66,7 @@ export default function BlockEditor({
                 ]}
               >
                 <Text style={[styles.role, { color: fg, opacity: 0.6 }]}>
-                  {ROLE_LABEL[role]}{role === 'goal' && categoryById(v.cat) ? ` · ${categoryById(v.cat)!.emoji}` : ''}
+                  {ROLE_LABEL[role]}{role !== 'action' && categoryById(v.cat) ? ` · ${categoryById(v.cat)!.emoji}` : ''}
                 </Text>
                 <Text
                   numberOfLines={4}
@@ -158,17 +158,8 @@ function CellEditor({ role, cell, blockCat, age, custom, onAge, onAddCustom, onC
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={styles.backdrop}>
         <ScrollView style={[styles.sheetScroll, { backgroundColor: t.bg }]} contentContainerStyle={styles.sheet} keyboardShouldPersistTaps="handled">
           <Text style={[styles.sheetTitle, { color: t.text }]}>{ROLE_LABEL[role]}</Text>
-          <TextInput
-            autoFocus value={text} onChangeText={setText} multiline maxLength={60}
-            placeholder={role === 'action' ? '예: 매주 토요일 2시간 영어 공부' : '목표를 짧고 명확하게'}
-            style={[ui.input, { minHeight: 60 }]}
-          />
-          <TextInput
-            value={note} onChangeText={setNote} multiline
-            placeholder="메모 · 기한 · 측정 기준 (선택)"
-            style={[ui.input, { minHeight: 80 }]}
-          />
-          {role === 'goal' && <GoalCategoryPicker selected={cat} onSelect={selectCat} />}
+          {/* 카테고리를 먼저 고르고, 그 아래에서 내용을 입력한다 */}
+          {role !== 'action' && <GoalCategoryPicker selected={cat} onSelect={selectCat} />}
           {role === 'action' && (
             <ActionItemPicker
               initialCat={blockCat}
@@ -180,6 +171,16 @@ function CellEditor({ role, cell, blockCat, age, custom, onAge, onAddCustom, onC
               onAddCustom={onAddCustom}
             />
           )}
+          <TextInput
+            value={text} onChangeText={setText} multiline maxLength={60}
+            placeholder={role === 'action' ? '예: 매주 토요일 2시간 영어 공부' : '목표를 짧고 명확하게'}
+            style={[ui.input, { minHeight: 60 }]}
+          />
+          <TextInput
+            value={note} onChangeText={setNote} multiline
+            placeholder="메모 · 기한 · 측정 기준 (선택)"
+            style={[ui.input, { minHeight: 80 }]}
+          />
           {role === 'action' && (
             <Pressable style={[ui.btn, done && { backgroundColor: t.done, borderColor: t.doneBorder }]} onPress={() => setDone(!done)}>
               <Text style={ui.btnText}>{done ? '✓ 완료됨' : '완료로 표시'}</Text>
@@ -189,7 +190,7 @@ function CellEditor({ role, cell, blockCat, age, custom, onAge, onAddCustom, onC
             <Pressable style={[ui.btn, { flex: 1 }]} onPress={onClose}><Text style={ui.btnText}>취소</Text></Pressable>
             <Pressable
               style={[ui.btnPrimary, { flex: 1 }]}
-              onPress={() => onSave({ text: text.trim(), note, done, ...(role === 'goal' ? { cat } : {}) })}
+              onPress={() => onSave({ text: text.trim(), note, done, ...(role !== 'action' ? { cat } : {}) })}
             >
               <Text style={ui.btnPrimaryText}>저장</Text>
             </Pressable>

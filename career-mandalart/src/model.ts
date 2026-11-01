@@ -14,7 +14,7 @@ export type Cell = {
   text: string;
   note: string;
   done: boolean;
-  // 세부 목표 칸에 지정한 목표 카테고리 id (src/categories/data.ts)
+  // 핵심 목표 · 세부 목표 칸에 지정한 목표 카테고리 id (src/categories/data.ts)
   cat?: string;
 };
 
