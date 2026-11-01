@@ -16,6 +16,21 @@ export type Cell = {
   done: boolean;
   // 핵심 목표 · 세부 목표 칸에 지정한 목표 카테고리 id (src/categories/data.ts)
   cat?: string;
+  // 실행 과제 칸: 고른 세부 카테고리 · 행동 · 단위 (다시 편집할 때 복원용, 화면에는 text 를 쓴다)
+  spec?: ActionSpec;
+};
+
+// 2레벨(세부 카테고리) · 3레벨(행동) 선택과 단위 — src/categories/tree.ts, units.ts
+export type ActionSpec = {
+  cat?: string;
+  sub?: string;
+  act?: string;
+  when?: string;
+  howLong?: string;
+  until?: string;
+  where?: string;
+  whereTo?: string;
+  qty?: { n: string; unit: string }[];
 };
 
 export type Plan = {

@@ -20,6 +20,7 @@ research/build-keyword-assets.mjs  특징 단어 추출 + 사전 검수 → keyw
         │                                                     → 앱 keywordWeights.json
         ▼
 앱 실행 과제 추천 — 연령대에 맞춰 카테고리 순서 정렬 · "사람들이 자주 쓴 말" 표시
+앱 2레벨 세부 카테고리 — src/categories/tree.ts 의 kw 가 v1 한국어 키워드를 참조 (🔎 표시 · 정렬)
 ```
 
 ## 갱신 절차

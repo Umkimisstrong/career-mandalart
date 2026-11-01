@@ -5,8 +5,10 @@ import {
   useWindowDimensions, View,
 } from 'react-native';
 import { AgeBand, categoryById } from '../categories/data';
-import { ActionItemPicker, GoalCategoryPicker } from '../components/CategoryPicker';
-import { CENTER, Cell, cellRole, getCell, Plan, progress } from '../model';
+import { guideSub } from '../categories/tree';
+import { composeText } from '../categories/units';
+import { ActionBuilder, GoalCategoryPicker } from '../components/CategoryPicker';
+import { ActionSpec, CENTER, Cell, cellRole, getCell, Plan, progress } from '../model';
 import { useTheme } from '../theme';
 
 type Props = {
@@ -54,6 +56,8 @@ export default function BlockEditor({
             const color = role === 'core' ? t.blocks[CENTER] : role === 'goal' ? t.blocks[block === CENTER ? c : block]
               : v.done ? t.done : t.surface;
             const fg = isAction ? (v.done ? t.doneText : t.text) : t.on(color);
+            // 비어 있는 실행 과제 칸에는 블록 카테고리의 세부 카테고리를 미리 안내한다
+            const guide = isAction && !v.text ? guideSub(blockCat, c, age) : undefined;
             return (
               <Pressable
                 key={c}
@@ -78,7 +82,7 @@ export default function BlockEditor({
                     !v.text && { opacity: 0.45, fontWeight: '400' },
                   ]}
                 >
-                  {v.text || '+ 입력'}
+                  {v.text || (guide ? `+ ${guide.label}` : '+ 입력')}
                 </Text>
                 {v.done && <Text style={[styles.check, { color: t.doneBorder }]}>✓</Text>}
               </Pressable>
@@ -117,6 +121,7 @@ export default function BlockEditor({
           role={cellRole(block, editing)}
           cell={getCell(plan, block, editing)}
           blockCat={blockCat}
+          guide={guideSub(blockCat, editing, age)?.id}
           age={age}
           custom={custom}
           onAge={onAge}
@@ -129,10 +134,11 @@ export default function BlockEditor({
   );
 }
 
-function CellEditor({ role, cell, blockCat, age, custom, onAge, onAddCustom, onClose, onSave }: {
+function CellEditor({ role, cell, blockCat, guide, age, custom, onAge, onAddCustom, onClose, onSave }: {
   role: keyof typeof ROLE_LABEL;
   cell: Cell;
   blockCat?: string;
+  guide?: string;
   age?: AgeBand;
   custom: Record<string, string[]>;
   onAge: (age: AgeBand | undefined) => void;
@@ -145,6 +151,17 @@ function CellEditor({ role, cell, blockCat, age, custom, onAge, onAddCustom, onC
   const [note, setNote] = useState(cell.note);
   const [done, setDone] = useState(cell.done);
   const [cat, setCat] = useState(cell.cat);
+  // 실행 과제: 저장된 선택을 복원하고, 빈 칸이면 블록의 안내 세부 카테고리로 시작
+  const [spec, setSpec] = useState<ActionSpec>(
+    cell.spec ?? (cell.text ? {} : { cat: blockCat, sub: guide }),
+  );
+  const composed = composeText(spec);
+
+  // 문장이 비었거나 자동으로 만든 그대로면 새 선택으로 다시 만든다 (직접 고친 문장은 유지)
+  const changeSpec = (next: ActionSpec) => {
+    if (!text.trim() || text === composed) setText(composeText(next));
+    setSpec(next);
+  };
 
   // 카테고리를 고를 때 제목이 비어 있거나 이전 카테고리 이름 그대로면 새 카테고리 이름으로 채운다
   const selectCat = (id: string | undefined) => {
@@ -161,18 +178,22 @@ function CellEditor({ role, cell, blockCat, age, custom, onAge, onAddCustom, onC
           {/* 카테고리를 먼저 고르고, 그 아래에서 내용을 입력한다 */}
           {role !== 'action' && <GoalCategoryPicker selected={cat} onSelect={selectCat} />}
           {role === 'action' && (
-            <ActionItemPicker
-              initialCat={blockCat}
-              text={text}
+            <ActionBuilder
+              spec={spec}
+              blockCat={blockCat}
+              typed={text === composed ? '' : text}
               age={age}
               custom={custom}
               onAge={onAge}
-              onPick={label => setText(label)}
+              onChange={changeSpec}
               onAddCustom={onAddCustom}
             />
           )}
+          {role === 'action' && (
+            <Text style={[styles.label, { color: t.text }]}>④ 칸에 들어갈 문장 <Text style={{ color: t.sub, fontWeight: '400' }}>고른 내용으로 자동 완성 · 직접 고쳐도 됩니다</Text></Text>
+          )}
           <TextInput
-            value={text} onChangeText={setText} multiline maxLength={60}
+            value={text} onChangeText={setText} multiline maxLength={role === 'action' ? 80 : 60}
             placeholder={role === 'action' ? '예: 매주 토요일 2시간 영어 공부' : '목표를 짧고 명확하게'}
             style={[ui.input, { minHeight: 60 }]}
           />
@@ -190,7 +211,7 @@ function CellEditor({ role, cell, blockCat, age, custom, onAge, onAddCustom, onC
             <Pressable style={[ui.btn, { flex: 1 }]} onPress={onClose}><Text style={ui.btnText}>취소</Text></Pressable>
             <Pressable
               style={[ui.btnPrimary, { flex: 1 }]}
-              onPress={() => onSave({ text: text.trim(), note, done, ...(role !== 'action' ? { cat } : {}) })}
+              onPress={() => onSave({ text: text.trim(), note, done, ...(role !== 'action' ? { cat } : { spec }) })}
             >
               <Text style={ui.btnPrimaryText}>저장</Text>
             </Pressable>
@@ -220,4 +241,5 @@ const styles = StyleSheet.create({
   },
   sheet: { padding: 20, gap: 12, paddingBottom: 36 },
   sheetTitle: { fontSize: 16, fontWeight: '700' },
+  label: { fontSize: 13, fontWeight: '800' },
 });
