@@ -19,6 +19,15 @@ export async function requestNotify(): Promise<boolean> {
   return (await Notification.requestPermission()) === 'granted';
 }
 
+// 서비스 워커(sw.js)가 있으면 그쪽으로 띄운다 — iPhone 홈 화면 앱 · Android 는 서비스 워커 알림만 허용
+async function show(title: string, opts: NotificationOptions) {
+  try {
+    const reg = await navigator.serviceWorker?.getRegistration();
+    if (reg) return await reg.showNotification(title, opts);
+    new Notification(title, opts);
+  } catch { /* 알림을 띄울 수 없는 환경 */ }
+}
+
 type BadgeNavigator = Navigator & { setAppBadge?: (n?: number) => Promise<void>; clearAppBadge?: () => Promise<void> };
 
 export async function syncReminders(items: RoutineItem[], enabled: boolean, remainingToday: number): Promise<number> {
@@ -35,7 +44,7 @@ export async function syncReminders(items: RoutineItem[], enabled: boolean, rema
   const soon = upcoming(items, new Date(), 2).filter(u => +u.at - Date.now() < 24 * 3600 * 1000);
   for (const { at, item } of soon) {
     timers.push(setTimeout(() => {
-      try { new Notification(`🔁 ${routineLabel(item.routine)}`, { body: item.text, tag: `${item.planId}-${item.block}-${item.cell}` }); } catch { /* iOS 는 서비스 워커 알림만 허용 */ }
+      show(`🔁 ${routineLabel(item.routine)}`, { body: item.text, tag: `${item.planId}-${item.block}-${item.cell}`, icon: '/icon-192.png' });
     }, +at - Date.now()));
   }
   return soon.length;
