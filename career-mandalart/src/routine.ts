@@ -1,7 +1,7 @@
 // 반복 점검 — 실행 과제 칸을 매일 · 요일마다 · 매주 · 매월 체크하고, 그 기록으로 나를 점검한다.
 // 기록은 Cell.log 에 "기간 키" 로 남긴다: 매일 · 요일 = 그날, 매주 = 그 주 월요일, 매월 = 'YYYY-MM'.
 // 모든 날짜는 기기의 현지 시각 기준.
-import { CENTER, Cell, Freq, Plan, Routine } from './model';
+import { CENTER, Freq, Plan, Routine, trackedCells } from './model';
 
 export const WEEKDAYS = ['일', '월', '화', '수', '목', '금', '토'];
 export const FREQ_LABEL: Record<Freq, string> = { daily: '매일', weekdays: '요일 지정', weekly: '매주 1회', monthly: '매월 1회' };
@@ -133,17 +133,15 @@ export type RoutineItem = {
 export function routineItems(plans: Plan[], today = new Date()): RoutineItem[] {
   const out: RoutineItem[] = [];
   for (const p of plans) {
-    p.blocks.forEach((row, b) => {
-      if (b === CENTER) return;
-      row.forEach((c: Cell, i) => {
-        if (i === CENTER || !c.routine || !c.text.trim() || c.done) return;
-        out.push({
-          planId: p.id, planTitle: p.title, goal: p.blocks[CENTER][b].text, block: b, cell: i,
-          text: c.text, routine: c.routine, log: c.log ?? [], scope: scopeOf(c.routine),
-          dueToday: dueOn(c.routine, today), stats: routineStats(c.routine, c.log, today),
-        });
+    for (const [b, i] of trackedCells(p)) {
+      const c = p.blocks[b][i];
+      if (!c.routine || !c.text.trim() || c.done) continue;
+      out.push({
+        planId: p.id, planTitle: p.title, goal: b === CENTER && i === CENTER ? p.title : p.blocks[CENTER][b].text, block: b, cell: i,
+        text: c.text, routine: c.routine, log: c.log ?? [], scope: scopeOf(c.routine),
+        dueToday: dueOn(c.routine, today), stats: routineStats(c.routine, c.log, today),
       });
-    });
+    }
   }
   return out;
 }
@@ -152,12 +150,10 @@ export function routineItems(plans: Plan[], today = new Date()): RoutineItem[] {
 export function dayGrid(plans: Plan[], today = new Date(), n = 28) {
   const cells: { r: Routine; log: Set<string> }[] = [];
   for (const p of plans) {
-    p.blocks.forEach((row, b) => {
-      if (b === CENTER) return;
-      row.forEach((c, i) => {
-        if (i !== CENTER && c.routine && scopeOf(c.routine) === 'day' && c.text.trim()) cells.push({ r: c.routine, log: new Set(c.log) });
-      });
-    });
+    for (const [b, i] of trackedCells(p)) {
+      const c = p.blocks[b][i];
+      if (c.routine && scopeOf(c.routine) === 'day' && c.text.trim()) cells.push({ r: c.routine, log: new Set(c.log) });
+    }
   }
   return Array.from({ length: n }, (_, j) => {
     const d = addDays(today, j - n + 1);

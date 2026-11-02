@@ -93,8 +93,8 @@ export default function App() {
         <PlanList
           plans={store.plans}
           onOpen={id => setRoute({ name: 'plan', id, block: null })}
-          onCreate={title => {
-            const p = newPlan(title);
+          onCreate={(title, size) => {
+            const p = newPlan(title, size);
             setStore({ ...store, plans: [...store.plans, p] });
             setRoute({ name: 'plan', id: p.id, block: null });
           }}

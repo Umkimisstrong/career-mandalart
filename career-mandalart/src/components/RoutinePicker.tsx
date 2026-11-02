@@ -10,7 +10,8 @@ const TIMES = ['07:00', '08:00', '12:00', '18:00', '21:00', '22:00'];
 const MONTH_DAYS = [1, 5, 10, 15, 20, 25];
 const isTime = (s: string) => /^([01]?\d|2[0-3]):[0-5]\d$/.test(s);
 
-export default function RoutinePicker({ routine, when, onChange }: {
+export default function RoutinePicker({ routine, when, onChange, step = '⑤' }: {
+  step?: string; // 편집 창 안 순서 번호
   routine?: Routine;
   when?: string; // 칸의 「언제」 단위 — 추천에 쓴다
   onChange: (r: Routine | undefined) => void;
@@ -41,7 +42,7 @@ export default function RoutinePicker({ routine, when, onChange }: {
   return (
     <View style={[styles.group, { borderColor: t.border }]}>
       <Text style={[styles.title, { color: t.text }]}>
-        ⑤ 반복 점검 · 알림 <Text style={[styles.small, { color: t.sub }]}>주기마다 「오늘의 점검」에 올라오고 기록이 쌓입니다</Text>
+        {step} 반복 점검 · 알림 <Text style={[styles.small, { color: t.sub }]}>주기마다 「오늘의 점검」에 올라오고 기록이 쌓입니다</Text>
       </Text>
       {suggest && (
         <Pressable onPress={() => onChange(suggest)} style={[styles.suggest, { borderColor: t.primary }]}>

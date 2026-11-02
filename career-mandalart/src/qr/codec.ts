@@ -5,7 +5,7 @@
 //    어떤 스캐너가 읽어도 문자열이 깨지지 않는다 (RFC 9285).
 //  - JSON 튜플은 키 이름 없이 저장 칸 73개(바깥 블록 중심 제외)만 담아 크기를 줄인다.
 import { deflateSync, inflateSync, strFromU8, strToU8 } from 'fflate';
-import { CENTER, newPlan, Plan } from '../model';
+import { CENTER, newPlan, Plan, PLAN_SIZES, PlanSize, sizeOf } from '../model';
 
 const PREFIX = 'MDA1:';
 // QR 버전 40 · 오류정정 L 의 영숫자 최대 용량
@@ -20,8 +20,8 @@ for (let b = 0; b < 9; b++) {
   }
 }
 
-// cats(5번째)는 가운데 블록 9칸의 카테고리 id — 이전 버전 QR 에는 없을 수 있다
-type Packed = [title: string, texts: string[], notes: string[] | 0, done: number[], cats?: string[]];
+// cats(5번째)는 가운데 블록 9칸의 카테고리 id, size(6번째)는 1 · 3 · 5 · 7칸 버전일 때만 — 이전 버전 QR 에는 없을 수 있다
+type Packed = [title: string, texts: string[], notes: string[] | 0, done: number[], cats?: string[], size?: number];
 
 const trimEnd = (a: string[]) => {
   let n = a.length;
@@ -35,7 +35,9 @@ function pack(plan: Plan, withNotes: boolean): Packed {
   const done = SLOTS.flatMap(([b, c], i) => (plan.blocks[b][c].done ? [i] : []));
   const cats = trimEnd(plan.blocks[CENTER].map(c => c.cat ?? ''));
   const packed: Packed = [plan.title, texts, notes.length ? notes : 0, done];
-  if (cats.length) packed.push(cats);
+  const size = sizeOf(plan);
+  if (cats.length || size !== 9) packed.push(cats);
+  if (size !== 9) packed.push(size);
   return packed;
 }
 
@@ -65,8 +67,8 @@ export function decodePlan(text: string): Plan {
   } catch {
     throw new Error('QR 데이터가 손상되었습니다.');
   }
-  const [title, texts, notes, done, cats = []] = packed;
-  const plan = newPlan(title || '불러온 청사진');
+  const [title, texts, notes, done, cats = [], size = 9] = packed;
+  const plan = newPlan(title || '불러온 청사진', PLAN_SIZES.includes(size as PlanSize) ? (size as PlanSize) : 9);
   const doneSet = new Set(done);
   SLOTS.forEach(([b, c], i) => {
     plan.blocks[b][c] = {

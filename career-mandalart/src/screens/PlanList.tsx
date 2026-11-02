@@ -1,14 +1,14 @@
 import { useState } from 'react';
 import { Alert, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { APP_NAME, APP_NAME_EN, APP_TAGLINE_EN } from '../brand';
-import { CENTER, Plan, progress } from '../model';
+import { CENTER, Plan, PLAN_SIZES, PlanSize, progress, sizeLabel, sizeOf } from '../model';
 import { routineItems } from '../routine';
 import { THEME_LABELS, useTheme } from '../theme';
 
 type Props = {
   plans: Plan[];
   onOpen: (id: string) => void;
-  onCreate: (title: string) => void;
+  onCreate: (title: string, size: PlanSize) => void;
   onDelete: (id: string) => void;
   onBackup: () => void;
   onScanQr: () => void;
@@ -34,6 +34,7 @@ function confirm(message: string, onYes: () => void) {
 export default function PlanList({ plans, onOpen, onCreate, onDelete, onBackup, onScanQr, onTheme, onStory, onAbout, onTemplates, onToday, notice }: Props) {
   const { t, ui } = useTheme();
   const [title, setTitle] = useState('');
+  const [size, setSize] = useState<PlanSize>(9);
   // 오늘의 점검 요약 — 반복 점검 칸이 하나라도 있으면 목록 맨 위에 보인다
   const items = routineItems(plans);
   const today = items.filter(i => i.scope === 'day' && i.dueToday);
@@ -41,7 +42,7 @@ export default function PlanList({ plans, onOpen, onCreate, onDelete, onBackup, 
   const missed = items.filter(i => i.stats.missedPrev).length;
 
   const create = () => {
-    onCreate(title.trim() || '새 청사진');
+    onCreate(title.trim() || (size === 9 ? '새 청사진' : `새 ${size}칸 청사진`), size);
     setTitle('');
   };
 
@@ -98,6 +99,24 @@ export default function PlanList({ plans, onOpen, onCreate, onDelete, onBackup, 
         <Text style={{ color: t.onPrimary, fontSize: 18 }}>›</Text>
       </Pressable>
 
+      {/* 81칸이 부담되면 작은 버전으로 — 9 가 시그니처(기본) */}
+      <View style={{ gap: 6, marginTop: 8 }}>
+        <View style={styles.sizeRow}>
+          {PLAN_SIZES.map(n => {
+            const on = n === size;
+            return (
+              <Pressable key={n} onPress={() => setSize(n)} style={[styles.sizeChip, { borderColor: on ? t.primary : t.border, backgroundColor: on ? t.primary : t.surface }]}>
+                <Text style={{ color: on ? t.onPrimary : t.text, fontWeight: on ? '800' : '600', fontSize: 15 }}>{n}</Text>
+                <Text style={{ color: on ? t.onPrimary : t.sub, fontSize: 10 }}>{n === 9 ? '81칸' : `${n * n}칸`}</Text>
+              </Pressable>
+            );
+          })}
+        </View>
+        <Text style={[ui.sub, { fontSize: 12 }]}>
+          {size === 9 ? '9 · 시그니처 81칸 — ' : `${size} · 작은 청사진 — `}{sizeLabel(size)}
+        </Text>
+      </View>
+
       <View style={styles.newRow}>
         <TextInput
           value={title}
@@ -114,16 +133,19 @@ export default function PlanList({ plans, onOpen, onCreate, onDelete, onBackup, 
       {[...plans].sort((a, b) => b.updatedAt - a.updatedAt).map(p => {
         const pr = progress(p);
         const core = p.blocks[CENTER][CENTER].text;
+        const n = sizeOf(p);
         return (
           <Pressable key={p.id} style={[styles.card, { backgroundColor: t.surface, borderColor: t.border, borderLeftColor: t.primary }]} onPress={() => onOpen(p.id)}>
             <View style={{ flex: 1 }}>
-              <Text style={[styles.cardTitle, { color: t.text }]}>{p.title}</Text>
+              <Text style={[styles.cardTitle, { color: t.text }]}>
+                {p.title}{n !== 9 && <Text style={{ color: t.sub, fontSize: 12, fontWeight: '600' }}>  {n}칸</Text>}
+              </Text>
               <Text style={[styles.cardCore, { color: t.sub }]} numberOfLines={1}>{core || '핵심 목표를 정해보세요'}</Text>
               <View style={ui.bar}>
                 <View style={[ui.barFill, { width: `${Math.round(pr.ratio * 100)}%` }]} />
               </View>
               <Text style={[styles.meta, { color: t.sub }]}>
-                실행 과제 {pr.done}/{pr.filled} 완료 · {new Date(p.updatedAt).toLocaleDateString()}
+                {n === 1 ? '목표' : '실행 과제'} {pr.done}/{pr.filled} 완료 · {new Date(p.updatedAt).toLocaleDateString()}
               </Text>
             </View>
             <Pressable hitSlop={10} onPress={() => confirm(`'${p.title}'을(를) 삭제할까요?`, () => onDelete(p.id))}>
@@ -149,7 +171,9 @@ export default function PlanList({ plans, onOpen, onCreate, onDelete, onBackup, 
 
 const styles = StyleSheet.create({
   wrap: { padding: 16, gap: 12 },
-  newRow: { flexDirection: 'row', gap: 8, marginVertical: 8 },
+  newRow: { flexDirection: 'row', gap: 8, marginBottom: 8 },
+  sizeRow: { flexDirection: 'row', gap: 6 },
+  sizeChip: { flex: 1, alignItems: 'center', paddingVertical: 6, borderRadius: 10, borderWidth: 1 },
   story: { flexDirection: 'row', alignItems: 'center', gap: 12, padding: 14, borderRadius: 14, borderWidth: 1 },
   storyStar: { fontSize: 24 },
   storyTitle: { fontSize: 15, fontWeight: '700' },

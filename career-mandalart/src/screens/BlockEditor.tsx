@@ -9,7 +9,8 @@ import { guideSub } from '../categories/tree';
 import { composeText } from '../categories/units';
 import { ActionBuilder, GoalCategoryPicker } from '../components/CategoryPicker';
 import RoutinePicker from '../components/RoutinePicker';
-import { ActionSpec, CENTER, Cell, cellRole, getCell, Plan, progress, Routine } from '../model';
+import { layoutBlock } from '../components/ShapeLayout';
+import { ActionSpec, blocksOf, CENTER, Cell, cellRole, getCell, Plan, progress, Routine, sizeOf } from '../model';
 import { routineLabel, routineStats } from '../routine';
 import { useTheme } from '../theme';
 
@@ -34,12 +35,14 @@ export default function BlockEditor({
   const { width } = useWindowDimensions();
   const { t, ui } = useTheme();
   const size = Math.min(width, 520) - 32;
-  const cellSize = (size - 16) / 3;
+  const shape = sizeOf(plan);
+  const lay = layoutBlock(shape, block, size, 8, shape === 1 ? 220 : 160);
+  const cellSize = lay.cell;
   const [editing, setEditing] = useState<number | null>(null);
 
   const center = getCell(plan, block, CENTER);
   const pr = progress(plan, block);
-  const headerTitle = block === CENTER ? '핵심 블록' : center.text || `세부 목표 ${block < CENTER ? block + 1 : block}`;
+  const headerTitle = block === CENTER ? '핵심 블록' : center.text || `세부 목표 ${blocksOf(shape).filter(b => b !== CENTER).indexOf(block) + 1}`;
   const blockCat = block === CENTER ? undefined : center.cat;
 
   return (
@@ -50,11 +53,13 @@ export default function BlockEditor({
       </View>
 
       <ScrollView contentContainerStyle={{ padding: 16, alignItems: 'center', gap: 16 }}>
-        <View style={[styles.grid, { width: size }]}>
-          {IDX.map(c => {
+        <View style={{ width: lay.width, height: lay.height }}>
+          {lay.cells.map(({ cell: c, x, y }) => {
             const v = getCell(plan, block, c);
             const role = cellRole(block, c);
             const isAction = role === 'action';
+            // 완료 · 반복 점검을 다는 칸 (1칸 버전은 핵심 목표 칸)
+            const tracked = isAction || shape === 1;
             const color = role === 'core' ? t.blocks[CENTER] : role === 'goal' ? t.blocks[block === CENTER ? c : block]
               : v.done ? t.done : t.surface;
             const fg = isAction ? (v.done ? t.doneText : t.text) : t.on(color);
@@ -67,8 +72,8 @@ export default function BlockEditor({
                 onLongPress={() => block === CENTER && c !== CENTER && onChangeBlock(c)}
                 style={[
                   styles.cell,
-                  { width: cellSize, height: cellSize, backgroundColor: color, borderColor: t.border },
-                  v.done && isAction && { borderColor: t.doneBorder },
+                  { left: x, top: y, width: cellSize, height: cellSize, backgroundColor: color, borderColor: t.border },
+                  v.done && tracked && { borderColor: t.doneBorder, borderWidth: isAction ? 1 : 3 },
                 ]}
               >
                 <Text style={[styles.role, { color: fg, opacity: 0.6 }]}>
@@ -87,7 +92,7 @@ export default function BlockEditor({
                   {v.text || (guide ? `+ ${guide.label}` : '+ 입력')}
                 </Text>
                 {v.done && <Text style={[styles.check, { color: t.doneBorder }]}>✓</Text>}
-                {isAction && v.routine && !v.done && (() => {
+                {tracked && v.routine && !v.done && (() => {
                   const st = routineStats(v.routine, v.log);
                   return (
                     <Text style={[styles.loop, { color: st.checked ? t.doneBorder : t.sub }]} numberOfLines={1}>
@@ -100,19 +105,19 @@ export default function BlockEditor({
           })}
         </View>
 
-        {block !== CENTER && (
+        {(block !== CENTER || shape === 1) && (
           <View style={{ width: size, gap: 6 }}>
             <View style={ui.bar}><View style={[ui.barFill, { width: `${Math.round(pr.ratio * 100)}%` }]} /></View>
-            <Text style={ui.sub}>이 블록 실행 과제 {pr.done}/{pr.filled} 완료</Text>
+            <Text style={ui.sub}>{shape === 1 ? `목표 ${pr.done}/${pr.filled} 완료 · 칸을 눌러 반복 점검 · 알림도 걸 수 있어요` : `이 블록 실행 과제 ${pr.done}/${pr.filled} 완료`}</Text>
           </View>
         )}
-        {block === CENTER && (
+        {block === CENTER && shape !== 1 && (
           <Text style={[ui.sub, { width: size }]}>세부 목표 칸을 길게 누르면 해당 블록으로 이동합니다.</Text>
         )}
 
-        {/* 블록 빠른 이동 */}
-        <View style={[styles.mini, { width: 3 * 40 + 8 }]}>
-          {IDX.map(b => (
+        {/* 블록 빠른 이동 — 이 크기에서 쓰는 블록만 */}
+        {shape !== 1 && <View style={[styles.mini, { width: 3 * 40 + 8 }]}>
+          {IDX.map(b => !blocksOf(shape).includes(b) ? <View key={b} style={styles.miniCell} /> : (
             <Pressable
               key={b}
               onPress={() => onChangeBlock(b)}
@@ -123,12 +128,13 @@ export default function BlockEditor({
               </Text>
             </Pressable>
           ))}
-        </View>
+        </View>}
       </ScrollView>
 
       {editing !== null && (
         <CellEditor
           role={cellRole(block, editing)}
+          trackable={cellRole(block, editing) === 'action' || shape === 1}
           cell={getCell(plan, block, editing)}
           blockCat={blockCat}
           guide={guideSub(blockCat, editing, age)?.id}
@@ -144,8 +150,9 @@ export default function BlockEditor({
   );
 }
 
-function CellEditor({ role, cell, blockCat, guide, age, custom, onAge, onAddCustom, onClose, onSave }: {
+function CellEditor({ role, trackable, cell, blockCat, guide, age, custom, onAge, onAddCustom, onClose, onSave }: {
   role: keyof typeof ROLE_LABEL;
+  trackable: boolean; // 완료 · 반복 점검을 다는 칸
   cell: Cell;
   blockCat?: string;
   guide?: string;
@@ -215,13 +222,13 @@ function CellEditor({ role, cell, blockCat, guide, age, custom, onAge, onAddCust
             placeholder="메모 · 기한 · 측정 기준 (선택)"
             style={[ui.input, { minHeight: 80 }]}
           />
-          {role === 'action' && <RoutinePicker routine={routine} when={spec.when} onChange={setRoutine} />}
-          {role === 'action' && (
+          {trackable && <RoutinePicker routine={routine} when={spec.when} onChange={setRoutine} step={role === 'action' ? '⑤' : '②'} />}
+          {trackable && (
             <Pressable style={[ui.btn, done && { backgroundColor: t.done, borderColor: t.doneBorder }]} onPress={() => setDone(!done)}>
-              <Text style={ui.btnText}>{done ? '✓ 과제 완료됨' : '과제 전체를 완료로 표시'}</Text>
+              <Text style={ui.btnText}>{role === 'action' ? (done ? '✓ 과제 완료됨' : '과제 전체를 완료로 표시') : (done ? '✓ 목표 달성' : '목표 달성으로 표시')}</Text>
             </Pressable>
           )}
-          {role === 'action' && routine && (
+          {trackable && routine && (
             <Text style={[ui.sub, { marginTop: -6 }]}>
               주기마다의 체크는 「오늘의 점검」에서 합니다 ({routineLabel(routine)}). 과제 전체를 완료하면 점검 목록에서 빠집니다.
             </Text>
@@ -230,7 +237,7 @@ function CellEditor({ role, cell, blockCat, guide, age, custom, onAge, onAddCust
             <Pressable style={[ui.btn, { flex: 1 }]} onPress={onClose}><Text style={ui.btnText}>취소</Text></Pressable>
             <Pressable
               style={[ui.btnPrimary, { flex: 1 }]}
-              onPress={() => onSave({ text: text.trim(), note, done, ...(role !== 'action' ? { cat } : { spec, routine }) })}
+              onPress={() => onSave({ text: text.trim(), note, done, ...(role !== 'action' ? { cat } : { spec }), ...(trackable ? { routine } : {}) })}
             >
               <Text style={ui.btnPrimaryText}>저장</Text>
             </Pressable>
@@ -242,9 +249,8 @@ function CellEditor({ role, cell, blockCat, guide, age, custom, onAge, onAddCust
 }
 
 const styles = StyleSheet.create({
-  grid: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   cell: {
-    borderRadius: 12, borderWidth: 1, padding: 8,
+    position: 'absolute', borderRadius: 12, borderWidth: 1, padding: 8,
     alignItems: 'center', justifyContent: 'center',
   },
   role: { position: 'absolute', top: 6, left: 8, fontSize: 9 },

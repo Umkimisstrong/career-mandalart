@@ -55,7 +55,45 @@ export type Plan = {
   createdAt: number;
   updatedAt: number;
   blocks: Cell[][];
+  // 청사진 크기 — 없으면 9 (81칸 시그니처). 작은 버전도 같은 9×9 저장 구조에서 일부 칸만 쓴다.
+  size?: PlanSize;
 };
+
+// 1 · 3 · 5 · 7 · 9칸 버전 — N칸 한 묶음 = 가운데 1 + 둘레 N-1.
+// 가운데 묶음의 둘레 칸 = 세부 목표 N-1개, 세부 목표마다 같은 모양 묶음 하나 (가운데 = 그 세부 목표, 둘레 = 실행 과제)
+//   9: 3×3 (81칸)       7: 육각 꽃 (위 2 · 가운데 3 · 아래 2)
+//   5: 십자              3: 가로 줄(가운데 묶음) + 세로 줄(세부 목표 묶음)      1: 핵심 목표 한 칸
+export type PlanSize = 1 | 3 | 5 | 7 | 9;
+export const PLAN_SIZES: PlanSize[] = [9, 7, 5, 3, 1];
+const SHAPE: Record<PlanSize, number[]> = {
+  9: [0, 1, 2, 3, 4, 5, 6, 7, 8],
+  7: [0, 2, 3, 4, 5, 6, 8],
+  5: [1, 3, 4, 5, 7],
+  3: [3, 4, 5],
+  1: [4],
+};
+export const sizeOf = (plan: Plan): PlanSize => plan.size ?? 9;
+// 이 크기에서 쓰는 블록 (= 가운데 묶음에서 쓰는 칸)
+export const blocksOf = (size: PlanSize) => SHAPE[size];
+// 블록 b 안에서 쓰는 칸 — 3칸 버전의 세부 목표 묶음은 세로 줄
+export const cellsOf = (size: PlanSize, block: number) =>
+  size === 3 && block !== CENTER ? [1, 4, 7] : SHAPE[size];
+// 3×3 안 위치 (열 · 행) — 7칸 버전은 위 · 아래 줄을 반 칸씩 안으로 당겨 육각형으로
+export function slotPos(size: PlanSize, i: number): { col: number; row: number } {
+  const row = Math.floor(i / 3);
+  let col = i % 3;
+  if (size === 7 && row !== 1) col = col === 0 ? 0.5 : 1.5;
+  return { col, row };
+}
+// 완료 · 반복 점검을 다는 칸 [블록, 칸] — 실행 과제 칸들 (1칸 버전은 핵심 목표 칸 하나)
+export function trackedCells(plan: Plan): [number, number][] {
+  const size = sizeOf(plan);
+  if (size === 1) return [[CENTER, CENTER]];
+  return blocksOf(size).filter(b => b !== CENTER)
+    .flatMap(b => cellsOf(size, b).filter(c => c !== CENTER).map(c => [b, c] as [number, number]));
+}
+export const sizeLabel = (size: PlanSize) =>
+  size === 1 ? '목표 1개' : `세부 목표 ${size - 1} · 실행 과제 ${(size - 1) ** 2}`;
 
 export type Store = {
   version: 1;
@@ -72,7 +110,7 @@ export type Store = {
 
 const emptyCell = (): Cell => ({ text: '', note: '', done: false });
 
-export function newPlan(title: string): Plan {
+export function newPlan(title: string, size: PlanSize = 9): Plan {
   const now = Date.now();
   return {
     id: `${now.toString(36)}-${Math.random().toString(36).slice(2, 8)}`,
@@ -80,6 +118,7 @@ export function newPlan(title: string): Plan {
     createdAt: now,
     updatedAt: now,
     blocks: Array.from({ length: 9 }, () => Array.from({ length: 9 }, emptyCell)),
+    ...(size !== 9 ? { size } : {}),
   };
 }
 
@@ -107,18 +146,16 @@ export function cellRole(block: number, cell: number): 'core' | 'goal' | 'action
   return 'action';
 }
 
-// 실행 과제(바깥 블록의 가장자리 64칸) 중 내용이 있는 칸 기준 진행률
+// 실행 과제(81칸이면 바깥 블록의 가장자리 64칸) 중 내용이 있는 칸 기준 진행률. 1칸 버전은 핵심 목표 칸
 export function progress(plan: Plan, onlyBlock?: number) {
   let filled = 0;
   let done = 0;
-  plan.blocks.forEach((row, b) => {
-    if (b === CENTER || (onlyBlock !== undefined && b !== onlyBlock)) return;
-    row.forEach((c, i) => {
-      if (i === CENTER || !c.text.trim()) return;
-      filled++;
-      if (c.done) done++;
-    });
-  });
+  for (const [b, i] of trackedCells(plan)) {
+    const c = plan.blocks[b][i];
+    if ((onlyBlock !== undefined && b !== onlyBlock) || !c.text.trim()) continue;
+    filled++;
+    if (c.done) done++;
+  }
   return { filled, done, ratio: filled ? done / filled : 0 };
 }
 
