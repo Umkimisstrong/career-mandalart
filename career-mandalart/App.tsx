@@ -3,7 +3,9 @@ import { ReactNode, useEffect, useMemo, useRef, useState } from 'react';
 import { ActivityIndicator, Platform, View } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import InstallBanner from './src/components/InstallBanner';
-import { Cell, getCell, newPlan, ohtaniPlan, Plan, setCell, Store } from './src/model';
+import { AGE_BANDS } from './src/categories/data';
+import { planFromTemplate, templateOf } from './src/categories/templates';
+import { Cell, fitSize, getCell, newPlan, ohtaniPlan, Plan, setCell, Store } from './src/model';
 import { syncReminders } from './src/notify';
 import { decodePlan } from './src/qr/codec';
 import { pickQrFromImage } from './src/qr/image';
@@ -11,7 +13,7 @@ import About from './src/screens/About';
 import Backup from './src/screens/Backup';
 import BlockEditor from './src/screens/BlockEditor';
 import Overview from './src/screens/Overview';
-import PlanList from './src/screens/PlanList';
+import PlanList, { Home } from './src/screens/PlanList';
 import QrScan from './src/screens/QrScan';
 import QrShare from './src/screens/QrShare';
 import Story from './src/screens/Story';
@@ -21,15 +23,16 @@ import Today from './src/screens/Today';
 import { routineItems, toggleKey } from './src/routine';
 import { loadStore, saveStore } from './src/storage';
 import { buildTheme, isDark, ThemeProvider } from './src/theme';
+import type { AgeBand } from './src/categories/data';
 
 type Route =
   | { name: 'list' }
   | { name: 'backup' }
   | { name: 'scan' }
   | { name: 'theme' }
-  | { name: 'story' }
+  | { name: 'story'; from: 'about' | 'templates' }
   | { name: 'about' }
-  | { name: 'templates' }
+  | { name: 'templates'; age?: AgeBand }
   | { name: 'today' }
   | { name: 'qr'; id: string }
   | { name: 'plan'; id: string; block: number | null };
@@ -37,7 +40,9 @@ type Route =
 export default function App() {
   const [store, setStore] = useState<Store | null>(null);
   const [route, setRoute] = useState<Route>({ name: 'list' });
-  const [notice, setNotice] = useState('');
+  const [notice, setNotice] = useState<{ text: string; error?: boolean }>();
+  // 메인 화면의 탭 · 목록 필터 — 다른 화면에 다녀와도 유지
+  const [home, setHome] = useState<Home>({ tab: 'list', filter: 'all' });
   const loaded = useRef(false);
   const theme = useMemo(() => buildTheme(store?.theme), [store?.theme]);
 
@@ -68,10 +73,11 @@ export default function App() {
     return () => clearTimeout(timer);
   }, [store?.plans, store?.notify]);
 
-  // QR 에서 복원한 청사진을 목록에 추가하고 바로 펼친다
-  const importPlan = (plan: Plan) => {
+  // 새 목표를 목록에 추가하고 바로 펼친다 (만들기 · 템플릿 · QR)
+  const addPlan = (plan: Plan) => {
     setStore(s => s && { ...s, plans: [...s.plans, plan] });
-    setNotice('');
+    setNotice(undefined);
+    setHome(h => ({ ...h, tab: 'list' }));
     setRoute({ name: 'plan', id: plan.id, block: null });
   };
 
@@ -79,9 +85,9 @@ export default function App() {
     if (Platform.OS !== 'web') return setRoute({ name: 'scan' });
     try {
       const text = await pickQrFromImage();
-      if (text) importPlan(decodePlan(text));
+      if (text) addPlan(decodePlan(text));
     } catch (e) {
-      setNotice((e as Error).message);
+      setNotice({ text: (e as Error).message, error: true });
     }
   };
 
@@ -92,25 +98,45 @@ export default function App() {
       screen = (
         <PlanList
           plans={store.plans}
+          home={home}
+          onHome={h => { setHome(h); setNotice(undefined); }}
+          age={store.age}
           onOpen={id => setRoute({ name: 'plan', id, block: null })}
-          onCreate={(title, size) => {
-            const p = newPlan(title, size);
-            setStore({ ...store, plans: [...store.plans, p] });
-            setRoute({ name: 'plan', id: p.id, block: null });
+          onCreate={(title, size, tpl) => {
+            // 템플릿은 81칸으로 채운 뒤 고른 크기에 들어가는 자리만 남긴다
+            const t = tpl && tpl !== 'ohtani' ? templateOf(tpl) : undefined;
+            const label = AGE_BANDS.find(a => a.id === tpl)?.label ?? '';
+            let p = tpl === 'ohtani' ? fitSize({ ...ohtaniPlan(), title: `오타니 쇼헤이의 ${size * size}칸 (고교 1학년)` }, size)
+              : t ? fitSize(planFromTemplate(t, label), size)
+              : newPlan(title || (size === 9 ? '새 목표' : `새 ${size}칸 목표`), size);
+            if (title) p = { ...p, title };
+            if (tpl && tpl !== 'ohtani' && !store.age) setStore(s => s && { ...s, age: tpl });
+            addPlan(p);
           }}
           onDelete={id => setStore({ ...store, plans: store.plans.filter(p => p.id !== id) })}
           onBackup={() => setRoute({ name: 'backup' })}
           onScanQr={scanQr}
           onTheme={() => setRoute({ name: 'theme' })}
-          onStory={() => setRoute({ name: 'story' })}
           onAbout={() => setRoute({ name: 'about' })}
-          onTemplates={() => setRoute({ name: 'templates' })}
+          onTemplates={age => setRoute({ name: 'templates', age })}
           onToday={() => setRoute({ name: 'today' })}
           notice={notice}
         />
       );
     } else if (route.name === 'backup') {
-      screen = <Backup store={store} onBack={() => setRoute({ name: 'list' })} onImport={setStore} />;
+      screen = (
+        <Backup
+          store={store}
+          onBack={() => setRoute({ name: 'list' })}
+          onImport={(next, ids) => {
+            setStore(next);
+            // 하나면 그 목표를 바로 펼치고, 여러 개면 전체 목록으로
+            setHome({ tab: 'list', filter: 'all' });
+            setNotice({ text: `백업 코드에서 목표 ${ids.length}개를 불러왔어요.` });
+            setRoute(ids.length === 1 ? { name: 'plan', id: ids[0], block: null } : { name: 'list' });
+          }}
+        />
+      );
     } else if (route.name === 'today') {
       screen = (
         <Today
@@ -125,25 +151,23 @@ export default function App() {
     } else if (route.name === 'templates') {
       screen = (
         <Templates
-          age={store.age}
+          age={route.age ?? store.age}
           onBack={() => setRoute({ name: 'list' })}
           onUse={(p, age) => {
-            setStore(s => s && { ...s, plans: [...s.plans, p], age: s.age ?? age });
-            setRoute({ name: 'plan', id: p.id, block: null });
+            setStore(s => s && { ...s, age: s.age ?? age });
+            addPlan(p);
           }}
+          onStory={() => setRoute({ name: 'story', from: 'templates' })}
+          onOhtani={() => addPlan(ohtaniPlan())}
         />
       );
     } else if (route.name === 'about') {
-      screen = <About onBack={() => setRoute({ name: 'list' })} onStory={() => setRoute({ name: 'story' })} />;
+      screen = <About onBack={() => setRoute({ name: 'list' })} onStory={() => setRoute({ name: 'story', from: 'about' })} />;
     } else if (route.name === 'story') {
       screen = (
         <Story
-          onBack={() => setRoute({ name: 'list' })}
-          onStart={() => {
-            const p = ohtaniPlan();
-            setStore(s => s && { ...s, plans: [...s.plans, p] });
-            setRoute({ name: 'plan', id: p.id, block: null });
-          }}
+          onBack={() => setRoute(route.from === 'templates' ? { name: 'templates' } : { name: 'about' })}
+          onStart={() => addPlan(ohtaniPlan())}
         />
       );
     } else if (route.name === 'theme') {
@@ -155,7 +179,7 @@ export default function App() {
         />
       );
     } else if (route.name === 'scan') {
-      screen = <QrScan onBack={() => setRoute({ name: 'list' })} onImport={importPlan} />;
+      screen = <QrScan onBack={() => setRoute({ name: 'list' })} onImport={addPlan} />;
     } else if (route.name === 'qr') {
       const plan = store.plans.find(p => p.id === route.id);
       if (plan) {

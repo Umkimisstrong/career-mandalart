@@ -191,7 +191,7 @@ export function ohtaniPlan(): Plan {
 }
 
 export function samplePlan(): Plan {
-  let p = newPlan('나의 커리어 청사진');
+  let p = newPlan('나의 커리어 목표');
   const goals = ['전문성', '리더십', '네트워크', '건강', '', '재무', '브랜딩', '학습', '마인드셋'];
   const cats = ['career', 'career', 'network', 'health', '', 'money', 'recognition', 'growth', 'mindset'];
   p = setCell(p, CENTER, CENTER, { text: '10년 후 업계 최고의 전문가' });
@@ -200,4 +200,12 @@ export function samplePlan(): Plan {
     p = setCell(p, 0, [0, 1, 2, 3][i], { text: t });
   });
   return p;
+}
+
+// 81칸으로 채운 목표(템플릿 · 오타니)를 작은 크기로 — 그 크기에서 쓰지 않는 칸은 비운다
+export function fitSize(plan: Plan, size: PlanSize): Plan {
+  if (size === 9) return plan;
+  const blocks = plan.blocks.map((row, b) => row.map((cell, c) =>
+    blocksOf(size).includes(b) && cellsOf(size, b).includes(c) ? cell : emptyCell()));
+  return { ...plan, blocks, size };
 }

@@ -1,4 +1,4 @@
-// 연령대별 81칸 템플릿 — 처음 쓰는 사람이 빈 81칸 앞에서 막히지 않도록 미리 채운 청사진.
+// 연령대별 81칸 템플릿 — 처음 쓰는 사람이 빈 81칸 앞에서 막히지 않도록 미리 채운 목표.
 //
 // 설계 근거 (docs/templates.md)
 //  - 연령대별 주제: Erikson 심리사회적 발달 단계 + Pew 삶의 의미 조사(연령대별 언급 영역)
@@ -483,9 +483,9 @@ export function parseAction(line: string, blockCat: string): ActionSpec {
 
 const OUTER = [0, 1, 2, 3, 5, 6, 7, 8];
 
-// 템플릿으로 81칸을 채운 새 청사진
+// 템플릿으로 81칸을 채운 새 목표
 export function planFromTemplate(tpl: Template, label: string): Plan {
-  let p = newPlan(`${label} 청사진 — ${tpl.core}`);
+  let p = newPlan(`${label} 목표 — ${tpl.core}`);
   p = setCell(p, CENTER, CENTER, { text: tpl.core });
   tpl.goals.forEach((g, gi) => {
     const b = OUTER[gi];

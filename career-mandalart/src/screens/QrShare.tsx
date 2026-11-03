@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { Image, Platform, Pressable, ScrollView, Text, useWindowDimensions, View } from 'react-native';
 import QRCode from 'qrcode';
 import { SvgXml } from 'react-native-svg';
-import { Plan } from '../model';
+import { Plan, sizeOf } from '../model';
 import { encodePlan } from '../qr/codec';
 import { makeQrPng, saveQrPng } from '../qr/image';
 import { useTheme } from '../theme';
@@ -49,7 +49,7 @@ export default function QrShare({ plan, onBack }: Props) {
       </View>
       <ScrollView contentContainerStyle={{ padding: 16, gap: 14, alignItems: 'center' }}>
         <Text style={[ui.sub, { width: size }]}>
-          이 QR 이미지 한 장에 「{plan.title}」의 81칸이 모두 들어 있습니다. 사진 앱에 저장해 두면 앱을 지우거나
+          이 QR 이미지 한 장에 「{plan.title}」의 {sizeOf(plan) ** 2}칸이 모두 들어 있습니다. 사진 앱에 저장해 두면 앱을 지우거나
           기기를 바꿔도 「QR로 불러오기」로 그대로 펼칠 수 있습니다.
         </Text>
 
@@ -67,7 +67,7 @@ export default function QrShare({ plan, onBack }: Props) {
 
         {droppedNotes && (
           <Text style={[ui.sub, { width: size, color: '#B45309' }]}>
-            메모까지 담기에는 내용이 많아 메모는 제외했습니다. 메모까지 보관하려면 JSON 백업을 함께 이용하세요.
+            메모까지 담기에는 내용이 많아 메모는 제외했습니다. 메모까지 보관하려면 「백업 · 복원」의 백업 코드를 함께 이용하세요.
           </Text>
         )}
 

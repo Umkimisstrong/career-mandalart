@@ -53,8 +53,12 @@ export function pickQrFromImage(): Promise<string | null> {
     const input = document.createElement('input');
     input.type = 'file';
     input.accept = 'image/*';
+    // iOS Safari 는 문서에 붙지 않은 input 의 change 를 놓칠 수 있어 잠깐 붙였다가 뗀다
+    input.style.display = 'none';
+    document.body.appendChild(input);
     input.onchange = async () => {
       const f = input.files?.[0];
+      input.remove();
       if (!f) return resolve(null);
       try {
         resolve(await decodeImageFile(f));

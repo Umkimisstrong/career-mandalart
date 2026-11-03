@@ -68,7 +68,7 @@ export function decodePlan(text: string): Plan {
     throw new Error('QR 데이터가 손상되었습니다.');
   }
   const [title, texts, notes, done, cats = [], size = 9] = packed;
-  const plan = newPlan(title || '불러온 청사진', PLAN_SIZES.includes(size as PlanSize) ? (size as PlanSize) : 9);
+  const plan = newPlan(title || '불러온 목표', PLAN_SIZES.includes(size as PlanSize) ? (size as PlanSize) : 9);
   const doneSet = new Set(done);
   SLOTS.forEach(([b, c], i) => {
     plan.blocks[b][c] = {

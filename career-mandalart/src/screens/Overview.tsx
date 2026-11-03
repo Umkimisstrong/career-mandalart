@@ -1,4 +1,4 @@
-// 청사진 전체 보기 (81칸 · 또는 1 · 3 · 5 · 7칸 버전의 모양대로). 칸을 누르면 그 블록 편집 화면으로 들어간다.
+// 목표 전체 보기 (81칸 · 또는 1 · 3 · 5 · 7칸 버전의 모양대로). 칸을 누르면 그 블록 편집 화면으로 들어간다.
 import { Pressable, ScrollView, StyleSheet, Text, TextInput, useWindowDimensions, View } from 'react-native';
 import { layoutPlan } from '../components/ShapeLayout';
 import { CENTER, cellRole, getCell, Plan, progress, sizeOf } from '../model';

@@ -106,7 +106,7 @@ export default function Today({ plans, notify, onBack, onToggle, onOpenBlock, on
         {!items.length ? (
           <View style={[styles.box2, card]}>
             <Text style={[styles.h2, { color: t.text }]}>아직 반복 점검할 칸이 없어요</Text>
-            <Text style={[ui.sub]}>청사진 → 블록 → 실행 과제 칸을 열고 「⑤ 반복 점검 · 알림」에서 매일 · 요일 · 매주 · 매월을 고르세요.</Text>
+            <Text style={[ui.sub]}>목표 → 블록 → 실행 과제 칸을 열고 「⑤ 반복 점검 · 알림」에서 매일 · 요일 · 매주 · 매월을 고르세요.</Text>
           </View>
         ) : (
           <>
