@@ -95,7 +95,7 @@ function WidgetBody({ plan, now, onToggle }: { plan: Plan; now: Date; onToggle: 
           : <Detail plan={plan} block={open} all={all} onToggle={onToggle} onBack={() => setOpen(null)} />}
       {/* 펼친 화면에서는 큰 창으로 가는 길 하나만 */}
       {open !== null && (
-        <Pressable onPress={() => desktop?.open(plan.id, open === CENTER ? null : open)} style={styles.more}>
+        <Pressable accessibilityRole="button" onPress={() => desktop?.open(plan.id, open === CENTER ? null : open)} style={styles.more}>
           <Text style={{ color: t.sub, fontSize: 11, fontWeight: '600' }}>큰 창에서 열기 ›</Text>
         </Pressable>
       )}
@@ -153,7 +153,7 @@ function Cell({ x, y, size, core, emoji, label, ratio, color, due, onPress }: {
   const pulse = usePulse(due > 0);
   const fg = t.on(color);
   return (
-    <Pressable onPress={onPress} accessibilityLabel={label}
+    <Pressable accessibilityRole="button" onPress={onPress} accessibilityLabel={label}
       style={[styles.cell, { left: x, top: y, width: size, height: size, backgroundColor: color }]}>
       {due > 0 && (
         <Animated.View pointerEvents="none" style={[StyleSheet.absoluteFill, styles.glow, {
@@ -181,7 +181,7 @@ function DetailHead({ emoji, title, right, color, onBack }: { emoji?: string; ti
   const { t } = useTheme();
   const fg = t.on(color);
   return (
-    <Pressable onPress={onBack} style={[styles.dHead, { backgroundColor: color }]} accessibilityLabel="뒤로">
+    <Pressable accessibilityRole="button" onPress={onBack} style={[styles.dHead, { backgroundColor: color }]} accessibilityLabel="뒤로">
       <Text style={[styles.back, { color: fg }]}>‹</Text>
       {!!emoji && <Text style={{ fontSize: 14, color: fg }}>{emoji}</Text>}
       <Text style={[styles.dTitle, { color: fg }]} numberOfLines={2}>{title}</Text>
@@ -253,7 +253,7 @@ function Row({ text, state, sub, onPress }: { text: string; state: 'done' | 'due
   const { t } = useTheme();
   const pulse = usePulse(state === 'due');
   return (
-    <Pressable onPress={onPress} accessibilityLabel={text}
+    <Pressable accessibilityRole="button" onPress={onPress} accessibilityLabel={text}
       style={({ pressed }) => [styles.row, pressed && { backgroundColor: 'rgba(127,127,127,0.15)' }]}>
       <View style={styles.mark}>
         {state === 'due'

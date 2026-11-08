@@ -60,7 +60,7 @@ function openWidget(id, i) {
   win.webContents.on('did-finish-load', () => {
     win.webContents.insertCSS(`
       html, body, #root { background: transparent !important; -webkit-app-region: drag; overflow: hidden; }
-      [role="button"] { -webkit-app-region: no-drag; cursor: pointer; }
+      [role="button"], [tabindex] { -webkit-app-region: no-drag; cursor: pointer; }
       [data-nodrag] { -webkit-app-region: no-drag; }
       ::-webkit-scrollbar { width: 5px; } ::-webkit-scrollbar-button { display: none; }
       ::-webkit-scrollbar-thumb { background: rgba(127, 127, 127, 0.35); border-radius: 3px; }
