@@ -23,7 +23,7 @@ import Today from './src/screens/Today';
 import { routineItems, toggleKey } from './src/routine';
 import { desktop, WIDGET_ID } from './src/desktop';
 import WidgetApp from './src/screens/Widget';
-import { loadStore, saveStore } from './src/storage';
+import { loadStore, saveStore, STORE_KEY } from './src/storage';
 import { buildTheme, isDark, ThemeProvider } from './src/theme';
 import type { AgeBand } from './src/categories/data';
 
@@ -55,6 +55,14 @@ function App() {
 
   useEffect(() => {
     loadStore().then(s => { loaded.current = true; setStore(s); });
+  }, []);
+
+  // 다른 창(바탕화면 작은 창)이 저장하면 다시 읽는다 — 같은 내용을 다시 저장해도 이벤트는 생기지 않는다
+  useEffect(() => {
+    if (Platform.OS !== 'web') return;
+    const onStorage = (e: StorageEvent) => { if (e.key === STORE_KEY) loadStore().then(setStore); };
+    window.addEventListener('storage', onStorage);
+    return () => window.removeEventListener('storage', onStorage);
   }, []);
 
   // 변경될 때마다 자동 저장

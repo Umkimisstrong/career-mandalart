@@ -1,14 +1,15 @@
 // 바탕화면에 띄워 두는 작은 창 — 목표 하나의 가운데 묶음(핵심 목표 + 세부 목표)을 그 크기 모양대로 보여 준다.
 // 오늘 해야 할 반복 점검이 남은 세부 목표 칸은 천천히 깜빡인다. 칸을 누르면 이 창 안에서 그 칸의 실행 과제를 펼친다
-// (핵심 목표 칸 = 오늘 할 일 모음). 큰 창에서 바꾸면 바로 따라 바뀐다. 이 창은 읽기만 하고 저장하지 않는다.
+// (핵심 목표 칸 = 오늘 할 일 모음). 펼친 목록의 줄을 누르면 체크 — 반복 점검은 이번 기간 체크, 그 밖은 완료.
+// 큰 창과 같은 저장소를 쓰고, 서로 저장하면 storage 이벤트로 바로 따라 바뀐다.
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Animated, LayoutChangeEvent, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { categoryById } from '../categories/data';
 import { layoutBlock } from '../components/ShapeLayout';
 import { desktop } from '../desktop';
-import { cellsOf, CENTER, Plan, progress, sizeOf, Store } from '../model';
-import { RoutineItem, routineItems, routineLabel, Scope } from '../routine';
-import { loadStore, STORE_KEY } from '../storage';
+import { cellsOf, CENTER, getCell, Plan, progress, setCell, sizeOf, Store } from '../model';
+import { periodKey, RoutineItem, routineItems, routineLabel, Scope, toggleKey } from '../routine';
+import { loadStore, saveStore, STORE_KEY } from '../storage';
 import { buildTheme, ThemeProvider, useTheme } from '../theme';
 
 const CELL = 76;
@@ -35,10 +36,24 @@ export default function WidgetApp({ id }: { id: string }) {
     return () => { window.removeEventListener('storage', onStorage); clearInterval(timer); };
   }, []);
 
+  // 줄 하나 체크 — 큰 창이 그 사이 저장했을 수 있으니 저장소에서 새로 읽어 고친다
+  const toggle = async (b: number, c: number) => {
+    const s = await loadStore();
+    const p = s.plans.find(x => x.id === id);
+    if (!p) return;
+    const cell = getCell(p, b, c);
+    const patch = cell.routine && !cell.done
+      ? { log: toggleKey(cell.log, periodKey(cell.routine, new Date())) }
+      : { done: !cell.done };
+    const next = { ...s, plans: s.plans.map(x => (x.id === id ? setCell(p, b, c, patch) : x)) };
+    await saveStore(next);
+    setStore(next);
+  };
+
   const plan = store?.plans.find(p => p.id === id);
   return (
     <ThemeProvider value={theme}>
-      {plan ? <WidgetBody plan={plan} now={now} /> : <Missing loaded={!!store} />}
+      {plan ? <WidgetBody plan={plan} now={now} onToggle={toggle} /> : <Missing loaded={!!store} />}
     </ThemeProvider>
   );
 }
@@ -62,7 +77,7 @@ function Missing({ loaded }: { loaded: boolean }) {
   );
 }
 
-function WidgetBody({ plan, now }: { plan: Plan; now: Date }) {
+function WidgetBody({ plan, now, onToggle }: { plan: Plan; now: Date; onToggle: (b: number, c: number) => void }) {
   const { t } = useTheme();
   const size = sizeOf(plan);
   // 펼친 칸 — null = 모양 그대로, CENTER = 오늘 할 일 모음, 그 밖 = 그 세부 목표의 실행 과제
@@ -76,8 +91,8 @@ function WidgetBody({ plan, now }: { plan: Plan; now: Date }) {
       {open === null
         ? <Grid plan={plan} todo={todo} missed={missed} onOpen={c => (size === 1 ? desktop?.open(plan.id, null) : setOpen(c))} />
         : open === CENTER
-          ? <Today plan={plan} todo={todo} onBack={() => setOpen(null)} />
-          : <Detail plan={plan} block={open} all={all} onBack={() => setOpen(null)} />}
+          ? <Today plan={plan} all={all} onToggle={onToggle} onBack={() => setOpen(null)} />
+          : <Detail plan={plan} block={open} all={all} onToggle={onToggle} onBack={() => setOpen(null)} />}
       {/* 펼친 화면에서는 큰 창으로 가는 길 하나만 */}
       {open !== null && (
         <Pressable onPress={() => desktop?.open(plan.id, open === CENTER ? null : open)} style={styles.more}>
@@ -176,7 +191,9 @@ function DetailHead({ emoji, title, right, color, onBack }: { emoji?: string; ti
 }
 
 // 세부 목표 하나의 실행 과제 — 완료 ✓ · 오늘 할 것(깜빡) · 이번 기간 끝 · 그 밖
-function Detail({ plan, block, all, onBack }: { plan: Plan; block: number; all: RoutineItem[]; onBack: () => void }) {
+function Detail({ plan, block, all, onToggle, onBack }: {
+  plan: Plan; block: number; all: RoutineItem[]; onToggle: (b: number, c: number) => void; onBack: () => void;
+}) {
   const { t } = useTheme();
   const g = plan.blocks[CENTER][block];
   const pr = progress(plan, block);
@@ -189,7 +206,7 @@ function Detail({ plan, block, all, onBack }: { plan: Plan; block: number; all: 
       {!rows.length && <Text style={[styles.empty, { color: t.sub }]}>아직 실행 과제가 없어요</Text>}
       <ScrollView style={{ maxHeight: LIST_MAX }} {...NODRAG}>
         {rows.map(({ c, cell, item }) => (
-          <Row key={c} text={cell.text}
+          <Row key={c} text={cell.text} onPress={() => onToggle(block, c)}
             state={cell.done ? 'done' : item?.dueToday && !item.stats.checked ? 'due' : item?.stats.checked ? 'checked' : 'none'}
             sub={cell.routine && !cell.done ? routineLabel(cell.routine) : undefined} />
         ))}
@@ -200,22 +217,28 @@ function Detail({ plan, block, all, onBack }: { plan: Plan; block: number; all: 
 
 const GROUPS: [Scope, string][] = [['day', '오늘'], ['week', '이번 주'], ['month', '이번 달']];
 
-// 핵심 목표 칸 — 이 목표 전체에서 오늘 남은 점검 (오늘 · 이번 주 · 이번 달로 나눠서)
-function Today({ plan, todo, onBack }: { plan: Plan; todo: RoutineItem[]; onBack: () => void }) {
+// 핵심 목표 칸 — 이 목표 전체에서 오늘 할 점검 (오늘 · 이번 주 · 이번 달로 나눠서). 체크한 줄도 ✓ 로 남겨 되돌릴 수 있게
+function Today({ plan, all, onToggle, onBack }: {
+  plan: Plan; all: RoutineItem[]; onToggle: (b: number, c: number) => void; onBack: () => void;
+}) {
   const { t } = useTheme();
+  const due = all.filter(i => i.dueToday);
+  const todo = due.filter(i => !i.stats.checked);
   return (
     <View>
       <DetailHead emoji="★" title="오늘 할 일" right={todo.length ? `${todo.length}` : '✓'} color={t.blocks[CENTER]} onBack={onBack} />
-      {!todo.length && <Text style={[styles.empty, { color: t.sub }]}>오늘 점검을 모두 마쳤어요</Text>}
+      {!due.length && <Text style={[styles.empty, { color: t.sub }]}>오늘 할 점검이 없어요</Text>}
       <ScrollView style={{ maxHeight: LIST_MAX }} {...NODRAG}>
         {GROUPS.map(([scope, label]) => {
-          const list = todo.filter(i => i.scope === scope);
+          const list = due.filter(i => i.scope === scope);
           if (!list.length) return null;
+          const left = list.filter(i => !i.stats.checked).length;
           return (
             <View key={scope}>
-              <Text style={[styles.group, { color: t.sub }]}>{label} · {list.length}</Text>
+              <Text style={[styles.group, { color: t.sub }]}>{label} · {left ? `${left} 남음` : '끝'}</Text>
               {list.map(i => (
-                <Row key={`${i.block}-${i.cell}`} text={i.text} state="due"
+                <Row key={`${i.block}-${i.cell}`} text={i.text} state={i.stats.checked ? 'checked' : 'due'}
+                  onPress={() => onToggle(i.block, i.cell)}
                   sub={`${short(plan.blocks[CENTER][i.block]?.text ?? '')} · ${routineLabel(i.routine)}`} />
               ))}
             </View>
@@ -226,11 +249,12 @@ function Today({ plan, todo, onBack }: { plan: Plan; todo: RoutineItem[]; onBack
   );
 }
 
-function Row({ text, state, sub }: { text: string; state: 'done' | 'due' | 'checked' | 'none'; sub?: string }) {
+function Row({ text, state, sub, onPress }: { text: string; state: 'done' | 'due' | 'checked' | 'none'; sub?: string; onPress: () => void }) {
   const { t } = useTheme();
   const pulse = usePulse(state === 'due');
   return (
-    <View style={styles.row}>
+    <Pressable onPress={onPress} accessibilityLabel={text}
+      style={({ pressed }) => [styles.row, pressed && { backgroundColor: 'rgba(127,127,127,0.15)' }]}>
       <View style={styles.mark}>
         {state === 'due'
           ? <Animated.View style={[styles.dot, { backgroundColor: t.accent, opacity: pulse.interpolate({ inputRange: [0, 1], outputRange: [0.3, 1] }) }]} />
@@ -242,7 +266,7 @@ function Row({ text, state, sub }: { text: string; state: 'done' | 'due' | 'chec
         <Text style={[styles.rowText, { color: state === 'done' ? t.sub : t.text }, state === 'done' && styles.strike]}>{text}</Text>
         {!!sub && <Text style={[styles.rowSub, { color: state === 'due' ? t.accent : t.sub }]}>{sub}{state === 'checked' ? ' · 이번 기간 완료' : ''}</Text>}
       </View>
-    </View>
+    </Pressable>
   );
 }
 
@@ -279,7 +303,7 @@ const styles = StyleSheet.create({
   back: { fontSize: 18, fontWeight: '700', marginTop: -2 },
   dTitle: { flex: 1, fontSize: 12.5, fontWeight: '800', letterSpacing: -0.3 },
   dRight: { fontSize: 11, fontWeight: '800', opacity: 0.85 },
-  row: { flexDirection: 'row', gap: 8, paddingVertical: 6, paddingHorizontal: 4 },
+  row: { flexDirection: 'row', gap: 8, paddingVertical: 6, paddingHorizontal: 4, borderRadius: 8 },
   mark: { width: 14, alignItems: 'center', paddingTop: 2 },
   dot: { width: 9, height: 9, borderRadius: 5, marginTop: 2 },
   hollow: { borderWidth: 1.5, backgroundColor: 'transparent' },
