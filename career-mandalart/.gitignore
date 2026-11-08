@@ -46,3 +46,4 @@ dist-check/
 # Windows 데스크톱 앱 빌드 결과
 desktop/node_modules/
 desktop/out/
+desktop/.dev-profile/

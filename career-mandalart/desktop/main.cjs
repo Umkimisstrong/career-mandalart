@@ -7,6 +7,9 @@ const path = require('path');
 const arg = process.argv.find(a => a.startsWith('--url='));
 const BASE = (arg ? arg.slice(6) : process.env.GUDO_URL) || 'https://career-mandalart.vercel.app';
 const ICON = path.join(__dirname, 'icon.png');
+// 시험용: --profile=<폴더> 로 실제 앱과 다른 저장소 · 설정을 쓴다 (npm run dev)
+const profile = process.argv.find(a => a.startsWith('--profile='));
+if (profile) app.setPath('userData', path.resolve(profile.slice(10)));
 const CONFIG = () => path.join(app.getPath('userData'), 'widgets.json');
 const ZOOMS = { 작게: 0.8, 보통: 1, 크게: 1.25 };
 
@@ -58,6 +61,9 @@ function openWidget(id, i) {
     win.webContents.insertCSS(`
       html, body, #root { background: transparent !important; -webkit-app-region: drag; overflow: hidden; }
       [role="button"] { -webkit-app-region: no-drag; cursor: pointer; }
+      [data-nodrag] { -webkit-app-region: no-drag; }
+      ::-webkit-scrollbar { width: 5px; } ::-webkit-scrollbar-button { display: none; }
+      ::-webkit-scrollbar-thumb { background: rgba(127, 127, 127, 0.35); border-radius: 3px; }
     `);
   });
   win.once('ready-to-show', () => win.showInactive());

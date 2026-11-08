@@ -1,13 +1,13 @@
 {
   "name": "gudo-desktop",
   "productName": "구도 GUDO",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "구도 GUDO · Nine Ways — Windows 데스크톱 앱 (바탕화면 작은 창)",
   "main": "main.cjs",
   "private": true,
   "scripts": {
     "start": "electron .",
-    "dev": "electron . --url=http://localhost:8090",
+    "dev": "electron . --url=http://localhost:8090 --profile=.dev-profile",
     "dist": "electron-builder --win nsis"
   },
   "devDependencies": {
