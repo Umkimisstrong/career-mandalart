@@ -28,3 +28,20 @@ export function InfoIcon({ color, size = 18 }: P) {
     </Svg>
   );
 }
+
+export function HomeIcon({ color, size = 16 }: P) {
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24">
+      <Path d="M4 11l8-7 8 7M6 9.5V20h4v-6h4v6h4V9.5" {...line(color)} />
+    </Svg>
+  );
+}
+
+// 접기 · 펴기 — open 이면 아래(▾), 아니면 오른쪽(▸)
+export function ChevronIcon({ color, size = 16, open }: P & { open: boolean }) {
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24">
+      <Path d={open ? 'M6 9l6 6 6-6' : 'M9 6l6 6-6 6'} {...line(color)} />
+    </Svg>
+  );
+}

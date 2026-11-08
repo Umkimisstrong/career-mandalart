@@ -5,6 +5,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Animated, LayoutChangeEvent, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { categoryById } from '../categories/data';
+import { ChevronIcon, HomeIcon } from '../components/Icons';
 import { layoutBlock } from '../components/ShapeLayout';
 import { desktop } from '../desktop';
 import { cellsOf, CENTER, getCell, Plan, progress, setCell, sizeOf, Store } from '../model';
@@ -82,40 +83,61 @@ function WidgetBody({ plan, now, onToggle }: { plan: Plan; now: Date; onToggle: 
   const size = sizeOf(plan);
   // 펼친 칸 — null = 모양 그대로, CENTER = 오늘 할 일 모음, 그 밖 = 그 세부 목표의 실행 과제
   const [open, setOpen] = useState<number | null>(null);
+  // 접으면 제목줄만 — 창마다 기억 (이 창의 설정이라 목표 데이터와 따로 둔다)
+  const foldKey = `gudo/widget-fold/${plan.id}`;
+  const [folded, setFolded] = useState(() => { try { return localStorage.getItem(foldKey) === '1'; } catch { return false; } });
+  const fold = () => {
+    const next = !folded;
+    setFolded(next);
+    try { localStorage.setItem(foldKey, next ? '1' : '0'); } catch { /* 기억 못 해도 동작은 한다 */ }
+  };
   const all = routineItems([plan], now);
   const todo = all.filter(i => i.dueToday && !i.stats.checked);
-  const missed = all.filter(i => i.stats.missedPrev).length;
+  const gridW = Math.max(layoutBlock(size, CENTER, 10_000, GAP, CELL).width, 150);
+
+  if (open === null || folded) {
+    return (
+      <View onLayout={fit} style={[styles.shell, { backgroundColor: t.surface, borderColor: t.border }, folded && styles.folded]}>
+        <View style={{ width: gridW }}>
+          <Head title={plan.title} folded={folded} onFold={fold} due={todo.length > 0} />
+          {!folded && <Grid plan={plan} todo={todo} onOpen={c => (size === 1 ? desktop?.open(plan.id, null) : setOpen(c))} />}
+        </View>
+      </View>
+    );
+  }
 
   return (
-    <View onLayout={fit} style={[styles.shell, { backgroundColor: t.surface, borderColor: t.border }, open !== null && { width: DETAIL_W }]}>
-      {open === null
-        ? <Grid plan={plan} todo={todo} missed={missed} onOpen={c => (size === 1 ? desktop?.open(plan.id, null) : setOpen(c))} />
-        : open === CENTER
-          ? <Today plan={plan} all={all} onToggle={onToggle} onBack={() => setOpen(null)} />
-          : <Detail plan={plan} block={open} all={all} onToggle={onToggle} onBack={() => setOpen(null)} />}
+    <View onLayout={fit} style={[styles.shell, { backgroundColor: t.surface, borderColor: t.border }, { width: DETAIL_W }]}>
+      {open === CENTER
+        ? <Today plan={plan} all={all} onToggle={onToggle} onBack={() => setOpen(null)} />
+        : <Detail plan={plan} block={open} all={all} onToggle={onToggle} onBack={() => setOpen(null)} />}
       {/* 펼친 화면에서는 큰 창으로 가는 길 하나만 */}
-      {open !== null && (
-        <Pressable accessibilityRole="button" onPress={() => desktop?.open(plan.id, open === CENTER ? null : open)} style={styles.more}>
-          <Text style={{ color: t.sub, fontSize: 11, fontWeight: '600' }}>큰 창에서 열기 ›</Text>
-        </Pressable>
-      )}
+      <Pressable accessibilityRole="button" onPress={() => desktop?.open(plan.id, open === CENTER ? null : open)} style={styles.more}>
+        <Text style={{ color: t.sub, fontSize: 11, fontWeight: '600' }}>큰 창에서 열기 ›</Text>
+      </Pressable>
     </View>
   );
 }
 
-function Pill({ n, missed }: { n: number; missed: number }) {
+// 제목줄 — 왼쪽 홈(큰 창의 목록), 가운데 제목, 오른쪽 접기 · 펴기. 접혀 있을 때 할 일이 남으면 점이 깜빡인다
+function Head({ title, folded, onFold, due }: { title: string; folded: boolean; onFold: () => void; due: boolean }) {
   const { t } = useTheme();
-  const on = n > 0;
+  const pulse = usePulse(folded && due);
   return (
-    <View style={[styles.pill, { backgroundColor: on ? t.accent : t.done }]}>
-      <Text style={[styles.pillText, { color: on ? t.on(t.accent) : t.doneBorder }]}>
-        {on ? `오늘 ${n}` : '✓ 오늘 끝'}{missed ? ` · 놓침 ${missed}` : ''}
-      </Text>
+    <View style={[styles.head, !folded && { marginBottom: 6 }]}>
+      <Pressable accessibilityRole="button" accessibilityLabel="홈" onPress={() => desktop?.open('', null)} hitSlop={6} style={styles.headBtn}>
+        <HomeIcon color={t.sub} />
+      </Pressable>
+      <Text style={[styles.title, { color: t.text }]} numberOfLines={1}>{title}</Text>
+      <Pressable accessibilityRole="button" accessibilityLabel={folded ? '펴기' : '접기'} onPress={onFold} hitSlop={6} style={styles.headBtn}>
+        <ChevronIcon color={t.sub} open={!folded} />
+        {folded && due && <Animated.View style={[styles.headDot, { backgroundColor: t.accent, opacity: pulse.interpolate({ inputRange: [0, 1], outputRange: [0.3, 1] }) }]} />}
+      </Pressable>
     </View>
   );
 }
 
-function Grid({ plan, todo, missed, onOpen }: { plan: Plan; todo: RoutineItem[]; missed: number; onOpen: (cell: number) => void }) {
+function Grid({ plan, todo, onOpen }: { plan: Plan; todo: RoutineItem[]; onOpen: (cell: number) => void }) {
   const { t } = useTheme();
   const size = sizeOf(plan);
   const lay = layoutBlock(size, CENTER, 10_000, GAP, CELL);
@@ -123,12 +145,7 @@ function Grid({ plan, todo, missed, onOpen }: { plan: Plan; todo: RoutineItem[];
   todo.forEach(i => due.set(i.block, (due.get(i.block) ?? 0) + 1));
 
   return (
-    <View style={{ width: Math.max(lay.width, 150) }}>
-      <View style={styles.head}>
-        <Text style={[styles.title, { color: t.text }]} numberOfLines={1}>{plan.title}</Text>
-        <Pill n={todo.length} missed={missed} />
-      </View>
-      <View style={{ width: lay.width, height: lay.height, alignSelf: 'center' }}>
+    <View style={{ width: lay.width, height: lay.height, alignSelf: 'center' }}>
         {lay.cells.map(c => {
           const g = plan.blocks[CENTER][c.cell];
           const core = c.cell === CENTER;
@@ -141,7 +158,6 @@ function Grid({ plan, todo, missed, onOpen }: { plan: Plan; todo: RoutineItem[];
               onPress={() => onOpen(c.cell)} />
           );
         })}
-      </View>
     </View>
   );
 }
@@ -160,8 +176,9 @@ function Cell({ x, y, size, core, emoji, label, ratio, color, due, onPress }: {
           borderColor: t.accent, opacity: pulse.interpolate({ inputRange: [0, 1], outputRange: [0.25, 1] }),
         }]} />
       )}
-      {!!emoji && <Text style={[styles.emoji, { color: fg }]}>{emoji}</Text>}
-      <Text style={[styles.label, { color: fg }, core && styles.coreLabel]} numberOfLines={core ? 3 : 2}>{label}</Text>
+      {/* 핵심 목표 칸은 별 하나만 */}
+      {!!emoji && <Text style={[styles.emoji, { color: fg }, core && styles.star]}>{emoji}</Text>}
+      {!core && <Text style={[styles.label, { color: fg }]} numberOfLines={2}>{label}</Text>}
       {/* 실행 과제 완료 비율 — 칸 아래 얇은 줄 */}
       {!core && ratio > 0 && (
         <View style={[styles.track, { backgroundColor: 'rgba(127,127,127,0.25)' }]}>
@@ -287,14 +304,15 @@ function usePulse(on: boolean) {
 
 const styles = StyleSheet.create({
   shell: { position: 'absolute', top: 0, left: 0, borderWidth: 1, borderRadius: 18, padding: PAD, overflow: 'hidden' },
-  head: { height: 26, flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 6 },
-  title: { flex: 1, fontSize: 12, fontWeight: '800', letterSpacing: -0.2 },
-  pill: { borderRadius: 10, paddingHorizontal: 8, paddingVertical: 3 },
-  pillText: { fontSize: 10.5, fontWeight: '800' },
+  folded: { paddingVertical: 6 },
+  head: { height: 26, flexDirection: 'row', alignItems: 'center', gap: 4 },
+  headBtn: { width: 24, height: 24, borderRadius: 8, alignItems: 'center', justifyContent: 'center' },
+  headDot: { position: 'absolute', top: 1, right: 1, width: 7, height: 7, borderRadius: 4 },
+  title: { flex: 1, fontSize: 12, fontWeight: '800', letterSpacing: -0.2, textAlign: 'center' },
   cell: { position: 'absolute', borderRadius: 14, alignItems: 'center', justifyContent: 'center', padding: 6, paddingBottom: 10, overflow: 'hidden' },
   emoji: { fontSize: 15, marginBottom: 2 },
   label: { fontSize: 11.5, fontWeight: '700', textAlign: 'center', letterSpacing: -0.3 },
-  coreLabel: { fontSize: 10.5, fontWeight: '800' },
+  star: { fontSize: 30, marginBottom: 0 },
   track: { position: 'absolute', left: 12, right: 12, bottom: 5, height: 3, borderRadius: 2, overflow: 'hidden' },
   glow: { borderWidth: 3, borderRadius: 14 },
   badge: { position: 'absolute', top: 4, right: 4, minWidth: 16, height: 16, borderRadius: 8, paddingHorizontal: 4, alignItems: 'center', justifyContent: 'center' },

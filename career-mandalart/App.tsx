@@ -82,7 +82,8 @@ function App() {
     if (store) desktop?.setWidgets((store.widget ?? []).filter(id => store.plans.some(p => p.id === id)));
   }, [store?.widget, store?.plans]);
   useEffect(() => {
-    desktop?.onOpen((id, block) => setRoute({ name: 'plan', id, block }));
+    // id 가 비어 있으면 홈(목록)
+    desktop?.onOpen((id, block) => setRoute(id ? { name: 'plan', id, block } : { name: 'list' }));
     desktop?.onUnpin(id => setStore(s => s && { ...s, widget: s.widget?.filter(w => w !== id) }));
   }, []);
 
