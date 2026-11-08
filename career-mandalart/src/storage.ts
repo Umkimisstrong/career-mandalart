@@ -3,7 +3,8 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { isStore, samplePlan, Store } from './model';
 
-const KEY = 'career-mandalart/store/v1';
+export const STORE_KEY = 'career-mandalart/store/v1';
+const KEY = STORE_KEY;
 
 export async function loadStore(): Promise<Store> {
   try {

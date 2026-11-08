@@ -50,6 +50,8 @@ export default function InstallBanner() {
   const [prompt, setPrompt] = useState<InstallPromptEvent | null>(null);
 
   useEffect(() => {
+    // Windows 데스크톱 앱 안에서는 설치 안내가 필요 없다
+    if ((window as unknown as { gudoDesktop?: unknown }).gudoDesktop) return;
     const previewing = window.location.search.includes('install-preview');
     if (!previewing && dismissedRecently()) return;
     setMode(detect());

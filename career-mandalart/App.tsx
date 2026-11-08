@@ -21,6 +21,8 @@ import Templates from './src/screens/Templates';
 import ThemeSettings from './src/screens/ThemeSettings';
 import Today from './src/screens/Today';
 import { routineItems, toggleKey } from './src/routine';
+import { desktop, WIDGET_ID } from './src/desktop';
+import WidgetApp from './src/screens/Widget';
 import { loadStore, saveStore } from './src/storage';
 import { buildTheme, isDark, ThemeProvider } from './src/theme';
 import type { AgeBand } from './src/categories/data';
@@ -37,7 +39,12 @@ type Route =
   | { name: 'qr'; id: string }
   | { name: 'plan'; id: string; block: number | null };
 
-export default function App() {
+// ?widget=<id> 로 열리면 작은 창만 그린다 (저장은 하지 않고 큰 창이 저장한 것을 읽기만)
+export default function Root() {
+  return WIDGET_ID ? <WidgetApp id={WIDGET_ID} /> : <App />;
+}
+
+function App() {
   const [store, setStore] = useState<Store | null>(null);
   const [route, setRoute] = useState<Route>({ name: 'list' });
   const [notice, setNotice] = useState<{ text: string; error?: boolean }>();
@@ -61,6 +68,15 @@ export default function App() {
   // 반복 점검 칸의 기간 체크를 켜고 끈다
   const toggleRoutine = (id: string, b: number, c: number, key: string) =>
     updatePlan(id, p => setCell(p, b, c, { log: toggleKey(getCell(p, b, c).log, key) }));
+
+  // 데스크톱 앱: 띄워 둘 목표 목록을 알려 주고, 작은 창에서 누른 칸을 큰 창에서 연다
+  useEffect(() => {
+    if (store) desktop?.setWidgets((store.widget ?? []).filter(id => store.plans.some(p => p.id === id)));
+  }, [store?.widget, store?.plans]);
+  useEffect(() => {
+    desktop?.onOpen((id, block) => setRoute({ name: 'plan', id, block }));
+    desktop?.onUnpin(id => setStore(s => s && { ...s, widget: s.widget?.filter(w => w !== id) }));
+  }, []);
 
   // 반복 점검이 바뀌면 알림 · 배지를 다시 맞춘다 (자주 바뀌니 잠깐 모았다가)
   useEffect(() => {
@@ -113,7 +129,11 @@ export default function App() {
             if (tpl && tpl !== 'ohtani' && !store.age) setStore(s => s && { ...s, age: tpl });
             addPlan(p);
           }}
-          onDelete={id => setStore({ ...store, plans: store.plans.filter(p => p.id !== id) })}
+          onDelete={id => setStore({ ...store, plans: store.plans.filter(p => p.id !== id), widget: store.widget?.filter(w => w !== id) })}
+          widget={desktop ? store.widget ?? [] : undefined}
+          onWidget={id => setStore(s => s && {
+            ...s, widget: s.widget?.includes(id) ? s.widget.filter(w => w !== id) : [...(s.widget ?? []), id],
+          })}
           onBackup={() => setRoute({ name: 'backup' })}
           onScanQr={scanQr}
           onTheme={() => setRoute({ name: 'theme' })}

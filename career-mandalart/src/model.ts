@@ -106,6 +106,8 @@ export type Store = {
   theme?: ThemeSetting;
   // 반복 점검 알림을 켰는지 (네이티브: 로컬 알림 예약, 웹: 앱 아이콘 배지 · 열려 있을 때 알림)
   notify?: boolean;
+  // 바탕화면 작은 창으로 띄워 둘 목표 id (Windows 데스크톱 앱)
+  widget?: string[];
 };
 
 const emptyCell = (): Cell => ({ text: '', note: '', done: false });

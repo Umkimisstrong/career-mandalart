@@ -29,6 +29,9 @@ type Props = {
   onAbout: () => void;
   onTemplates: (age?: AgeBand) => void;
   onToday: () => void;
+  // 데스크톱 앱에서만: 바탕화면에 띄운 목표 id · 띄우기 켜고 끄기
+  widget?: string[];
+  onWidget: (id: string) => void;
   notice?: { text: string; error?: boolean };
 };
 
@@ -95,7 +98,7 @@ export default function PlanList(props: Props) {
   );
 }
 
-function ListTab({ plans, home, onHome, onOpen, onDelete, onScanQr, onBackup, onToday }: Props) {
+function ListTab({ plans, home, onHome, onOpen, onDelete, onScanQr, onBackup, onToday, widget, onWidget }: Props) {
   const { t, ui } = useTheme();
   const items = routineItems(plans);
   const today = items.filter(i => i.scope === 'day' && i.dueToday);
@@ -172,6 +175,14 @@ function ListTab({ plans, home, onHome, onOpen, onDelete, onScanQr, onBackup, on
                 {n === 1 ? '목표' : '실행 과제'} {pr.done}/{pr.filled} 완료 · {new Date(p.updatedAt).toLocaleDateString()}
                 {due ? <Text style={{ color: t.accent, fontWeight: '700' }}>  · 🔔 오늘 {due}개</Text> : null}
               </Text>
+              {widget && (
+                <Pressable onPress={() => onWidget(p.id)} hitSlop={6}
+                  style={[styles.pin, { borderColor: widget.includes(p.id) ? t.primary : t.border, backgroundColor: widget.includes(p.id) ? t.primary : t.surface }]}>
+                  <Text style={{ color: widget.includes(p.id) ? t.onPrimary : t.sub, fontSize: 12, fontWeight: '700' }}>
+                    {widget.includes(p.id) ? '☑ 바탕화면에 띄움' : '☐ 바탕화면에 띄우기'}
+                  </Text>
+                </Pressable>
+              )}
             </View>
             <Pressable hitSlop={10} accessibilityLabel="삭제" style={styles.del}
               onPress={() => confirm(`'${p.title}'을(를) 삭제할까요?`, () => onDelete(p.id))}>
@@ -320,4 +331,5 @@ const styles = StyleSheet.create({
   cardCore: { fontSize: 14, marginTop: 4, marginBottom: 10 },
   meta: { fontSize: 12, marginTop: 6 },
   del: { padding: 2 },
+  pin: { alignSelf: 'flex-start', marginTop: 10, borderWidth: 1, borderRadius: 8, paddingHorizontal: 10, paddingVertical: 5 },
 });
