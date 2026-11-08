@@ -1,7 +1,7 @@
 // 메인 화면 — 「목록」(크기 · 점검 필터)과 「만들기」(크기 → 템플릿 여부 → 연령대)를 탭으로 나눈다.
 import { useState } from 'react';
 import { Alert, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
-import { BellIcon, InfoIcon, TrashIcon } from '../components/Icons';
+import { BellIcon, InfoIcon, ShapeIcon, TrashIcon } from '../components/Icons';
 import { APP_NAME, APP_NAME_EN, APP_TAGLINE_EN } from '../brand';
 import { AGE_BANDS, AgeBand } from '../categories/data';
 import { templateOf } from '../categories/templates';
@@ -109,22 +109,26 @@ function ListTab({ plans, home, onHome, onOpen, onDelete, onScanQr, onBackup, on
     .filter(p => home.filter === 'all' ? true : home.filter === 'check' ? checkIds.has(p.id) : sizeOf(p) === home.filter)
     .sort((a, b) => b.updatedAt - a.updatedAt);
 
+  // 필터 버튼 — 전체만 글자, 점검은 종, 크기는 모양 아이콘. 한 줄에 같은 너비로
   const chip = (f: Filter, label: string) => {
     const on = home.filter === f;
+    const fg = on ? t.onPrimary : t.sub;
     return (
-      <Pressable key={String(f)} onPress={() => onHome({ ...home, filter: f })}
-        style={[styles.chip, { borderColor: on ? t.primary : t.border, backgroundColor: on ? t.primary : t.surface }]}>
-        <Text style={{ color: on ? t.onPrimary : t.text, fontWeight: on ? '800' : '600', fontSize: 13 }}>{label}</Text>
+      <Pressable key={String(f)} onPress={() => onHome({ ...home, filter: f })} accessibilityLabel={label}
+        style={[styles.filter, { borderColor: on ? t.primary : t.border, backgroundColor: on ? t.primary : t.surface }]}>
+        {f === 'all' ? <Text style={{ color: on ? t.onPrimary : t.text, fontWeight: '800', fontSize: 13 }}>{label}</Text>
+          : f === 'check' ? <BellIcon color={fg} size={18} />
+          : <ShapeIcon color={on ? t.onPrimary : t.text} shape={f} size={24} />}
       </Pressable>
     );
   };
 
   return (
     <View style={{ gap: 12 }}>
-      <View style={styles.chips}>
+      <View style={styles.filters}>
         {chip('all', '전체')}
-        {chip('check', '🔔 점검')}
-        {PLAN_SIZES.map(n => chip(n, n === 9 ? '9 · 81칸' : `${n} · ${n * n}칸`))}
+        {chip('check', '점검')}
+        {PLAN_SIZES.map(n => chip(n, `${n * n}칸`))}
       </View>
 
       {home.filter === 'check' && (
@@ -313,6 +317,8 @@ const styles = StyleSheet.create({
   tabs: { flexDirection: 'row', borderWidth: 1, borderRadius: 12, padding: 4, gap: 4 },
   tab: { flex: 1, alignItems: 'center', paddingVertical: 9, borderRadius: 9 },
   chips: { flexDirection: 'row', flexWrap: 'wrap', gap: 6 },
+  filters: { flexDirection: 'row', gap: 5 },
+  filter: { flex: 1, height: 36, borderRadius: 10, borderWidth: 1, alignItems: 'center', justifyContent: 'center' },
   chip: { paddingHorizontal: 11, paddingVertical: 6, borderRadius: 16, borderWidth: 1 },
   step: { fontSize: 14, fontWeight: '800', marginTop: 6 },
   choice: { flex: 1, borderWidth: 1, borderRadius: 12, paddingVertical: 10, alignItems: 'center' },

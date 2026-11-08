@@ -1,5 +1,6 @@
 // 색을 입힐 수 있는 작은 선 아이콘 (react-native-svg) — 이모지는 테마 색을 따르지 않아서.
-import Svg, { Circle, Path } from 'react-native-svg';
+import Svg, { Circle, Path, Rect } from 'react-native-svg';
+import { blocksOf, PlanSize, slotPos } from '../model';
 
 type P = { color: string; size?: number };
 const line = (color: string) => ({ stroke: color, strokeWidth: 2, strokeLinecap: 'round' as const, strokeLinejoin: 'round' as const, fill: 'none' });
@@ -42,6 +43,24 @@ export function ChevronIcon({ color, size = 16, open }: P & { open: boolean }) {
   return (
     <Svg width={size} height={size} viewBox="0 0 24 24">
       <Path d={open ? 'M6 9l6 6 6-6' : 'M9 6l6 6-6 6'} {...line(color)} />
+    </Svg>
+  );
+}
+
+// 목표 크기 모양 — 9: 3×3, 7: 육각, 5: 십자, 3: 가로 줄, 1: 한 칸 (가운데 칸은 진하게)
+export function ShapeIcon({ color, size = 20, shape }: P & { shape: PlanSize }) {
+  const u = 7.4;
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24">
+      {/* 1칸은 한 칸을 크게 */}
+      {shape === 1 && <Rect x={6} y={6} width={12} height={12} rx={2.5} fill={color} />}
+      {shape !== 1 && blocksOf(shape).map(i => {
+        const { col, row } = slotPos(shape, i);
+        return (
+          <Rect key={i} x={1 + col * u + 0.6} y={1 + row * u + 0.6} width={u - 1.2} height={u - 1.2} rx={1.4}
+            fill={color} opacity={i === 4 ? 1 : 0.6} />
+        );
+      })}
     </Svg>
   );
 }
