@@ -3,9 +3,8 @@ import { ReactNode, useEffect, useMemo, useRef, useState } from 'react';
 import { ActivityIndicator, Platform, View } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import InstallBanner from './src/components/InstallBanner';
-import { AGE_BANDS } from './src/categories/data';
-import { planFromTemplate, templateOf } from './src/categories/templates';
-import { Cell, fitSize, getCell, newPlan, ohtaniPlan, Plan, setCell, Store } from './src/model';
+import { buildPlan } from './src/categories/templates';
+import { Cell, getCell, ohtaniPlan, Plan, setCell, Store } from './src/model';
 import { syncReminders } from './src/notify';
 import { decodePlan } from './src/qr/codec';
 import { pickQrFromImage } from './src/qr/image';
@@ -128,15 +127,8 @@ function App() {
           age={store.age}
           onOpen={id => setRoute({ name: 'plan', id, block: null })}
           onCreate={(title, size, tpl) => {
-            // 템플릿은 81칸으로 채운 뒤 고른 크기에 들어가는 자리만 남긴다
-            const t = tpl && tpl !== 'ohtani' ? templateOf(tpl) : undefined;
-            const label = AGE_BANDS.find(a => a.id === tpl)?.label ?? '';
-            let p = tpl === 'ohtani' ? fitSize({ ...ohtaniPlan(), title: `오타니 쇼헤이의 ${size * size}칸 (고교 1학년)` }, size)
-              : t ? fitSize(planFromTemplate(t, label), size)
-              : newPlan(title || (size === 9 ? '새 목표' : `새 ${size}칸 목표`), size);
-            if (title) p = { ...p, title };
             if (tpl && tpl !== 'ohtani' && !store.age) setStore(s => s && { ...s, age: tpl });
-            addPlan(p);
+            addPlan(buildPlan(title, size, tpl));
           }}
           onDelete={id => setStore({ ...store, plans: store.plans.filter(p => p.id !== id), widget: store.widget?.filter(w => w !== id) })}
           widget={desktop ? store.widget ?? [] : undefined}

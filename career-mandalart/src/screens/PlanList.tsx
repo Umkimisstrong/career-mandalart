@@ -4,7 +4,8 @@ import { Alert, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, Vi
 import { BellIcon, InfoIcon, ShapeIcon, TrashIcon } from '../components/Icons';
 import { APP_NAME, APP_NAME_EN, APP_TAGLINE_EN } from '../brand';
 import { AGE_BANDS, AgeBand } from '../categories/data';
-import { templateOf } from '../categories/templates';
+import { buildPlan, templateOf } from '../categories/templates';
+import PlanPreview from '../components/PlanPreview';
 import { CENTER, Plan, PLAN_SIZES, PlanSize, progress, sizeLabel, sizeOf } from '../model';
 import { routineItems } from '../routine';
 import { useTheme } from '../theme';
@@ -208,29 +209,50 @@ function ListTab({ plans, home, onHome, onOpen, onDelete, onScanQr, onBackup, on
   );
 }
 
-function CreateTab({ age, onCreate, onTemplates }: Props) {
+// 만들기 — 한 단계를 고르면 다음 단계가 열린다: ① 크기 → ② 빈 칸 / 템플릿 → ③ 연령대(템플릿일 때) → 이름 · 미리보기 · 만들기
+function CreateTab({ age, onCreate }: Props) {
   const { t, ui } = useTheme();
   const [title, setTitle] = useState('');
-  const [size, setSize] = useState<PlanSize>(9);
-  const [useTpl, setUseTpl] = useState(false);
-  const [pick, setPick] = useState<AgeBand | 'ohtani'>(age ?? '30s');
-  const tpl = pick === 'ohtani' ? null : templateOf(pick);
+  const [size, setSize] = useState<PlanSize | null>(null);
+  const [useTpl, setUseTpl] = useState<boolean | null>(null);
+  const [pick, setPick] = useState<AgeBand | 'ohtani' | null>(null);
+  const [preview, setPreview] = useState<Plan | null>(null);
+  const tpl = pick && pick !== 'ohtani' ? templateOf(pick) : undefined;
+  // 지금까지 고른 단계 수 — 다음 단계는 이 값으로 연다
+  const step2 = size !== null;
+  const step3 = step2 && useTpl === true;
+  const ready = step2 && (useTpl === false || (useTpl === true && pick !== null));
+  const choice = useTpl ? pick : null;
 
   const create = () => {
-    onCreate(title.trim(), size, useTpl ? pick : null);
-    setTitle('');
+    if (!ready) return;
+    onCreate(title.trim(), size!, choice);
+    setTitle(''); setSize(null); setUseTpl(null); setPick(null); setPreview(null);
   };
-  const choice = (on: boolean, label: string, sub: string, onPress: () => void) => (
+  const open = () => { if (ready) setPreview(buildPlan(title.trim(), size!, choice)); };
+
+  const card = (on: boolean, label: string, sub: string, onPress: () => void) => (
     <Pressable onPress={onPress} style={[styles.choice, { borderColor: on ? t.primary : t.border, backgroundColor: on ? t.primary : t.surface }]}>
       <Text style={{ color: on ? t.onPrimary : t.text, fontWeight: '800', fontSize: 15 }}>{label}</Text>
       <Text style={{ color: on ? t.onPrimary : t.sub, fontSize: 11, marginTop: 2, opacity: 0.9 }}>{sub}</Text>
     </Pressable>
   );
+  // 아직 열리지 않은 단계 — 흐리게, 누를 수 없게
+  const lock = (on: boolean) => (on ? null : { opacity: 0.35, pointerEvents: 'none' as const });
+  const head = (n: string, label: string, done: boolean, hint?: string) => (
+    <View style={styles.stepRow}>
+      <View style={[styles.stepNum, { backgroundColor: done ? t.primary : t.surface, borderColor: done ? t.primary : t.border }]}>
+        <Text style={{ color: done ? t.onPrimary : t.sub, fontSize: 12, fontWeight: '800' }}>{done ? '✓' : n}</Text>
+      </View>
+      <Text style={[styles.step, { color: t.text }]}>{label}</Text>
+      {!!hint && <Text style={{ color: t.sub, fontSize: 12 }}>{hint}</Text>}
+    </View>
+  );
 
   return (
     <View style={{ gap: 10 }}>
-      <Text style={[styles.step, { color: t.text }]}>① 크기</Text>
-      {/* 81칸이 부담되면 작은 버전으로 — 9 가 시그니처(기본) */}
+      {head('1', '크기', step2)}
+      {/* 81칸이 부담되면 작은 버전으로 — 9 가 시그니처 */}
       <View style={styles.sizeRow}>
         {PLAN_SIZES.map(n => {
           const on = n === size;
@@ -243,25 +265,29 @@ function CreateTab({ age, onCreate, onTemplates }: Props) {
           );
         })}
       </View>
-      <Text style={[ui.sub, { fontSize: 12 }]}>
-        {size === 9 ? '9 · 시그니처 81칸 — ' : `${size} · 작은 목표 — `}{sizeLabel(size)}
-      </Text>
+      {size !== null && (
+        <Text style={[ui.sub, { fontSize: 12 }]}>
+          {size === 9 ? '시그니처 81칸 — ' : `작은 목표 ${size * size}칸 — `}{sizeLabel(size)}
+        </Text>
+      )}
 
-      <Text style={[styles.step, { color: t.text }]}>② 템플릿</Text>
-      <View style={{ flexDirection: 'row', gap: 8 }}>
-        {choice(!useTpl, '빈 칸으로', '처음부터 직접 쓰기', () => setUseTpl(false))}
-        {choice(useTpl, '템플릿 채우기', '예시로 채운 뒤 고치기', () => setUseTpl(true))}
+      <View style={[{ gap: 10 }, lock(step2)]}>
+        {head('2', '시작 방법', useTpl !== null)}
+        <View style={{ flexDirection: 'row', gap: 8 }}>
+          {card(useTpl === false, '빈 칸으로', '처음부터 직접 쓰기', () => setUseTpl(false))}
+          {card(useTpl === true, '템플릿 채우기', '예시로 채운 뒤 고치기', () => setUseTpl(true))}
+        </View>
       </View>
 
-      {useTpl && (
-        <>
-          <Text style={[styles.step, { color: t.text }]}>③ 연령대</Text>
+      {useTpl !== false && (
+        <View style={[{ gap: 10 }, lock(step3)]}>
+          {head('3', '연령대', pick !== null && step3, age && !pick ? `추천 ${AGE_BANDS.find(a => a.id === age)?.label}` : undefined)}
           <View style={styles.chips}>
             {AGE_BANDS.map(a => {
               const on = a.id === pick;
               return (
                 <Pressable key={a.id} onPress={() => setPick(a.id)}
-                  style={[styles.chip, { borderColor: on ? t.primary : t.border, backgroundColor: on ? t.primary : t.surface }]}>
+                  style={[styles.chip, { borderColor: on || (a.id === age && !pick) ? t.primary : t.border, backgroundColor: on ? t.primary : t.surface }]}>
                   <Text style={{ color: on ? t.onPrimary : t.text, fontWeight: on ? '800' : '500', fontSize: 13 }}>{a.label}</Text>
                 </Pressable>
               );
@@ -272,35 +298,36 @@ function CreateTab({ age, onCreate, onTemplates }: Props) {
               <Text style={{ color: pick === 'ohtani' ? t.on(t.accent) : t.accent, fontWeight: '800', fontSize: 13 }}>★ 16살 오타니</Text>
             </Pressable>
           </View>
-          <Pressable onPress={() => onTemplates(pick === 'ohtani' ? undefined : pick)}
-            style={[styles.story, { backgroundColor: t.surface, borderColor: t.border }]}>
-            <View style={{ flex: 1 }}>
-              <Text style={[styles.storyTitle, { color: t.text }]} numberOfLines={2}>
-                {pick === 'ohtani' ? '16살 오타니가 81칸에 적은 꿈' : tpl?.theme}
-              </Text>
-              <Text style={[styles.storySub, { color: t.sub }]} numberOfLines={1}>
-                {pick === 'ohtani' ? '핵심 목표 · 8구단 드래프트 1순위' : `핵심 목표 · ${tpl?.core}`}
-              </Text>
-            </View>
-            <Text style={{ color: t.accent, fontSize: 13, fontWeight: '700' }}>미리보기 ›</Text>
-          </Pressable>
-          {size !== 9 && (
-            <Text style={[ui.sub, { fontSize: 12 }]}>{size}칸에 들어가는 자리만 템플릿으로 채워요.</Text>
+          {step3 && pick !== null && (
+            <Text style={[ui.sub, { fontSize: 12 }]} numberOfLines={2}>
+              {pick === 'ohtani' ? '16살 오타니가 81칸에 적은 꿈 — 핵심 목표 「8구단 드래프트 1순위」' : `${tpl?.theme} — 핵심 목표 「${tpl?.core}」`}
+              {size !== 9 ? ` · ${size! * size!}칸에 들어가는 자리만 채워요` : ''}
+            </Text>
           )}
-        </>
+        </View>
       )}
 
-      <Text style={[styles.step, { color: t.text }]}>{useTpl ? '④' : '③'} 이름 <Text style={{ color: t.sub, fontWeight: '400', fontSize: 12 }}>(비우면 자동)</Text></Text>
-      <TextInput
-        value={title}
-        onChangeText={setTitle}
-        placeholder="예: 2030 커리어"
-        style={ui.input}
-        onSubmitEditing={create}
-      />
-      <Pressable style={[ui.btnPrimary, { marginTop: 4 }]} onPress={create}>
-        <Text style={ui.btnPrimaryText}>{useTpl ? '✨ 템플릿으로 만들기' : '만들기'}</Text>
-      </Pressable>
+      <View style={[{ gap: 10 }, lock(ready)]}>
+        {head(useTpl === false ? '3' : '4', '이름', !!title.trim(), '비우면 자동')}
+        <TextInput
+          value={title}
+          onChangeText={setTitle}
+          placeholder="예: 2030 커리어"
+          style={ui.input}
+          onSubmitEditing={create}
+        />
+        <View style={{ flexDirection: 'row', gap: 8, marginTop: 4 }}>
+          <Pressable style={[ui.btn, { flex: 1 }]} onPress={open}>
+            <Text style={ui.btnText}>미리보기</Text>
+          </Pressable>
+          <Pressable style={[ui.btnPrimary, { flex: 2 }]} onPress={create}>
+            <Text style={ui.btnPrimaryText}>{useTpl ? '✨ 템플릿으로 만들기' : '만들기'}</Text>
+          </Pressable>
+        </View>
+      </View>
+
+      <PlanPreview plan={preview} onClose={() => setPreview(null)} onCreate={create}
+        sub={useTpl ? (pick === 'ohtani' ? '16살 오타니' : `${AGE_BANDS.find(a => a.id === pick)?.label} 템플릿`) : '빈 칸'} />
     </View>
   );
 }
@@ -321,7 +348,9 @@ const styles = StyleSheet.create({
   filters: { flexDirection: 'row', gap: 5 },
   filter: { flex: 1, height: 36, borderRadius: 10, borderWidth: 1, alignItems: 'center', justifyContent: 'center' },
   chip: { paddingHorizontal: 11, paddingVertical: 6, borderRadius: 16, borderWidth: 1 },
-  step: { fontSize: 14, fontWeight: '800', marginTop: 6 },
+  step: { fontSize: 14, fontWeight: '800' },
+  stepRow: { flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 6 },
+  stepNum: { width: 22, height: 22, borderRadius: 11, borderWidth: 1, alignItems: 'center', justifyContent: 'center' },
   choice: { flex: 1, borderWidth: 1, borderRadius: 12, paddingVertical: 10, alignItems: 'center' },
   sizeRow: { flexDirection: 'row', gap: 6 },
   sizeChip: { flex: 1, alignItems: 'center', paddingVertical: 7, gap: 3, borderRadius: 10, borderWidth: 1 },
