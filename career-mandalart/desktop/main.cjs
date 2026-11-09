@@ -3,6 +3,7 @@
 const { app, BrowserWindow, Menu, Tray, ipcMain, nativeImage, screen, shell } = require('electron');
 const fs = require('fs');
 const path = require('path');
+const { checkNow, startUpdater, updateState } = require('./updater.cjs');
 
 const arg = process.argv.find(a => a.startsWith('--url='));
 const BASE = (arg ? arg.slice(6) : process.env.GUDO_URL) || 'https://career-mandalart.vercel.app';
@@ -117,6 +118,9 @@ function buildTray() {
       app.setLoginItemSettings({ openAtLogin: m.checked, args: ['--hidden'] });
     } },
     { type: 'separator' },
+    { label: `업데이트 확인 · v${app.getVersion()}`, click: checkNow },
+    { label: updateState(), enabled: false },
+    { type: 'separator' },
     { label: '종료', click: () => { quitting = true; app.quit(); } },
   ]);
   tray.setContextMenu(menu());
@@ -149,6 +153,7 @@ if (!app.requestSingleInstanceLock()) {
     const hidden = process.argv.includes('--hidden') && config.ids.length > 0;
     openMain(!hidden);
     config.ids.forEach((id, i) => openWidget(id, i));
+    startUpdater(() => { quitting = true; });
   });
   app.on('before-quit', () => { quitting = true; });
   app.on('window-all-closed', () => { /* 트레이에 남는다 */ });
