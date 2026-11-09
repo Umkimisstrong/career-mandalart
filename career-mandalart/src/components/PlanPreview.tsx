@@ -5,7 +5,8 @@ import { CENTER, getCell, Plan, sizeLabel, sizeOf } from '../model';
 import { mix, useTheme } from '../theme';
 import { layoutPlan } from './ShapeLayout';
 
-type Props = { plan: Plan | null; sub?: string; onClose: () => void; onCreate: () => void };
+// onCreate 가 없으면(아직 다 고르지 않음) 닫기 버튼만
+type Props = { plan: Plan | null; sub?: string; onClose: () => void; onCreate?: () => void };
 
 export default function PlanPreview({ plan, sub, onClose, onCreate }: Props) {
   const { t, ui } = useTheme();
@@ -36,7 +37,7 @@ export default function PlanPreview({ plan, sub, onClose, onCreate }: Props) {
                     style={[styles.cell, { left: c.x, top: c.y, width: lay.cell, height: lay.cell, backgroundColor: bg, borderRadius: Math.max(3, lay.cell * 0.14) }]}>
                     <Text style={{ color: head ? t.on(bg) : t.text, fontSize: font, lineHeight: font * 1.2, fontWeight: head ? '800' : '500', textAlign: 'center' }}
                       numberOfLines={3}>
-                      {cell.text}
+                      {cell.text || (c.block === CENTER && c.cell === CENTER ? '핵심 목표' : head ? '세부 목표' : '')}
                     </Text>
                   </View>
                 );
@@ -45,7 +46,7 @@ export default function PlanPreview({ plan, sub, onClose, onCreate }: Props) {
           </ScrollView>
           <View style={styles.actions}>
             <Pressable style={[ui.btn, { flex: 1 }]} onPress={onClose}><Text style={ui.btnText}>닫기</Text></Pressable>
-            <Pressable style={[ui.btnPrimary, { flex: 1 }]} onPress={onCreate}><Text style={ui.btnPrimaryText}>이대로 만들기</Text></Pressable>
+            {onCreate && <Pressable style={[ui.btnPrimary, { flex: 1 }]} onPress={onCreate}><Text style={ui.btnPrimaryText}>이대로 만들기</Text></Pressable>}
           </View>
         </Pressable>
       </Pressable>

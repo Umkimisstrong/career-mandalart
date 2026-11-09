@@ -229,7 +229,8 @@ function CreateTab({ age, onCreate }: Props) {
     onCreate(title.trim(), size!, choice);
     setTitle(''); setSize(null); setUseTpl(null); setPick(null); setPreview(null);
   };
-  const open = () => { if (ready) setPreview(buildPlan(title.trim(), size!, choice)); };
+  // 크기만 골라도 볼 수 있다 — 템플릿 · 연령대까지 골랐으면 채운 모습으로
+  const open = () => { if (size !== null) setPreview(buildPlan(title.trim(), size, choice)); };
 
   const card = (on: boolean, label: string, sub: string, onPress: () => void) => (
     <Pressable onPress={onPress} style={[styles.choice, { borderColor: on ? t.primary : t.border, backgroundColor: on ? t.primary : t.surface }]}>
@@ -239,19 +240,25 @@ function CreateTab({ age, onCreate }: Props) {
   );
   // 아직 열리지 않은 단계 — 흐리게, 누를 수 없게
   const lock = (on: boolean) => (on ? null : { opacity: 0.35, pointerEvents: 'none' as const });
-  const head = (n: string, label: string, done: boolean, hint?: string) => (
+  const head = (n: string, label: string, done: boolean, hint?: string, right?: React.ReactNode) => (
     <View style={styles.stepRow}>
       <View style={[styles.stepNum, { backgroundColor: done ? t.primary : t.surface, borderColor: done ? t.primary : t.border }]}>
         <Text style={{ color: done ? t.onPrimary : t.sub, fontSize: 12, fontWeight: '800' }}>{done ? '✓' : n}</Text>
       </View>
       <Text style={[styles.step, { color: t.text }]}>{label}</Text>
       {!!hint && <Text style={{ color: t.sub, fontSize: 12 }}>{hint}</Text>}
+      {right}
     </View>
   );
 
   return (
     <View style={{ gap: 10 }}>
-      {head('1', '크기', step2)}
+      {head('1', '크기', step2, undefined, (
+        <Pressable onPress={open} disabled={size === null} accessibilityLabel="미리보기"
+          style={[styles.peek, { borderColor: size === null ? t.border : t.primary, opacity: size === null ? 0.4 : 1 }]}>
+          <Text style={{ color: size === null ? t.sub : t.primary, fontSize: 12, fontWeight: '800' }}>미리보기</Text>
+        </Pressable>
+      ))}
       {/* 81칸이 부담되면 작은 버전으로 — 9 가 시그니처 */}
       <View style={styles.sizeRow}>
         {PLAN_SIZES.map(n => {
@@ -316,18 +323,14 @@ function CreateTab({ age, onCreate }: Props) {
           style={ui.input}
           onSubmitEditing={create}
         />
-        <View style={{ flexDirection: 'row', gap: 8, marginTop: 4 }}>
-          <Pressable style={[ui.btn, { flex: 1 }]} onPress={open}>
-            <Text style={ui.btnText}>미리보기</Text>
-          </Pressable>
-          <Pressable style={[ui.btnPrimary, { flex: 2 }]} onPress={create}>
-            <Text style={ui.btnPrimaryText}>{useTpl ? '✨ 템플릿으로 만들기' : '만들기'}</Text>
-          </Pressable>
-        </View>
+        <Pressable style={[ui.btnPrimary, { marginTop: 4 }]} onPress={create}>
+          <Text style={ui.btnPrimaryText}>{useTpl ? '✨ 템플릿으로 만들기' : '만들기'}</Text>
+        </Pressable>
       </View>
 
-      <PlanPreview plan={preview} onClose={() => setPreview(null)} onCreate={create}
-        sub={useTpl ? (pick === 'ohtani' ? '16살 오타니' : `${AGE_BANDS.find(a => a.id === pick)?.label} 템플릿`) : '빈 칸'} />
+      {/* 다 고르기 전에는 모양만 보는 미리보기 — 「이대로 만들기」 대신 닫기만 */}
+      <PlanPreview plan={preview} onClose={() => setPreview(null)} onCreate={ready ? create : undefined}
+        sub={choice ? (choice === 'ohtani' ? '16살 오타니' : `${AGE_BANDS.find(a => a.id === choice)?.label} 템플릿`) : '빈 칸'} />
     </View>
   );
 }
@@ -349,6 +352,7 @@ const styles = StyleSheet.create({
   filter: { flex: 1, height: 36, borderRadius: 10, borderWidth: 1, alignItems: 'center', justifyContent: 'center' },
   chip: { paddingHorizontal: 11, paddingVertical: 6, borderRadius: 16, borderWidth: 1 },
   step: { fontSize: 14, fontWeight: '800' },
+  peek: { marginLeft: 'auto', borderWidth: 1, borderRadius: 14, paddingHorizontal: 12, paddingVertical: 5 },
   stepRow: { flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 6 },
   stepNum: { width: 22, height: 22, borderRadius: 11, borderWidth: 1, alignItems: 'center', justifyContent: 'center' },
   choice: { flex: 1, borderWidth: 1, borderRadius: 12, paddingVertical: 10, alignItems: 'center' },
