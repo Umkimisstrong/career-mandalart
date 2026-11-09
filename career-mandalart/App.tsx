@@ -4,7 +4,7 @@ import { ActivityIndicator, Platform, View } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import InstallBanner from './src/components/InstallBanner';
 import { buildPlan } from './src/categories/templates';
-import { Cell, getCell, ohtaniPlan, Plan, setCell, setExtra, Store } from './src/model';
+import { Cell, CENTER, getCell, newPlan, ohtaniPlan, Plan, setCell, setExtra, Store } from './src/model';
 import { syncReminders } from './src/notify';
 import { decodePlan } from './src/qr/codec';
 import { pickQrFromImage } from './src/qr/image';
@@ -263,6 +263,8 @@ function App() {
             onOpenBlock={block => setRoute({ ...route, block })}
             onQr={() => setRoute({ name: 'qr', id: plan.id })}
             onTeam={plan.team ? () => setRoute({ name: 'team', id: plan.id }) : undefined}
+            parentTitle={plan.parent ? store.plans.find(p => p.id === plan.parent!.plan)?.title : undefined}
+            onParent={() => plan.parent && setRoute({ name: 'plan', id: plan.parent.plan, block: plan.parent.block })}
           />
         );
       } else {
@@ -274,6 +276,19 @@ function App() {
             onChangeBlock={block => setRoute({ ...route, block })}
             // 팀 목표: 고칠 수 있는 블록만, 고치면 그 블록 시각을 올린다
             canEdit={(b, c) => canEditBlock(plan, storedBlock(b, c))}
+            planTitle={id => store.plans.find(p => p.id === id)?.title}
+            onExpand={(b, c, size) => {
+              // 이미 펼친 목표가 있으면 열고, 없으면 그 과제를 핵심 목표로 새 목표를 만들어 서로 잇는다
+              const cell = getCell(plan, b, c);
+              if (cell.child && store.plans.some(p => p.id === cell.child)) return setRoute({ name: 'plan', id: cell.child, block: null });
+              let child = newPlan(cell.text, size);
+              child = { ...setCell(child, CENTER, CENTER, { text: cell.text }), parent: { plan: plan.id, block: b, cell: c } };
+              setStore(s => s && {
+                ...s,
+                plans: [...s.plans.map(p => (p.id === plan.id && canEditBlock(p, storedBlock(b, c)) ? setCell(p, b, c, { child: child.id }) : p)), child],
+              });
+              setRoute({ name: 'plan', id: child.id, block: null });
+            }}
             onGrow={(b, c, on) => updatePlan(plan.id, p => (canEditBlock(p, b) ? touch(setExtra(p, b, c, on), b, 0) : p))}
             onEdit={(b, c, patch: Partial<Cell>) => updatePlan(plan.id, p => (canEditBlock(p, storedBlock(b, c)) ? touch(setCell(p, b, c, patch), b, c) : p))}
             age={store.age}

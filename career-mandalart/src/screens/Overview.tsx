@@ -11,9 +11,11 @@ type Props = {
   onOpenBlock: (block: number) => void;
   onQr: () => void;
   onTeam?: () => void; // 팀 목표만
+  parentTitle?: string; // 다른 목표의 실행 과제에서 펼친 목표면 그 목표 이름
+  onParent?: () => void;
 };
 
-export default function Overview({ plan, onBack, onRename, onOpenBlock, onQr, onTeam }: Props) {
+export default function Overview({ plan, onBack, onRename, onOpenBlock, onQr, onTeam, parentTitle, onParent }: Props) {
   const { width } = useWindowDimensions();
   const { t, ui } = useTheme();
   const size = Math.min(width, 640) - 32;
@@ -32,6 +34,11 @@ export default function Overview({ plan, onBack, onRename, onOpenBlock, onQr, on
           : <Pressable onPress={onQr} hitSlop={8}><Text style={ui.back}>QR 저장</Text></Pressable>}
       </View>
       <ScrollView contentContainerStyle={{ padding: 16, alignItems: 'center', gap: 14 }}>
+        {!!parentTitle && (
+          <Pressable onPress={onParent} style={{ alignSelf: 'stretch' }}>
+            <Text style={[ui.sub, { color: t.accent }]} numberOfLines={1}>↖ 「{parentTitle}」의 실행 과제에서 펼친 목표</Text>
+          </Pressable>
+        )}
         <View style={{ width: lay.width, height: lay.height }}>
           {lay.cells.map(({ block: b, cell: c, x, y }) => {
             const v = getCell(plan, b, c);

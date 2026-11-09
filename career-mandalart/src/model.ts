@@ -23,7 +23,13 @@ export type Cell = {
   routine?: Routine;
   // 체크한 기간 키 목록 — 매일 · 요일: 'YYYY-MM-DD', 매주: 그 주 월요일 'YYYY-MM-DD', 매월: 'YYYY-MM'
   log?: string[];
+  // 실행 과제 칸: 하위 할 일 체크리스트 — 칸 수(최대 8)를 넘는 일을 한 칸 안에 담는다
+  items?: SubItem[];
+  // 실행 과제 칸: 이 과제를 핵심 목표로 펼친 새 목표의 id
+  child?: string;
 };
+
+export type SubItem = { text: string; done: boolean };
 
 // daily 매일 · weekdays 고른 요일마다 · weekly 주 1회 · monthly 월 1회
 export type Freq = 'daily' | 'weekdays' | 'weekly' | 'monthly';
@@ -62,6 +68,8 @@ export type Plan = {
   team?: Team;
   // 3 · 5칸 버전에서 세부 목표 묶음마다 더 연 실행 과제 칸 (블록 → 칸 번호들). 최대 3×3 까지
   extra?: Record<number, number[]>;
+  // 다른 목표의 실행 과제에서 펼쳐 만든 목표면 그 자리 (목표 id · 블록 · 칸)
+  parent?: { plan: string; block: number; cell: number };
 };
 
 // 1 · 3 · 5 · 7 · 9칸 버전 — N칸 한 묶음 = 가운데 1 + 둘레 N-1.

@@ -61,6 +61,7 @@ type Payload = {
   // 블록마다 [칸 9개 문장, 완료 칸 번호들, (가운데 블록만) 카테고리] — 보낸 사람이 고칠 수 없는 블록은 0
   b: ([string[], number[], string[]?] | 0)[];
   x?: Record<number, number[]>; // 3 · 5칸 버전에서 더 연 칸 — 보낸 사람이 고칠 수 있는 블록만
+  i?: Record<number, Record<number, [string, number][]>>; // 하위 할 일 [문장, 완료 1/0] — 블록 → 칸
 };
 
 const PREFIX = 'GDT1:';
@@ -78,6 +79,11 @@ function payloadOf(p: Plan, k: TeamKind, to?: number): Payload {
       ...(b === CENTER ? [row.map(c => c.cat ?? '')] : []),
     ] as [string[], number[], string[]?]),
     ...(p.extra ? { x: Object.fromEntries(Object.entries(p.extra).filter(([b]) => mine(Number(b)))) } : {}),
+    i: Object.fromEntries(p.blocks.flatMap((row, b) => {
+      if (!mine(b)) return [];
+      const cells = Object.fromEntries(row.flatMap((c, i) => (c.items?.length ? [[i, c.items.map(x => [x.text, x.done ? 1 : 0] as [string, number])]] : [])));
+      return Object.keys(cells).length ? [[b, cells]] : [];
+    })),
   };
 }
 
@@ -169,7 +175,8 @@ function apply(plan: Plan, pay: Payload): { plan: Plan; changed: number } {
     blocks[b] = blocks[b].map((cell, i) => {
       // 바깥 블록의 가운데 칸은 저장하지 않는다 (가운데 블록의 세부 목표를 본다)
       if (b !== CENTER && i === CENTER) return cell;
-      return { ...cell, text: texts[i] ?? '', done: done.includes(i), ...(cats ? { cat: cats[i] || undefined } : {}) };
+      const items = pay.i?.[b]?.[i]?.map(([text, d]) => ({ text, done: !!d }));
+      return { ...cell, text: texts[i] ?? '', done: done.includes(i), items: items?.length ? items : undefined, ...(cats ? { cat: cats[i] || undefined } : {}) };
     });
     stamps[b] = pay.u[b];
     if (pay.x?.[b]?.length) extra[b] = pay.x[b]; else delete extra[b];

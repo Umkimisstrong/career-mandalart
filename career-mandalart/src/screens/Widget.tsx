@@ -225,7 +225,7 @@ function Detail({ plan, block, all, onToggle, onBack }: {
         {rows.map(({ c, cell, item }) => (
           <Row key={c} text={cell.text} onPress={() => onToggle(block, c)}
             state={cell.done ? 'done' : item?.dueToday && !item.stats.checked ? 'due' : item?.stats.checked ? 'checked' : 'none'}
-            sub={cell.routine && !cell.done ? routineLabel(cell.routine) : undefined} />
+            sub={[cell.routine && !cell.done ? routineLabel(cell.routine) : '', cell.items?.length ? `할 일 ${cell.items.filter(i => i.done).length}/${cell.items.length}` : ''].filter(Boolean).join(' · ') || undefined} />
         ))}
       </ScrollView>
     </View>
