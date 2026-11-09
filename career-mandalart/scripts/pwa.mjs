@@ -4,6 +4,7 @@
 //  - Android: Chrome 이 「앱 설치」를 띄워 앱 서랍에 아이콘이 생긴다 (manifest 192 · 512 · 마스커블 아이콘 + 서비스 워커).
 import { copyFileSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
+import { execSync } from 'node:child_process';
 
 const dist = process.argv[2] ?? 'dist';
 const app = JSON.parse(readFileSync('app.json', 'utf8')).expo;
@@ -71,11 +72,17 @@ const head = [
   "<script>if('serviceWorker' in navigator)addEventListener('load',()=>navigator.serviceWorker.register('/sw.js'))</script>",
 ].join('\n    ');
 
+// 화면(웹) 빌드 표시 — 버전 화면에서 읽는다. Vercel 은 커밋 해시를 환경 변수로 준다
+let sha = process.env.VERCEL_GIT_COMMIT_SHA ?? '';
+if (!sha) { try { sha = execSync('git rev-parse HEAD').toString().trim(); } catch { /* git 없음 */ } }
+const build = `<meta name="gudo-build" content="${sha.slice(0, 7)} ${new Date().toISOString()}">`;
+
 const indexPath = join(dist, 'index.html');
 let html = readFileSync(indexPath, 'utf8').replace('<html lang="en">', '<html lang="ko">');
 if (!html.includes('apple-mobile-web-app-capable')) {
   html = html.replace('</head>', `    ${head}\n  </head>`);
 }
+html = html.replace(/\s*<meta name="gudo-build"[^>]*>/, '').replace('</head>', `    ${build}\n  </head>`);
 // 노치/홈 인디케이터 영역까지 그리도록 viewport-fit=cover
 html = html.replace(/<meta name="viewport" content="([^"]*)"/, (m, c) =>
   c.includes('viewport-fit') ? m : `<meta name="viewport" content="${c}, viewport-fit=cover"`);

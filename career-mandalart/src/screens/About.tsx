@@ -3,9 +3,9 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { APP_NAME, APP_NAME_EN, APP_TAGLINE_EN, DESCRIPTION, DESCRIPTION_EN, MEANINGS } from '../brand';
 import { useTheme } from '../theme';
 
-type Props = { onBack: () => void; onStory: () => void };
+type Props = { onBack: () => void; onStory: () => void; onVersion: () => void };
 
-export default function About({ onBack, onStory }: Props) {
+export default function About({ onBack, onStory, onVersion }: Props) {
   const { t, ui } = useTheme();
   const card = { backgroundColor: t.surface, borderColor: t.border };
 
@@ -59,6 +59,10 @@ export default function About({ onBack, onStory }: Props) {
             <Text style={[styles.link, { color: t.accent }]}>★ 이 앱이 시작된 이야기 보기 · Read the story ›</Text>
           </Pressable>
         </View>
+        <Pressable onPress={onVersion} style={[styles.box, card, { flexDirection: 'row', alignItems: 'center' }]}>
+          <Text style={[styles.title, { color: t.text, flex: 1 }]}>버전 · 업데이트</Text>
+          <Text style={{ color: t.accent, fontWeight: '700' }}>보기 ›</Text>
+        </Pressable>
       </ScrollView>
     </View>
   );

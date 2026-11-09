@@ -13,7 +13,15 @@ export type DesktopBridge = {
   onOpen: (cb: (planId: string, block: number | null) => void) => void;
   // 큰 창: 작은 창 메뉴에서 「바탕화면에서 내리기」를 누르면 목록 체크를 푼다
   onUnpin: (cb: (planId: string) => void) => void;
+  // 1.2.1~ 버전 · 업데이트 (그 전 버전에는 없다)
+  info?: () => Promise<DesktopInfo>;
+  checkUpdate?: () => void;
+  installUpdate?: () => void;
+  onUpdate?: (cb: (info: DesktopInfo) => void) => void;
+  onPage?: (cb: (page: string) => void) => void; // 트레이 메뉴에서 열 화면
 };
+
+export type DesktopInfo = { version: string; state: string; ready: string | null; checkedAt: number | null; packaged: boolean };
 
 export const desktop: DesktopBridge | undefined =
   Platform.OS === 'web' && typeof window !== 'undefined' ? (window as unknown as { gudoDesktop?: DesktopBridge }).gudoDesktop : undefined;

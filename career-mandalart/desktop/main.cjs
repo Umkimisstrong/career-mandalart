@@ -3,7 +3,7 @@
 const { app, BrowserWindow, Menu, Tray, ipcMain, nativeImage, screen, shell } = require('electron');
 const fs = require('fs');
 const path = require('path');
-const { checkNow, startUpdater, updateState } = require('./updater.cjs');
+const { checkSilent, installNow, onChange, startUpdater, updateInfo } = require('./updater.cjs');
 
 const arg = process.argv.find(a => a.startsWith('--url='));
 const BASE = (arg ? arg.slice(6) : process.env.GUDO_URL) || 'https://career-mandalart.vercel.app';
@@ -118,8 +118,7 @@ function buildTray() {
       app.setLoginItemSettings({ openAtLogin: m.checked, args: ['--hidden'] });
     } },
     { type: 'separator' },
-    { label: `업데이트 확인 · v${app.getVersion()}`, click: checkNow },
-    { label: updateState(), enabled: false },
+    { label: `버전 · 업데이트 (v${app.getVersion()})`, click: () => { openMain(); main.webContents.send('gudo:page', 'version'); } },
     { type: 'separator' },
     { label: '종료', click: () => { quitting = true; app.quit(); } },
   ]);
@@ -127,6 +126,12 @@ function buildTray() {
   tray.on('right-click', () => tray.setContextMenu(menu()));
   tray.on('click', () => openMain());
 }
+
+// 버전 화면 — 상태 묻기 · 확인 · 바로 적용, 상태가 바뀌면 큰 창에 알린다
+ipcMain.handle('gudo:info', () => updateInfo());
+ipcMain.on('gudo:check', () => checkSilent());
+ipcMain.on('gudo:install', () => installNow());
+onChange(i => main && main.webContents.send('gudo:update', i));
 
 ipcMain.on('gudo:widgets', (_e, ids) => { if (Array.isArray(ids)) setWidgets(ids.filter(x => typeof x === 'string')); });
 ipcMain.on('gudo:resize', (e, w, h) => {

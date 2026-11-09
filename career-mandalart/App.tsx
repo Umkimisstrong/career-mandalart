@@ -17,6 +17,7 @@ import QrScan from './src/screens/QrScan';
 import QrShare from './src/screens/QrShare';
 import Story from './src/screens/Story';
 import Team from './src/screens/Team';
+import Version from './src/screens/Version';
 import { canEditBlock, copyTeam, isAdmin, isTeamQr, receiveTeamCode, storedBlock, touch } from './src/team';
 import Templates from './src/screens/Templates';
 import ThemeSettings from './src/screens/ThemeSettings';
@@ -39,6 +40,7 @@ type Route =
   | { name: 'today' }
   | { name: 'qr'; id: string }
   | { name: 'team'; id: string }
+  | { name: 'version' }
   | { name: 'plan'; id: string; block: number | null };
 
 // ?widget=<id> 로 열리면 작은 창만 그린다 (저장은 하지 않고 큰 창이 저장한 것을 읽기만)
@@ -103,6 +105,8 @@ function App() {
   useEffect(() => {
     // id 가 비어 있으면 홈(목록)
     desktop?.onOpen((id, block) => setRoute(id ? { name: 'plan', id, block } : { name: 'list' }));
+    // 트레이 「버전 · 업데이트」
+    desktop?.onPage?.(page => page === 'version' && setRoute({ name: 'version' }));
     desktop?.onUnpin(id => setStore(s => s && { ...s, widget: s.widget?.filter(w => w !== id) }));
   }, []);
 
@@ -213,7 +217,9 @@ function App() {
         />
       );
     } else if (route.name === 'about') {
-      screen = <About onBack={() => setRoute({ name: 'list' })} onStory={() => setRoute({ name: 'story', from: 'about' })} />;
+      screen = <About onBack={() => setRoute({ name: 'list' })} onStory={() => setRoute({ name: 'story', from: 'about' })} onVersion={() => setRoute({ name: 'version' })} />;
+    } else if (route.name === 'version') {
+      screen = <Version onBack={() => setRoute({ name: 'about' })} />;
     } else if (route.name === 'story') {
       screen = (
         <Story
