@@ -235,8 +235,9 @@ function CreateTab({ age, onCreate, onTemplates }: Props) {
         {PLAN_SIZES.map(n => {
           const on = n === size;
           return (
-            <Pressable key={n} onPress={() => setSize(n)} style={[styles.sizeChip, { borderColor: on ? t.primary : t.border, backgroundColor: on ? t.primary : t.surface }]}>
-              <Text style={{ color: on ? t.onPrimary : t.text, fontWeight: on ? '800' : '600', fontSize: 15 }}>{n}</Text>
+            <Pressable key={n} onPress={() => setSize(n)} accessibilityLabel={`${n * n}칸으로 만들기`}
+              style={[styles.sizeChip, { borderColor: on ? t.primary : t.border, backgroundColor: on ? t.primary : t.surface }]}>
+              <ShapeIcon color={on ? t.onPrimary : t.text} shape={n} size={26} />
               <Text style={{ color: on ? t.onPrimary : t.sub, fontSize: 10 }}>{n * n}칸</Text>
             </Pressable>
           );
@@ -323,7 +324,7 @@ const styles = StyleSheet.create({
   step: { fontSize: 14, fontWeight: '800', marginTop: 6 },
   choice: { flex: 1, borderWidth: 1, borderRadius: 12, paddingVertical: 10, alignItems: 'center' },
   sizeRow: { flexDirection: 'row', gap: 6 },
-  sizeChip: { flex: 1, alignItems: 'center', paddingVertical: 6, borderRadius: 10, borderWidth: 1 },
+  sizeChip: { flex: 1, alignItems: 'center', paddingVertical: 7, gap: 3, borderRadius: 10, borderWidth: 1 },
   story: { flexDirection: 'row', alignItems: 'center', gap: 12, padding: 14, borderRadius: 14, borderWidth: 1 },
   storyStar: { fontSize: 24 },
   storyTitle: { fontSize: 15, fontWeight: '700' },
