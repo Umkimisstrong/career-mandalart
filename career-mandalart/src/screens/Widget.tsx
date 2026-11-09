@@ -4,7 +4,7 @@
 // 큰 창과 같은 저장소를 쓰고, 서로 저장하면 storage 이벤트로 바로 따라 바뀐다.
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Animated, LayoutChangeEvent, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { categoryById } from '../categories/data';
+import { catInfo } from '../categories/data';
 import { ChevronIcon, HomeIcon } from '../components/Icons';
 import { layoutBlock } from '../components/ShapeLayout';
 import { desktop } from '../desktop';
@@ -152,7 +152,7 @@ function Grid({ plan, todo, onOpen }: { plan: Plan; todo: RoutineItem[]; onOpen:
           const pr = core ? progress(plan) : progress(plan, c.cell);
           return (
             <Cell key={c.cell} x={c.x} y={c.y} size={lay.cell} core={core}
-              emoji={core ? '★' : categoryById(g.cat)?.emoji}
+              emoji={core ? '★' : catInfo(g.cat)?.emoji}
               label={core ? g.text || '핵심 목표' : short(g.text)}
               ratio={pr.ratio} color={t.blocks[c.cell]} due={due.get(c.cell) ?? 0}
               onPress={() => onOpen(c.cell)} />
@@ -219,7 +219,7 @@ function Detail({ plan, block, all, onToggle, onBack }: {
     .filter(r => r.cell.text.trim());
   return (
     <View>
-      <DetailHead emoji={categoryById(g.cat)?.emoji} title={g.text || '세부 목표'} right={`${pr.done}/${pr.filled}`} color={t.blocks[block]} onBack={onBack} />
+      <DetailHead emoji={catInfo(g.cat)?.emoji} title={g.text || '세부 목표'} right={`${pr.done}/${pr.filled}`} color={t.blocks[block]} onBack={onBack} />
       {!rows.length && <Text style={[styles.empty, { color: t.sub }]}>아직 실행 과제가 없어요</Text>}
       <ScrollView style={{ maxHeight: LIST_MAX }} {...NODRAG}>
         {rows.map(({ c, cell, item }) => (

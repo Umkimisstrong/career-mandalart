@@ -4,7 +4,7 @@ import {
   KeyboardAvoidingView, Modal, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput,
   useWindowDimensions, View,
 } from 'react-native';
-import { AgeBand, categoryById } from '../categories/data';
+import { AgeBand, catInfo, categoryById } from '../categories/data';
 import { guideSub } from '../categories/tree';
 import { composeText } from '../categories/units';
 import { ActionBuilder, GoalCategoryPicker } from '../components/CategoryPicker';
@@ -22,6 +22,8 @@ type Props = {
   onBack: () => void;
   onChangeBlock: (block: number) => void;
   onEdit: (block: number, cell: number, patch: Partial<Cell>) => void;
+  // 팀 목표: 이 기기에서 고칠 수 있는 칸인지 (없으면 모두 가능)
+  canEdit?: (block: number, cell: number) => boolean;
   onAge: (age: AgeBand | undefined) => void;
   onAddCustom: (catId: string, label: string) => void;
 };
@@ -30,7 +32,7 @@ const IDX = [0, 1, 2, 3, 4, 5, 6, 7, 8];
 const ROLE_LABEL = { core: '핵심 목표', goal: '세부 목표', action: '실행 과제' } as const;
 
 export default function BlockEditor({
-  plan, block, age, custom, onBack, onChangeBlock, onEdit, onAge, onAddCustom,
+  plan, block, age, custom, onBack, onChangeBlock, onEdit, onAge, onAddCustom, canEdit,
 }: Props) {
   const { width } = useWindowDimensions();
   const { t, ui } = useTheme();
@@ -39,6 +41,8 @@ export default function BlockEditor({
   const lay = layoutBlock(shape, block, size, 8, shape === 1 ? 220 : 160);
   const cellSize = lay.cell;
   const [editing, setEditing] = useState<number | null>(null);
+  const [locked, setLocked] = useState(false);
+  const owner = plan.team?.owners[block === CENTER ? CENTER : block];
 
   const center = getCell(plan, block, CENTER);
   const pr = progress(plan, block);
@@ -68,7 +72,7 @@ export default function BlockEditor({
             return (
               <Pressable
                 key={c}
-                onPress={() => setEditing(c)}
+                onPress={() => (canEdit && !canEdit(block, c) ? setLocked(true) : setEditing(c))}
                 onLongPress={() => block === CENTER && c !== CENTER && onChangeBlock(c)}
                 style={[
                   styles.cell,
@@ -77,7 +81,7 @@ export default function BlockEditor({
                 ]}
               >
                 <Text style={[styles.role, { color: fg, opacity: 0.6 }]}>
-                  {ROLE_LABEL[role]}{role !== 'action' && categoryById(v.cat) ? ` · ${categoryById(v.cat)!.emoji}` : ''}
+                  {ROLE_LABEL[role]}{role !== 'action' && catInfo(v.cat) ? ` · ${catInfo(v.cat)!.emoji}` : ''}
                 </Text>
                 <Text
                   numberOfLines={4}
@@ -110,6 +114,14 @@ export default function BlockEditor({
             <View style={ui.bar}><View style={[ui.barFill, { width: `${Math.round(pr.ratio * 100)}%` }]} /></View>
             <Text style={ui.sub}>{shape === 1 ? `목표 ${pr.done}/${pr.filled} 완료 · 칸을 눌러 반복 점검 · 알림도 걸 수 있어요` : `이 블록 실행 과제 ${pr.done}/${pr.filled} 완료`}</Text>
           </View>
+        )}
+        {/* 팀 목표: 담당자 · 고칠 수 없는 칸을 눌렀을 때 안내 */}
+        {plan.team && (
+          <Text style={[ui.sub, { width: size, color: locked ? t.accent : t.sub, fontWeight: locked ? '700' : '400' }]}>
+            {locked
+              ? `🔒 이 칸은 ${block === CENTER || !owner ? '관리자' : `${owner} 님`}만 고칠 수 있어요`
+              : owner ? `담당 · ${owner}` : '담당자 없음'}
+          </Text>
         )}
         {block === CENTER && shape !== 1 && (
           <Text style={[ui.sub, { width: size }]}>세부 목표 칸을 길게 누르면 해당 블록으로 이동합니다.</Text>

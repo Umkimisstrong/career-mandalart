@@ -7,12 +7,13 @@ import { useTheme } from '../theme';
 type Props = {
   plan: Plan;
   onBack: () => void;
-  onRename: (title: string) => void;
+  onRename?: (title: string) => void; // 없으면 이름 고치기 막음 (팀 담당자)
   onOpenBlock: (block: number) => void;
   onQr: () => void;
+  onTeam?: () => void; // 팀 목표만
 };
 
-export default function Overview({ plan, onBack, onRename, onOpenBlock, onQr }: Props) {
+export default function Overview({ plan, onBack, onRename, onOpenBlock, onQr, onTeam }: Props) {
   const { width } = useWindowDimensions();
   const { t, ui } = useTheme();
   const size = Math.min(width, 640) - 32;
@@ -25,8 +26,10 @@ export default function Overview({ plan, onBack, onRename, onOpenBlock, onQr }: 
     <View style={{ flex: 1 }}>
       <View style={ui.header}>
         <Pressable onPress={onBack}><Text style={ui.back}>‹ 목록</Text></Pressable>
-        <TextInput value={plan.title} onChangeText={onRename} style={ui.headerTitle} />
-        <Pressable onPress={onQr} hitSlop={8}><Text style={ui.back}>QR 저장</Text></Pressable>
+        <TextInput value={plan.title} onChangeText={onRename} editable={!!onRename} style={ui.headerTitle} />
+        {onTeam
+          ? <Pressable onPress={onTeam} hitSlop={8}><Text style={ui.back}>👥 팀</Text></Pressable>
+          : <Pressable onPress={onQr} hitSlop={8}><Text style={ui.back}>QR 저장</Text></Pressable>}
       </View>
       <ScrollView contentContainerStyle={{ padding: 16, alignItems: 'center', gap: 14 }}>
         <View style={{ width: lay.width, height: lay.height }}>
@@ -57,6 +60,9 @@ export default function Overview({ plan, onBack, onRename, onOpenBlock, onQr }: 
                   ]}
                 >
                   {v.text || (shape !== 9 && role !== 'action' ? (role === 'core' ? '핵심 목표' : '세부 목표') : '')}
+                  {/* 팀 목표: 세부 목표 칸에 담당자 이름 */}
+                  {role === 'goal' && plan.team?.owners[b === CENTER ? c : b] ? `
+· ${plan.team.owners[b === CENTER ? c : b]}` : ''}
                 </Text>
               </Pressable>
             );

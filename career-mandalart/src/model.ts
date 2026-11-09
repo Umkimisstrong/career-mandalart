@@ -7,6 +7,7 @@
 
 import type { AgeBand } from './categories/data';
 import type { ThemeSetting } from './theme';
+import type { Team } from './team';
 
 export const CENTER = 4;
 
@@ -57,6 +58,8 @@ export type Plan = {
   blocks: Cell[][];
   // 청사진 크기 — 없으면 9 (81칸 시그니처). 작은 버전도 같은 9×9 저장 구조에서 일부 칸만 쓴다.
   size?: PlanSize;
+  // 팀 목표 — 관리자 · 담당자, 블록 담당자 이름, 블록별 갱신 시각 (src/team.ts). 없으면 개인 목표
+  team?: Team;
 };
 
 // 1 · 3 · 5 · 7 · 9칸 버전 — N칸 한 묶음 = 가운데 1 + 둘레 N-1.

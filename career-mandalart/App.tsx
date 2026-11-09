@@ -16,6 +16,8 @@ import PlanList, { Home } from './src/screens/PlanList';
 import QrScan from './src/screens/QrScan';
 import QrShare from './src/screens/QrShare';
 import Story from './src/screens/Story';
+import Team from './src/screens/Team';
+import { canEditBlock, copyTeam, isAdmin, isTeamQr, receiveTeamCode, storedBlock, touch } from './src/team';
 import Templates from './src/screens/Templates';
 import ThemeSettings from './src/screens/ThemeSettings';
 import Today from './src/screens/Today';
@@ -36,6 +38,7 @@ type Route =
   | { name: 'templates'; age?: AgeBand }
   | { name: 'today' }
   | { name: 'qr'; id: string }
+  | { name: 'team'; id: string }
   | { name: 'plan'; id: string; block: number | null };
 
 // ?widget=<id> 로 열리면 작은 창만 그린다 (저장은 하지 않고 큰 창이 저장한 것을 읽기만)
@@ -53,7 +56,24 @@ function App() {
   const theme = useMemo(() => buildTheme(store?.theme), [store?.theme]);
 
   useEffect(() => {
-    loadStore().then(s => { loaded.current = true; setStore(s); });
+    loadStore().then(s => {
+      loaded.current = true;
+      // 팀 초대장 · 갱신 링크(?team=…)로 열었으면 바로 반영하고 그 목표를 연다
+      const code = Platform.OS === 'web' ? new URLSearchParams(location.search).get('team') : null;
+      if (code) {
+        history.replaceState(null, '', location.pathname);
+        try {
+          const r = receiveTeamCode(s.plans, code);
+          setStore({ ...s, plans: r.plans });
+          setNotice({ text: r.message });
+          setRoute({ name: 'plan', id: r.planId, block: null });
+          return;
+        } catch (e) {
+          setNotice({ text: (e as Error).message, error: true });
+        }
+      }
+      setStore(s);
+    });
   }, []);
 
   // 다른 창(바탕화면 작은 창)이 저장하면 다시 읽는다 — 같은 내용을 다시 저장해도 이벤트는 생기지 않는다
@@ -105,11 +125,20 @@ function App() {
     setRoute({ name: 'plan', id: plan.id, block: null });
   };
 
+  // 팀 코드(초대장 · 갱신)를 반영하고 그 목표를 연다 — 결과 문장을 돌려준다 (실패하면 throw)
+  const receiveTeam = (text: string) => {
+    const r = receiveTeamCode(store!.plans, text);
+    setStore(s => s && { ...s, plans: r.plans });
+    setRoute(cur => (cur.name === 'team' ? cur : { name: 'plan', id: r.planId, block: null }));
+    return r.message;
+  };
+
   const scanQr = async () => {
     if (Platform.OS !== 'web') return setRoute({ name: 'scan' });
     try {
       const text = await pickQrFromImage();
-      if (text) addPlan(decodePlan(text));
+      if (text && isTeamQr(text)) receiveTeam(text);
+      else if (text) addPlan(decodePlan(text));
     } catch (e) {
       setNotice({ text: (e as Error).message, error: true });
     }
@@ -127,7 +156,7 @@ function App() {
           age={store.age}
           onOpen={id => setRoute({ name: 'plan', id, block: null })}
           onCreate={(title, size, tpl) => {
-            if (tpl && tpl !== 'ohtani' && !store.age) setStore(s => s && { ...s, age: tpl });
+            if (tpl && tpl !== 'ohtani' && tpl !== 'team' && !store.age) setStore(s => s && { ...s, age: tpl });
             addPlan(buildPlan(title, size, tpl));
           }}
           onDelete={id => setStore({ ...store, plans: store.plans.filter(p => p.id !== id), widget: store.widget?.filter(w => w !== id) })}
@@ -201,6 +230,20 @@ function App() {
       );
     } else if (route.name === 'scan') {
       screen = <QrScan onBack={() => setRoute({ name: 'list' })} onImport={addPlan} />;
+    } else if (route.name === 'team') {
+      const plan = store.plans.find(p => p.id === route.id);
+      if (plan?.team) {
+        screen = (
+          <Team
+            plan={plan}
+            onBack={() => setRoute({ name: 'plan', id: plan.id, block: null })}
+            onOwners={owners => updatePlan(plan.id, p => ({ ...p, team: { ...p.team!, owners } }))}
+            onReceive={receiveTeam}
+            onCopy={() => addPlan(copyTeam(plan))}
+            onDelete={() => { setStore(s => s && { ...s, plans: s.plans.filter(p => p.id !== plan.id), widget: s.widget?.filter(w => w !== plan.id) }); setRoute({ name: 'list' }); }}
+          />
+        );
+      }
     } else if (route.name === 'qr') {
       const plan = store.plans.find(p => p.id === route.id);
       if (plan) {
@@ -215,9 +258,10 @@ function App() {
           <Overview
             plan={plan}
             onBack={() => setRoute({ name: 'list' })}
-            onRename={title => updatePlan(plan.id, p => ({ ...p, title, updatedAt: Date.now() }))}
+            onRename={!plan.team || isAdmin(plan) ? title => updatePlan(plan.id, p => ({ ...p, title, updatedAt: Date.now() })) : undefined}
             onOpenBlock={block => setRoute({ ...route, block })}
             onQr={() => setRoute({ name: 'qr', id: plan.id })}
+            onTeam={plan.team ? () => setRoute({ name: 'team', id: plan.id }) : undefined}
           />
         );
       } else {
@@ -227,7 +271,9 @@ function App() {
             block={route.block}
             onBack={() => setRoute({ ...route, block: null })}
             onChangeBlock={block => setRoute({ ...route, block })}
-            onEdit={(b, c, patch: Partial<Cell>) => updatePlan(plan.id, p => setCell(p, b, c, patch))}
+            // 팀 목표: 고칠 수 있는 블록만, 고치면 그 블록 시각을 올린다
+            canEdit={(b, c) => canEditBlock(plan, storedBlock(b, c))}
+            onEdit={(b, c, patch: Partial<Cell>) => updatePlan(plan.id, p => (canEditBlock(p, storedBlock(b, c)) ? touch(setCell(p, b, c, patch), b, c) : p))}
             age={store.age}
             custom={store.custom ?? {}}
             onAge={age => setStore(s => s && { ...s, age })}

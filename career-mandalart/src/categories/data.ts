@@ -162,3 +162,39 @@ export const CATEGORIES: Category[] = [
 ];
 
 export const categoryById = (id?: string) => CATEGORIES.find(c => c.id === id);
+
+// ---- 팀 목표 카테고리 — 균형성과표(BSC) 4관점 × 2 (docs/team.md) ----
+// 개인 목표가 매슬로우를 아래부터 쌓듯, 팀 목표는 학습과 성장(바탕) → 내부 프로세스 → 고객 → 재무(결과)로 쌓는다.
+export type Perspective = 'learning' | 'process' | 'customer' | 'finance';
+export const PERSPECTIVES: Record<Perspective, string> = {
+  learning: '학습과 성장', process: '내부 프로세스', customer: '고객', finance: '재무',
+};
+export type TeamCategory = { id: string; label: string; emoji: string; perspective: Perspective; desc: string };
+
+export const TEAM_CATEGORIES: TeamCategory[] = [
+  { id: 'team-growth', label: '재무 · 성장', emoji: '💰', perspective: 'finance', desc: '매출 · 시장 확대' },
+  { id: 'team-customer', label: '고객 가치', emoji: '🤝', perspective: 'customer', desc: '만족 · 유지 · 추천' },
+  { id: 'team-productivity', label: '재무 · 생산성', emoji: '📈', perspective: 'finance', desc: '비용 · 수익성' },
+  { id: 'team-operations', label: '운영 프로세스', emoji: '⚙️', perspective: 'process', desc: '품질 · 속도 · 비용' },
+  { id: 'team-innovation', label: '혁신 프로세스', emoji: '💡', perspective: 'process', desc: '개선 · 신제품 · 신규 사업' },
+  { id: 'team-people', label: '사람 · 역량', emoji: '🧑‍🎓', perspective: 'learning', desc: '인적 자본 · 교육' },
+  { id: 'team-culture', label: '조직 문화 · 팀워크', emoji: '🫶', perspective: 'learning', desc: '신뢰 · 협업 · 리더십' },
+  { id: 'team-tools', label: '정보 · 도구', emoji: '🛠️', perspective: 'learning', desc: '시스템 · 데이터 · 정보' },
+  // 바꿔 쓰는 카테고리
+  { id: 'team-relations', label: '고객 관리', emoji: '📇', perspective: 'process', desc: '발굴 · 유지 · 관계' },
+  { id: 'team-society', label: '규제 · 사회', emoji: '🌱', perspective: 'process', desc: '안전 · 환경 · ESG' },
+  { id: 'team-funding', label: '재원 · 효율', emoji: '🏛️', perspective: 'finance', desc: '공공 · 비영리 재원' },
+];
+
+// 크기별 세부 목표 자리 → 팀 카테고리 (위 줄 = 결과, 아래 줄 = 바탕)
+export const TEAM_LAYOUT: Record<number, Record<number, string>> = {
+  9: { 0: 'team-growth', 1: 'team-customer', 2: 'team-productivity', 3: 'team-operations', 5: 'team-innovation', 6: 'team-people', 7: 'team-culture', 8: 'team-tools' },
+  7: { 0: 'team-growth', 2: 'team-customer', 3: 'team-operations', 5: 'team-innovation', 6: 'team-people', 8: 'team-culture' },
+  5: { 1: 'team-growth', 3: 'team-customer', 5: 'team-operations', 7: 'team-people' },
+  3: { 3: 'team-operations', 5: 'team-customer' },
+  1: {},
+};
+
+export const teamCategoryById = (id?: string) => TEAM_CATEGORIES.find(c => c.id === id);
+// 개인 · 팀 어느 쪽 카테고리든 이모지 · 이름
+export const catInfo = (id?: string): { emoji: string; label: string } | undefined => categoryById(id) ?? teamCategoryById(id);

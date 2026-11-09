@@ -14,7 +14,7 @@ import { useTheme } from '../theme';
 export type Filter = 'all' | PlanSize | 'check';
 export type Home = { tab: 'list' | 'create'; filter: Filter };
 // 템플릿 — 연령대 또는 시그니처(16살 오타니의 81칸)
-export type TemplatePick = AgeBand | 'ohtani' | null;
+export type TemplatePick = AgeBand | 'ohtani' | 'team' | null;
 
 type Props = {
   plans: Plan[];
@@ -170,7 +170,7 @@ function ListTab({ plans, home, onHome, onOpen, onDelete, onScanQr, onBackup, on
           <Pressable key={p.id} style={[styles.card, { backgroundColor: t.surface, borderColor: t.border, borderLeftColor: t.primary }]} onPress={() => onOpen(p.id)}>
             <View style={{ flex: 1 }}>
               <Text style={[styles.cardTitle, { color: t.text }]}>
-                {p.title}<Text style={{ color: t.sub, fontSize: 12, fontWeight: '600' }}>  {n}칸</Text>
+                {p.title}<Text style={{ color: t.sub, fontSize: 12, fontWeight: '600' }}>  {n}칸{p.team ? ` · 👥 ${p.team.role === 'admin' ? '팀 관리자' : '팀'}` : ''}</Text>
               </Text>
               <Text style={[styles.cardCore, { color: t.sub }]} numberOfLines={1}>{core || '핵심 목표를 정해보세요'}</Text>
               <View style={ui.bar}>
@@ -214,7 +214,9 @@ function CreateTab({ age, onCreate }: Props) {
   const { t, ui } = useTheme();
   const [title, setTitle] = useState('');
   const [size, setSize] = useState<PlanSize | null>(null);
-  const [useTpl, setUseTpl] = useState<boolean | null>(null);
+  // 시작 방법 — 빈 칸 · 템플릿 · 팀 목표(균형성과표 칸, 초대장으로 함께)
+  const [mode, setMode] = useState<'blank' | 'tpl' | 'team' | null>(null);
+  const useTpl = mode === null ? null : mode === 'tpl';
   const [pick, setPick] = useState<AgeBand | 'ohtani' | null>(null);
   const [preview, setPreview] = useState<Plan | null>(null);
   const tpl = pick && pick !== 'ohtani' ? templateOf(pick) : undefined;
@@ -222,12 +224,12 @@ function CreateTab({ age, onCreate }: Props) {
   const step2 = size !== null;
   const step3 = step2 && useTpl === true;
   const ready = step2 && (useTpl === false || (useTpl === true && pick !== null));
-  const choice = useTpl ? pick : null;
+  const choice: TemplatePick = mode === 'team' ? 'team' : useTpl ? pick : null;
 
   const create = () => {
     if (!ready) return;
     onCreate(title.trim(), size!, choice);
-    setTitle(''); setSize(null); setUseTpl(null); setPick(null); setPreview(null);
+    setTitle(''); setSize(null); setMode(null); setPick(null); setPreview(null);
   };
   // 크기만 골라도 볼 수 있다 — 템플릿 · 연령대까지 골랐으면 채운 모습으로
   const open = () => { if (size !== null) setPreview(buildPlan(title.trim(), size, choice)); };
@@ -279,10 +281,11 @@ function CreateTab({ age, onCreate }: Props) {
       )}
 
       <View style={[{ gap: 10 }, lock(step2)]}>
-        {head('2', '시작 방법', useTpl !== null)}
+        {head('2', '시작 방법', mode !== null)}
         <View style={{ flexDirection: 'row', gap: 8 }}>
-          {card(useTpl === false, '빈 칸으로', '처음부터 직접 쓰기', () => setUseTpl(false))}
-          {card(useTpl === true, '템플릿 채우기', '예시로 채운 뒤 고치기', () => setUseTpl(true))}
+          {card(mode === 'blank', '빈 칸', '처음부터 쓰기', () => setMode('blank'))}
+          {card(mode === 'tpl', '템플릿', '예시로 채우기', () => setMode('tpl'))}
+          {card(mode === 'team', '팀 목표', '팀원 초대하기', () => setMode('team'))}
         </View>
       </View>
 
@@ -324,13 +327,13 @@ function CreateTab({ age, onCreate }: Props) {
           onSubmitEditing={create}
         />
         <Pressable style={[ui.btnPrimary, { marginTop: 4 }]} onPress={create}>
-          <Text style={ui.btnPrimaryText}>{useTpl ? '✨ 템플릿으로 만들기' : '만들기'}</Text>
+          <Text style={ui.btnPrimaryText}>{mode === 'team' ? '👥 팀 목표 만들기' : useTpl ? '✨ 템플릿으로 만들기' : '만들기'}</Text>
         </Pressable>
       </View>
 
       {/* 다 고르기 전에는 모양만 보는 미리보기 — 「이대로 만들기」 대신 닫기만 */}
       <PlanPreview plan={preview} onClose={() => setPreview(null)} onCreate={ready ? create : undefined}
-        sub={choice ? (choice === 'ohtani' ? '16살 오타니' : `${AGE_BANDS.find(a => a.id === choice)?.label} 템플릿`) : '빈 칸'} />
+        sub={choice === 'team' ? '팀 · 균형성과표' : choice ? (choice === 'ohtani' ? '16살 오타니' : `${AGE_BANDS.find(a => a.id === choice)?.label} 템플릿`) : '빈 칸'} />
     </View>
   );
 }

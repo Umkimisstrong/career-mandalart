@@ -10,9 +10,10 @@
 //   "세부카테고리:행동 @언제 ~얼마나 #수량단위 ^언제까지 &어디서 =어디로"
 //   - 세부카테고리는 블록 카테고리의 것. 다른 카테고리 것이면 "카테고리/세부카테고리:"
 //   - #은 여러 번 쓸 수 있다 (예: #3회 #5km)
-import { AGE_BANDS, type AgeBand } from './data';
+import { AGE_BANDS, type AgeBand, TEAM_LAYOUT, teamCategoryById } from './data';
 import { composeText } from './units';
 import { ActionSpec, CENTER, fitSize, newPlan, ohtaniPlan, Plan, PlanSize, setCell } from '../model';
+import { makeTeam } from '../team';
 
 export type Template = {
   age: AgeBand;
@@ -499,12 +500,23 @@ export function planFromTemplate(tpl: Template, label: string): Plan {
 }
 
 // 만들기 탭의 선택(크기 · 템플릿 · 이름)으로 새 목표를 만든다 — 미리보기와 실제 만들기가 같은 결과를 쓴다.
-// 템플릿은 81칸으로 채운 뒤 고른 크기에 들어가는 자리만 남긴다. tpl = 연령대 · 'ohtani'(시그니처) · null(빈 칸)
-export function buildPlan(title: string, size: PlanSize, tpl: AgeBand | 'ohtani' | null): Plan {
+// 템플릿은 81칸으로 채운 뒤 고른 크기에 들어가는 자리만 남긴다. tpl = 연령대 · 'ohtani'(시그니처) · 'team'(팀, 균형성과표 칸) · null(빈 칸)
+export function buildPlan(title: string, size: PlanSize, tpl: AgeBand | 'ohtani' | 'team' | null): Plan {
+  if (tpl === 'team') return teamPlan(title, size);
   const t = tpl && tpl !== 'ohtani' ? templateOf(tpl) : undefined;
   const label = AGE_BANDS.find(a => a.id === tpl)?.label ?? '';
   const p = tpl === 'ohtani' ? fitSize({ ...ohtaniPlan(), title: `오타니 쇼헤이의 ${size * size}칸 (고교 1학년)` }, size)
     : t ? fitSize(planFromTemplate(t, label), size)
     : newPlan(title || (size === 9 ? '새 목표' : `새 ${size}칸 목표`), size);
   return title ? { ...p, title } : p;
+}
+
+// 팀 목표 — 세부 목표 칸에 균형성과표 카테고리를 깔고, 이 기기가 관리자
+function teamPlan(title: string, size: PlanSize): Plan {
+  let p = newPlan(title || `새 팀 목표 (${size * size}칸)`, size);
+  for (const [slot, id] of Object.entries(TEAM_LAYOUT[size])) {
+    const c = teamCategoryById(id)!;
+    p = setCell(p, CENTER, Number(slot), { text: c.label, cat: c.id });
+  }
+  return makeTeam(p, '관리자');
 }

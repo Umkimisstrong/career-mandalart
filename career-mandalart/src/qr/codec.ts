@@ -84,7 +84,7 @@ export function decodePlan(text: string): Plan {
 // ---- base45 (RFC 9285) ----
 const B45 = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ $%*+-./:';
 
-function base45Encode(bytes: Uint8Array): string {
+export function base45Encode(bytes: Uint8Array): string {
   let out = '';
   for (let i = 0; i < bytes.length; i += 2) {
     if (i + 1 < bytes.length) {
@@ -100,7 +100,7 @@ function base45Encode(bytes: Uint8Array): string {
   return out;
 }
 
-function base45Decode(str: string): Uint8Array {
+export function base45Decode(str: string): Uint8Array {
   const v = [...str].map(ch => {
     const i = B45.indexOf(ch);
     if (i < 0) throw new Error('bad base45');
