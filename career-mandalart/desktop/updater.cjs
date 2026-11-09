@@ -20,6 +20,7 @@ function startUpdater(onQuit) {
   ({ autoUpdater: updater } = require('electron-updater'));
   updater.autoDownload = true;
   updater.autoInstallOnAppQuit = true;
+  updater.disableWebInstaller = true;
   updater.logger = { info: log, warn: log, error: log, debug: () => {} };
 
   updater.on('checking-for-update', () => { state = '업데이트 확인 중…'; });
