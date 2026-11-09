@@ -10,9 +10,11 @@ type Props = {
   onBack: () => void;
   // 복원한 뒤 목록(또는 하나뿐이면 그 목표)으로 바로 이동 — ids = 백업 코드에 들어 있던 목표
   onImport: (next: Store, ids: string[]) => void;
+  // 팀 초대장 · 갱신 링크를 붙여넣었을 때 (데스크톱 앱처럼 링크를 바로 열 수 없는 곳에서 들어오는 길)
+  onTeam: (text: string) => void;
 };
 
-export default function Backup({ store, onBack, onImport }: Props) {
+export default function Backup({ store, onBack, onImport, onTeam }: Props) {
   const { ui } = useTheme();
   const json = exportJson(store);
   const [paste, setPaste] = useState('');
@@ -28,6 +30,7 @@ export default function Backup({ store, onBack, onImport }: Props) {
 
   const restore = () => {
     try {
+      if (/[?&]team=|^\s*GDT1:/.test(paste)) { onTeam(paste); setPaste(''); return; }
       const next = importJson(store, paste);
       const ids = (JSON.parse(paste).plans as { id: string }[]).map(p => p.id);
       setPaste('');
@@ -52,7 +55,7 @@ export default function Backup({ store, onBack, onImport }: Props) {
         <Text style={{ fontWeight: '700', marginTop: 12 }}>복원하기</Text>
         <Text style={ui.sub}>보관해 둔 백업 코드를 통째로 붙여넣으세요. 같은 목표가 이미 있으면 백업 코드의 내용으로 바뀌어요.</Text>
         <TextInput
-          value={paste} onChangeText={setPaste} multiline placeholder="백업 코드 붙여넣기"
+          value={paste} onChangeText={setPaste} multiline placeholder="백업 코드 또는 팀 초대장 링크 붙여넣기"
           style={[ui.input, { height: 140, fontSize: 11 }]}
         />
         <Pressable style={ui.btn} onPress={restore} disabled={!paste.trim()}>

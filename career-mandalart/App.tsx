@@ -178,6 +178,7 @@ function App() {
         <Backup
           store={store}
           onBack={() => setRoute({ name: 'list' })}
+          onTeam={text => setNotice({ text: receiveTeam(text) })}
           onImport={(next, ids) => {
             setStore(next);
             // 하나면 그 목표를 바로 펼치고, 여러 개면 전체 목록으로
