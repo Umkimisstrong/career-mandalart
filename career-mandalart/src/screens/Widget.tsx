@@ -8,7 +8,7 @@ import { catInfo } from '../categories/data';
 import { ChevronIcon, HomeIcon } from '../components/Icons';
 import { layoutBlock } from '../components/ShapeLayout';
 import { desktop } from '../desktop';
-import { cellsOf, CENTER, getCell, Plan, progress, setCell, sizeOf, Store } from '../model';
+import { cellsIn, CENTER, getCell, Plan, progress, setCell, sizeOf, Store } from '../model';
 import { periodKey, RoutineItem, routineItems, routineLabel, Scope, toggleKey } from '../routine';
 import { loadStore, saveStore, STORE_KEY } from '../storage';
 import { buildTheme, ThemeProvider, useTheme } from '../theme';
@@ -214,7 +214,7 @@ function Detail({ plan, block, all, onToggle, onBack }: {
   const { t } = useTheme();
   const g = plan.blocks[CENTER][block];
   const pr = progress(plan, block);
-  const rows = cellsOf(sizeOf(plan), block).filter(c => c !== CENTER)
+  const rows = cellsIn(plan, block).filter(c => c !== CENTER)
     .map(c => ({ c, cell: plan.blocks[block][c], item: all.find(i => i.block === block && i.cell === c) }))
     .filter(r => r.cell.text.trim());
   return (

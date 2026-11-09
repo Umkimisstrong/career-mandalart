@@ -60,6 +60,8 @@ export type Plan = {
   size?: PlanSize;
   // 팀 목표 — 관리자 · 담당자, 블록 담당자 이름, 블록별 갱신 시각 (src/team.ts). 없으면 개인 목표
   team?: Team;
+  // 3 · 5칸 버전에서 세부 목표 묶음마다 더 연 실행 과제 칸 (블록 → 칸 번호들). 최대 3×3 까지
+  extra?: Record<number, number[]>;
 };
 
 // 1 · 3 · 5 · 7 · 9칸 버전 — N칸 한 묶음 = 가운데 1 + 둘레 N-1.
@@ -81,6 +83,31 @@ export const blocksOf = (size: PlanSize) => SHAPE[size];
 // 블록 b 안에서 쓰는 칸 — 3칸 버전의 세부 목표 묶음은 세로 줄
 export const cellsOf = (size: PlanSize, block: number) =>
   size === 3 && block !== CENTER ? [1, 4, 7] : SHAPE[size];
+// 칸을 더 열 수 있는 크기 — 정사각 격자 모양(3 · 5)만. 7칸(육각)은 자리가 어긋나고 9칸은 이미 다 찼다
+export const canGrow = (size: PlanSize) => size === 3 || size === 5;
+// 이 목표에서 블록 b 가 쓰는 칸 = 크기 모양 + 더 연 칸
+export function cellsIn(plan: Plan, block: number): number[] {
+  const size = sizeOf(plan);
+  const base = cellsOf(size, block);
+  if (block === CENTER || !canGrow(size)) return base;
+  return [...new Set([...base, ...(plan.extra?.[block] ?? [])])].sort((a, b) => a - b);
+}
+// 블록 b 에서 더 열 수 있는 빈 자리
+export function growSlots(plan: Plan, block: number): number[] {
+  if (block === CENTER || !canGrow(sizeOf(plan)) || !blocksOf(sizeOf(plan)).includes(block)) return [];
+  const used = cellsIn(plan, block);
+  return [0, 1, 2, 3, 5, 6, 7, 8].filter(c => !used.includes(c));
+}
+// 칸 열기 · 닫기 (닫으면 그 칸 내용도 비운다)
+export function setExtra(plan: Plan, block: number, cell: number, on: boolean): Plan {
+  const cur = plan.extra?.[block] ?? [];
+  const next = on ? [...new Set([...cur, cell])] : cur.filter(c => c !== cell);
+  const extra = { ...plan.extra, [block]: next };
+  if (!next.length) delete extra[block];
+  const blocks = on ? plan.blocks : plan.blocks.map((row, b) => (b === block ? row.map((c, i) => (i === cell ? emptyCell() : c)) : row));
+  return { ...plan, blocks, extra, updatedAt: Date.now() };
+}
+
 // 3×3 안 위치 (열 · 행) — 7칸 버전은 위 · 아래 줄을 반 칸씩 안으로 당겨 육각형으로
 export function slotPos(size: PlanSize, i: number): { col: number; row: number } {
   const row = Math.floor(i / 3);
@@ -93,7 +120,7 @@ export function trackedCells(plan: Plan): [number, number][] {
   const size = sizeOf(plan);
   if (size === 1) return [[CENTER, CENTER]];
   return blocksOf(size).filter(b => b !== CENTER)
-    .flatMap(b => cellsOf(size, b).filter(c => c !== CENTER).map(c => [b, c] as [number, number]));
+    .flatMap(b => cellsIn(plan, b).filter(c => c !== CENTER).map(c => [b, c] as [number, number]));
 }
 export const sizeLabel = (size: PlanSize) =>
   size === 1 ? '목표 1개' : `세부 목표 ${size - 1} · 실행 과제 ${(size - 1) ** 2}`;

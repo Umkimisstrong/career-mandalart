@@ -4,7 +4,7 @@ import { ActivityIndicator, Platform, View } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import InstallBanner from './src/components/InstallBanner';
 import { buildPlan } from './src/categories/templates';
-import { Cell, getCell, ohtaniPlan, Plan, setCell, Store } from './src/model';
+import { Cell, getCell, ohtaniPlan, Plan, setCell, setExtra, Store } from './src/model';
 import { syncReminders } from './src/notify';
 import { decodePlan } from './src/qr/codec';
 import { pickQrFromImage } from './src/qr/image';
@@ -274,6 +274,7 @@ function App() {
             onChangeBlock={block => setRoute({ ...route, block })}
             // 팀 목표: 고칠 수 있는 블록만, 고치면 그 블록 시각을 올린다
             canEdit={(b, c) => canEditBlock(plan, storedBlock(b, c))}
+            onGrow={(b, c, on) => updatePlan(plan.id, p => (canEditBlock(p, b) ? touch(setExtra(p, b, c, on), b, 0) : p))}
             onEdit={(b, c, patch: Partial<Cell>) => updatePlan(plan.id, p => (canEditBlock(p, storedBlock(b, c)) ? touch(setCell(p, b, c, patch), b, c) : p))}
             age={store.age}
             custom={store.custom ?? {}}

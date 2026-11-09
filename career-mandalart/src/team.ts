@@ -60,6 +60,7 @@ type Payload = {
   u: number[]; // 블록 시각
   // 블록마다 [칸 9개 문장, 완료 칸 번호들, (가운데 블록만) 카테고리] — 보낸 사람이 고칠 수 없는 블록은 0
   b: ([string[], number[], string[]?] | 0)[];
+  x?: Record<number, number[]>; // 3 · 5칸 버전에서 더 연 칸 — 보낸 사람이 고칠 수 있는 블록만
 };
 
 const PREFIX = 'GDT1:';
@@ -76,6 +77,7 @@ function payloadOf(p: Plan, k: TeamKind, to?: number): Payload {
       row.flatMap((c, i) => (c.done ? [i] : [])),
       ...(b === CENTER ? [row.map(c => c.cat ?? '')] : []),
     ] as [string[], number[], string[]?]),
+    ...(p.extra ? { x: Object.fromEntries(Object.entries(p.extra).filter(([b]) => mine(Number(b)))) } : {}),
   };
 }
 
@@ -156,6 +158,7 @@ function apply(plan: Plan, pay: Payload): { plan: Plan; changed: number } {
   const fromAdmin = pay.from === -1;
   const blocks = plan.blocks.map(r => r.slice());
   const stamps = [...team.stamps];
+  const extra: Record<number, number[]> = { ...plan.extra };
   let changed = 0;
   pay.b.forEach((blk, b) => {
     if (!blk) return;
@@ -169,10 +172,11 @@ function apply(plan: Plan, pay: Payload): { plan: Plan; changed: number } {
       return { ...cell, text: texts[i] ?? '', done: done.includes(i), ...(cats ? { cat: cats[i] || undefined } : {}) };
     });
     stamps[b] = pay.u[b];
+    if (pay.x?.[b]?.length) extra[b] = pay.x[b]; else delete extra[b];
     changed++;
   });
   const next: Plan = {
-    ...plan, blocks, updatedAt: changed ? Date.now() : plan.updatedAt,
+    ...plan, blocks, extra, updatedAt: changed ? Date.now() : plan.updatedAt,
     ...(fromAdmin ? { title: pay.t, size: pay.s === 9 ? undefined : pay.s } : {}),
     team: { ...team, stamps, ...(fromAdmin ? { owners: pay.o } : {}) },
   };

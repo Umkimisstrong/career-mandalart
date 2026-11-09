@@ -4,10 +4,11 @@ import { blocksOf, cellsOf, CENTER, PlanSize, slotPos } from '../model';
 export type Placed = { block: number; cell: number; x: number; y: number };
 
 // 전체 화면: 쓰는 블록 × 블록 안 쓰는 칸. 블록 사이는 gap px 띄운다.
-export function layoutPlan(size: PlanSize, width: number, gap: number, maxCell: number) {
+// cellsFor = 블록마다 그릴 칸 (기본: 크기 모양, 목표에 더 연 칸이 있으면 cellsIn)
+export function layoutPlan(size: PlanSize, width: number, gap: number, maxCell: number, cellsFor = (b: number) => cellsOf(size, b)) {
   const units = blocksOf(size).flatMap(b => {
     const bp = slotPos(size, b);
-    return cellsOf(size, b).map(c => {
+    return cellsFor(b).map(c => {
       const cp = slotPos(size, c);
       return { block: b, cell: c, ux: bp.col * 3 + cp.col, uy: bp.row * 3 + cp.row, gx: bp.col, gy: bp.row };
     });
@@ -16,8 +17,8 @@ export function layoutPlan(size: PlanSize, width: number, gap: number, maxCell: 
 }
 
 // 블록 화면: 블록 하나의 칸들. 칸 사이는 gap px.
-export function layoutBlock(size: PlanSize, block: number, width: number, gap: number, maxCell: number) {
-  const units = cellsOf(size, block).map(c => {
+export function layoutBlock(size: PlanSize, block: number, width: number, gap: number, maxCell: number, cells = cellsOf(size, block)) {
+  const units = cells.map(c => {
     const cp = slotPos(size, c);
     return { block, cell: c, ux: cp.col, uy: cp.row, gx: cp.col, gy: cp.row };
   });

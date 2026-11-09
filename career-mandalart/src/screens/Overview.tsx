@@ -1,7 +1,7 @@
 // 목표 전체 보기 (81칸 · 또는 1 · 3 · 5 · 7칸 버전의 모양대로). 칸을 누르면 그 블록 편집 화면으로 들어간다.
 import { Pressable, ScrollView, StyleSheet, Text, TextInput, useWindowDimensions, View } from 'react-native';
 import { layoutPlan } from '../components/ShapeLayout';
-import { CENTER, cellRole, getCell, Plan, progress, sizeOf } from '../model';
+import { CENTER, cellRole, cellsIn, getCell, Plan, progress, sizeOf } from '../model';
 import { useTheme } from '../theme';
 
 type Props = {
@@ -18,7 +18,7 @@ export default function Overview({ plan, onBack, onRename, onOpenBlock, onQr, on
   const { t, ui } = useTheme();
   const size = Math.min(width, 640) - 32;
   const shape = sizeOf(plan);
-  const lay = layoutPlan(shape, size, 6, shape === 1 ? 180 : 110); // 블록 사이 간격 6px
+  const lay = layoutPlan(shape, size, 6, shape === 1 ? 180 : 110, b => cellsIn(plan, b)); // 블록 사이 간격 6px
   const cell = lay.cell;
   const pr = progress(plan);
 

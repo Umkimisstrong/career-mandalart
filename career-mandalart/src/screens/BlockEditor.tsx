@@ -10,7 +10,7 @@ import { composeText } from '../categories/units';
 import { ActionBuilder, GoalCategoryPicker } from '../components/CategoryPicker';
 import RoutinePicker from '../components/RoutinePicker';
 import { layoutBlock } from '../components/ShapeLayout';
-import { ActionSpec, blocksOf, CENTER, Cell, cellRole, getCell, Plan, progress, Routine, sizeOf } from '../model';
+import { ActionSpec, blocksOf, canGrow, CENTER, Cell, cellRole, cellsIn, getCell, growSlots, Plan, progress, Routine, sizeOf } from '../model';
 import { routineLabel, routineStats } from '../routine';
 import { useTheme } from '../theme';
 
@@ -24,6 +24,8 @@ type Props = {
   onEdit: (block: number, cell: number, patch: Partial<Cell>) => void;
   // 팀 목표: 이 기기에서 고칠 수 있는 칸인지 (없으면 모두 가능)
   canEdit?: (block: number, cell: number) => boolean;
+  // 3 · 5칸 버전: 실행 과제 칸 열기(on) · 빼기
+  onGrow: (block: number, cell: number, on: boolean) => void;
   onAge: (age: AgeBand | undefined) => void;
   onAddCustom: (catId: string, label: string) => void;
 };
@@ -32,13 +34,18 @@ const IDX = [0, 1, 2, 3, 4, 5, 6, 7, 8];
 const ROLE_LABEL = { core: '핵심 목표', goal: '세부 목표', action: '실행 과제' } as const;
 
 export default function BlockEditor({
-  plan, block, age, custom, onBack, onChangeBlock, onEdit, onAge, onAddCustom, canEdit,
+  plan, block, age, custom, onBack, onChangeBlock, onEdit, onAge, onAddCustom, canEdit, onGrow,
 }: Props) {
   const { width } = useWindowDimensions();
   const { t, ui } = useTheme();
   const size = Math.min(width, 520) - 32;
   const shape = sizeOf(plan);
-  const lay = layoutBlock(shape, block, size, 8, shape === 1 ? 220 : 160);
+  // 칸을 더 열 수 있는 블록은 3×3 전체 자리로 그리고, 빈 자리에 ＋ 를 둔다
+  const growable = canGrow(shape) && block !== CENTER && (!canEdit || canEdit(block, 0));
+  const slots = growable ? growSlots(plan, block) : [];
+  const lay = growable
+    ? layoutBlock(9, block, size, 8, 160, [0, 1, 2, 3, 4, 5, 6, 7, 8].filter(c => cellsIn(plan, block).includes(c) || slots.includes(c)))
+    : layoutBlock(shape, block, size, 8, shape === 1 ? 220 : 160, cellsIn(plan, block));
   const cellSize = lay.cell;
   const [editing, setEditing] = useState<number | null>(null);
   const [locked, setLocked] = useState(false);
@@ -59,6 +66,15 @@ export default function BlockEditor({
       <ScrollView contentContainerStyle={{ padding: 16, alignItems: 'center', gap: 16 }}>
         <View style={{ width: lay.width, height: lay.height }}>
           {lay.cells.map(({ cell: c, x, y }) => {
+            // 아직 열지 않은 자리 — 누르면 칸을 열고 바로 입력
+            if (slots.includes(c)) {
+              return (
+                <Pressable key={c} accessibilityLabel="실행 과제 칸 더하기" onPress={() => { onGrow(block, c, true); setEditing(c); }}
+                  style={[styles.cell, styles.ghost, { left: x, top: y, width: cellSize, height: cellSize, borderColor: t.border }]}>
+                  <Text style={{ fontSize: 26, color: t.sub }}>＋</Text>
+                </Pressable>
+              );
+            }
             const v = getCell(plan, block, c);
             const role = cellRole(block, c);
             const isAction = role === 'action';
@@ -154,15 +170,17 @@ export default function BlockEditor({
           custom={custom}
           onAge={onAge}
           onAddCustom={onAddCustom}
-          onClose={() => setEditing(null)}
+          // 새로 연 칸을 비운 채 닫으면 칸도 다시 닫는다
+          onClose={() => { if (plan.extra?.[block]?.includes(editing) && !getCell(plan, block, editing).text) onGrow(block, editing, false); setEditing(null); }}
           onSave={patch => { onEdit(block, editing, patch); setEditing(null); }}
+          onRemove={plan.extra?.[block]?.includes(editing) ? () => { onGrow(block, editing, false); setEditing(null); } : undefined}
         />
       )}
     </View>
   );
 }
 
-function CellEditor({ role, trackable, cell, blockCat, guide, age, custom, onAge, onAddCustom, onClose, onSave }: {
+function CellEditor({ role, trackable, cell, blockCat, guide, age, custom, onAge, onAddCustom, onClose, onSave, onRemove }: {
   role: keyof typeof ROLE_LABEL;
   trackable: boolean; // 완료 · 반복 점검을 다는 칸
   cell: Cell;
@@ -174,6 +192,7 @@ function CellEditor({ role, trackable, cell, blockCat, guide, age, custom, onAge
   onAddCustom: (catId: string, label: string) => void;
   onClose: () => void;
   onSave: (patch: Partial<Cell>) => void;
+  onRemove?: () => void; // 더 연 칸만 — 칸을 닫는다
 }) {
   const { t, ui } = useTheme();
   const [text, setText] = useState(cell.text);
@@ -254,6 +273,11 @@ function CellEditor({ role, trackable, cell, blockCat, guide, age, custom, onAge
               <Text style={ui.btnPrimaryText}>저장</Text>
             </Pressable>
           </View>
+          {onRemove && (
+            <Pressable onPress={onRemove} style={{ alignSelf: 'center', padding: 6 }}>
+              <Text style={{ color: '#DC2626', fontSize: 13, fontWeight: '700' }}>이 칸 빼기</Text>
+            </Pressable>
+          )}
         </ScrollView>
       </KeyboardAvoidingView>
     </Modal>
@@ -261,6 +285,7 @@ function CellEditor({ role, trackable, cell, blockCat, guide, age, custom, onAge
 }
 
 const styles = StyleSheet.create({
+  ghost: { borderStyle: 'dashed', borderWidth: 1.5, backgroundColor: 'transparent' },
   cell: {
     position: 'absolute', borderRadius: 12, borderWidth: 1, padding: 8,
     alignItems: 'center', justifyContent: 'center',
