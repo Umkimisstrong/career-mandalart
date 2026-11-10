@@ -35,25 +35,25 @@
 ## 폴더 구조
 ```
 career-mandalart/
-  App.tsx                 화면 전환(list / backup / plan(overview|block)) + 자동 저장
-  src/model.ts            데이터 모델, 좌표 규칙, 진행률, 샘플 데이터
-  src/storage.ts          AsyncStorage 저장/로드, JSON 내보내기/가져오기
-  src/theme.ts            공통 스타일, 블록 색상
-  src/screens/            PlanList, Overview(81칸), BlockEditor(3x3 + 칸 편집 모달), Today(오늘의 점검), Backup, QrShare, QrScan
+  App.tsx                 화면 전환(list · plan(overview|block) · team · today · backup · qr · version …) + 자동 저장, ?widget= · ?team= 처리
+  src/model.ts            데이터 모델(Plan · Cell · Store), 크기 · 칸 규칙(blocksOf · cellsIn · growSlots), 진행률, 샘플
+  src/storage.ts          AsyncStorage(웹 localStorage) 저장 · 로드, 백업 코드(JSON) 내보내기 · 가져오기
+  src/theme.ts            테마 토큰 · 공통 스타일
+  src/team.ts             팀 목표: 초대장 · 갱신 코드 형식, 받기 규칙(receiveTeamCode), 권한(canEditBlock)
+  src/desktop.ts          Windows 데스크톱 앱과의 다리(window.gudoDesktop), WIDGET_ID
   src/routine.ts · notify(.web).ts · ics.ts  반복 점검 계산 · 알림 · 캘린더 파일
-  src/categories/data.ts  목표 카테고리 데이터셋
-  src/components/CategoryPicker.tsx  세부 목표 카테고리 선택 / 실행 과제 속성 추천
-  src/qr/                 QR 코덱(codec.ts), 웹 이미지 생성·읽기(image.web.ts)
-docs/categories.md        카테고리 설계 근거와 출처
-docs/hosting.md · docs/data-collection.md  무료 호스팅 비교 / 목표 데이터 수집 방법
-docs/TODO-확인.md         사용자 확인 · 결정 대기 목록
-FEATURES.md               기능 목록 & 작업 이력 (기능 추가 시 갱신)
-  scripts/deploy.mjs      배포 파이프라인 (ref 별: develop→preview OTA, main→production OTA, v* 태그→스토어 빌드)
-  scripts/post-receive    bare 저장소에 설치되는 훅 템플릿
-  scripts/setup-local-git.ps1  로컬 Git 서버 1회 설정
-  scripts/pwa.mjs         웹 빌드 후 iPhone 홈 화면 앱(PWA) 메타/manifest 주입
+  src/categories/         data.ts(개인 매슬로우 + 팀 BSC 카테고리) · tree.ts · units.ts · templates.ts(연령대 템플릿 · buildPlan)
+  src/components/         CategoryPicker · RoutinePicker · ShapeLayout · PlanPreview · Icons(휴지통 · 종 · 모양 아이콘) · InstallBanner
+  src/screens/            PlanList(목록 · 만들기 탭) · Overview · BlockEditor(칸 편집 · 하위 할 일 · 펼치기 · 칸 늘리기) · Today · Team · Widget · Version · Backup · QrShare · QrScan · Templates · Story · About · ThemeSettings
+  src/qr/                 QR 코덱(codec.ts, base45 공용), 웹 이미지 생성 · 읽기(image.web.ts)
+  desktop/                Windows 데스크톱 앱(Electron): main.cjs(큰 창 · 작은 창 · 트레이) · preload.cjs · updater.cjs(자동 업데이트) · release.cjs(npm run release)
+  scripts/pwa.mjs         웹 빌드 후 PWA 메타 · manifest · 서비스 워커 · 화면 빌드 표시(gudo-build) 주입
+  scripts/deploy.mjs · post-receive · setup-local-git.ps1  로컬 Git → EAS 배포 파이프라인 (미사용)
   .githooks/pre-commit    커밋 전 tsc 검사
   eas.json, vercel.json   EAS 빌드 프로필 / Vercel 웹 배포 설정
+docs/                     categories · templates · team(조직 확장 근거 · 결정) · hosting · identity · research …
+FEATURES.md               기능 목록 & 작업 이력 (기능 추가 시 갱신)
+.claude/skills/verify-gudo/  (git 제외) 앱을 사용자처럼 조작해 증명하는 검증 스킬 — 기능 지도 features/
 ```
 
 ## 데이터 모델 핵심 규칙 (`src/model.ts`)
@@ -73,19 +73,17 @@ npm run setup:git       # 로컬 Git 자동배포 1회 설정
 npm run deploy:dry      # EAS 호출 없이 배포 파이프라인 점검
 ```
 
-## 현재 상태 (2026-10-30)
-- 완료: 앱 4개 화면, 로컬 저장, JSON 백업/복원, EAS/로컬 Git 배포 스크립트, Vercel 설정, PWA 메타 주입.
-- 검증: tsc 통과, 웹 번들 빌드 성공, 375px 모바일 뷰에서 편집·완료·저장·진행률 동작 확인.
-- GitHub: https://github.com/Umkimisstrong/career-mandalart (public, 저장소 루트 = 이 폴더)
-- Vercel: https://career-mandalart.vercel.app — GitHub `main` push 시 자동 배포. 루트 `vercel.json` 이 `career-mandalart/` 하위 폴더를 빌드하도록 지정 (Vercel 프로젝트 Root Directory 는 비워둠).
-- QR 기능: 웹에서 81칸 + 메모 + 완료 체크 왕복(생성 PNG → jsQR 디코드 → 복원) 일치 확인. 세부 목표 카테고리도 QR 에 포함(5번째 튜플). 네이티브 카메라 스캔은 미검증.
-- 카테고리 기능: 웹 375px 에서 세부 목표 카테고리 선택, 연령대 추천(★), 속성 선택 입력, 직접 추가(Store.custom) 동작 확인.
-- 미검증: 실제 iPhone 실행, 로컬 Git 훅 push, EAS update/build.
-- 환경: Git·GitHub CLI·Vercel CLI 설치·로그인 완료. Node **26.13 LTS** (Expo 58 지원) — `npm run build:web`, `npx expo start` 로컬 실행 가능.
-- Windows PowerShell 실행 정책 때문에 `vercel` 대신 `vercel.cmd` 로 호출해야 함.
-- `scripts/setup-local-git.ps1` 은 `career-mandalart/` 를 저장소 루트로 가정하고 작성됨 — 지금은 상위 폴더가 저장소이므로 사용 전 경로 수정 필요.
+## 현재 상태 (2026-11-11)
+- 배포: 웹 https://career-mandalart.vercel.app (GitHub `main` push → Vercel 자동). Windows 앱 1.2.1 — 설치 · 업데이트 링크 https://github.com/Umkimisstrong/career-mandalart/releases/latest/download/GUDO-Setup.exe, 설치본은 GitHub 릴리스로 자동 업데이트.
+- 기능 목록 · 이력은 FEATURES.md. 크기(1 · 3 · 5 · 7 · 9) · 단계별 만들기 · 미리보기 · 반복 점검 · 팀 목표 · 칸 늘리기 · 하위 할 일 · 펼치기 · 데스크톱 작은 창 · 버전 화면까지.
+- 검증: 2026-11-11 verify-gudo 로 목록 · 만들기 · 칸 편집 · 팀 · 작은 창 5개 기능을 실제 앱에서 증명. 미검증: 실제 iPhone · Android 화면, 휴대폰 알림, 네이티브 카메라 QR, 작은 창 실제 마우스 클릭.
+- 판매 시작 기준(사용자 결정): ① 사용자 10명 피드백 ② 디자인 · 테마 확정 ③ 9×9 이미지 카드 — ③ 미구현, ② 미정.
+- 알려진 빈틈: 팀 목표 실행 과제 편집 창에 개인(매슬로우) 추천이 뜸. 기기끼리 데이터 자동 동기화 없음(백업 코드 · QR 로 옮김).
+- GitHub: https://github.com/Umkimisstrong/career-mandalart (public). 루트 `vercel.json` 이 `career-mandalart/` 를 빌드.
+- 환경: Node 26.13, Git · GitHub CLI · Vercel CLI 로그인. PowerShell 에서는 `vercel.cmd`. 데스크톱 빌드는 `career-mandalart/desktop` 에서 (npm 12 는 electron 바이너리를 `node node_modules/electron/install.js` 로 직접 받음).
 
 ## 다음 할 일 후보
-- Node 22 / Git 설치 → `npm run setup:git` → `eas init`
-- Vercel 연결 후 iPhone Safari → 공유 → 홈 화면에 추가
-- 아이디어: 칸별 기한/리마인더, 이미지로 내보내기(공유용 9×9 카드), 다크 모드
+- 9×9 이미지 카드 내보내기 (판매 시작 기준 ③, my-goals 07-5)
+- 팀 목표 실행 과제 편집 창을 BSC 에 맞는 추천으로 (지금은 개인 카테고리 추천)
+- 디자인 · 테마 확정 (판매 시작 기준 ②)
+- 실제 휴대폰 점검 (화면 · 알림 · 카메라 QR)

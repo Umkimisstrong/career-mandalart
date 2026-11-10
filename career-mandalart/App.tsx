@@ -133,6 +133,7 @@ function App() {
   const receiveTeam = (text: string) => {
     const r = receiveTeamCode(store!.plans, text);
     setStore(s => s && { ...s, plans: r.plans });
+    setNotice({ text: r.message });
     setRoute(cur => (cur.name === 'team' ? cur : { name: 'plan', id: r.planId, block: null }));
     return r.message;
   };
@@ -182,7 +183,7 @@ function App() {
         <Backup
           store={store}
           onBack={() => setRoute({ name: 'list' })}
-          onTeam={text => setNotice({ text: receiveTeam(text) })}
+          onTeam={receiveTeam}
           onImport={(next, ids) => {
             setStore(next);
             // 하나면 그 목표를 바로 펼치고, 여러 개면 전체 목록으로
@@ -264,9 +265,10 @@ function App() {
         screen = (
           <Overview
             plan={plan}
-            onBack={() => setRoute({ name: 'list' })}
+            notice={notice}
+            onBack={() => { setNotice(undefined); setRoute({ name: 'list' }); }}
             onRename={!plan.team || isAdmin(plan) ? title => updatePlan(plan.id, p => ({ ...p, title, updatedAt: Date.now() })) : undefined}
-            onOpenBlock={block => setRoute({ ...route, block })}
+            onOpenBlock={block => { setNotice(undefined); setRoute({ ...route, block }); }}
             onQr={() => setRoute({ name: 'qr', id: plan.id })}
             onTeam={plan.team ? () => setRoute({ name: 'team', id: plan.id }) : undefined}
             parentTitle={plan.parent ? store.plans.find(p => p.id === plan.parent!.plan)?.title : undefined}
