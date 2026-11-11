@@ -78,12 +78,12 @@ npm run deploy:dry      # EAS 호출 없이 배포 파이프라인 점검
 - 배포: 웹 https://career-mandalart.vercel.app (GitHub `main` push → Vercel 자동). Windows 앱 1.2.1 — 설치 · 업데이트 링크 https://github.com/Umkimisstrong/career-mandalart/releases/latest/download/GUDO-Setup.exe, 설치본은 GitHub 릴리스로 자동 업데이트.
 - 기능 목록 · 이력은 FEATURES.md. 크기(1 · 3 · 5 · 7 · 9) · 단계별 만들기 · 미리보기 · 반복 점검 · 팀 목표 · 칸 늘리기 · 하위 할 일 · 펼치기 · 데스크톱 작은 창 · 버전 화면까지.
 - 검증: 2026-11-11 verify-gudo 로 목록 · 만들기 · 칸 편집 · 팀 · 작은 창 5개 기능을 실제 앱에서 증명. 미검증: 실제 iPhone · Android 화면, 휴대폰 알림, 네이티브 카메라 QR, 작은 창 실제 마우스 클릭.
-- 판매 시작 기준(사용자 결정): ① 사용자 10명 피드백 ② 디자인 · 테마 확정 ③ 9×9 이미지 카드 — ③ 완료(2026-11-11, 목표 화면 「카드」 · 퍼즐 그림 · 흐림 조절), ② 진행 중(앱 · 블록 테마 두 층까지, 사용자 확정 대기). 판매는 디자인 확정 뒤(사용자 결정 2026-11-11).
+- 판매 시작 기준(사용자 결정): ① 사용자 10명 피드백 ② 디자인 · 테마 확정 ③ 9×9 이미지 카드 — ③ 완료(2026-11-11, 목표 화면 「카드」 · 퍼즐 그림 · 흐림 조절), ② **확정**(2026-11-11 사용자: 둥근 파스텔 UI · 움직임 · 앱 테마 / 블록 테마 두 층 · 4계열 · 퍼즐 그림). 남은 기준 ① 10명 피드백.
 - 알려진 빈틈: 팀 목표 실행 과제 편집 창에 개인(매슬로우) 추천이 뜸. 기기끼리 데이터 자동 동기화 없음(백업 코드 · QR 로 옮김).
 - GitHub: https://github.com/Umkimisstrong/career-mandalart (public). 루트 `vercel.json` 이 `career-mandalart/` 를 빌드.
 - 환경: Node 26.13, Git · GitHub CLI · Vercel CLI 로그인. PowerShell 에서는 `vercel.cmd`. 데스크톱 빌드는 `career-mandalart/desktop` 에서 (npm 12 는 electron 바이너리를 `node node_modules/electron/install.js` 로 직접 받음).
 
 ## 다음 할 일 후보
 - 팀 목표 실행 과제 편집 창을 BSC 에 맞는 추천으로 (지금은 개인 카테고리 추천)
-- 디자인 · 테마 확정 (판매 시작 기준 ②)
+- 캘린더 메뉴 (달력에서 반복 점검 · 일정 보기, 형식에 맞춘 일정 입력)
 - 실제 휴대폰 점검 (화면 · 알림 · 카메라 QR)
