@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 900">
+<defs><linearGradient id="a" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FCE6CC"/><stop offset="1" stop-color="#FBEFE2"/></linearGradient></defs>
+<rect width="900" height="900" fill="url(#a)"/>
+<circle cx="150" cy="150" r="60" fill="#F7C873"/>
+<path d="M0 480 Q240 400 470 460 T900 430 V900 H0Z" fill="#E9C99A"/>
+<g><rect x="250" y="340" width="28" height="220" rx="10" fill="#8A5A36"/><g fill="#E0623E"><circle cx="210" cy="300" r="80"/><circle cx="310" cy="270" r="90"/><circle cx="350" cy="350" r="70"/><circle cx="200" cy="380" r="60"/></g></g>
+<g><rect x="610" y="300" width="28" height="260" rx="10" fill="#8A5A36"/><g fill="#F2A33A"><circle cx="580" cy="260" r="90"/><circle cx="680" cy="240" r="80"/><circle cx="700" cy="330" r="70"/><circle cx="560" cy="350" r="60"/></g></g>
+<g><rect x="440" y="400" width="20" height="160" rx="8" fill="#8A5A36"/><g fill="#D94E5A"><circle cx="450" cy="370" r="60"/><circle cx="410" cy="410" r="40"/><circle cx="490" cy="410" r="40"/></g></g>
+<path d="M0 620 Q280 560 520 620 T900 600 V900 H0Z" fill="#D9A866"/>
+<g fill="#E0623E"><path d="M120 700 l14 -26 l14 26 l26 -8 l-12 24 l20 14 l-30 4 l2 28 l-20 -18 l-20 18 l2 -28 l-30 -4 l20 -14 l-12 -24Z"/></g>
+<g fill="#F2A33A"><path d="M770 690 l12 -22 l12 22 l22 -6 l-10 20 l16 12 l-26 4 l2 24 l-16 -16 l-18 16 l2 -24 l-26 -4 l18 -12 l-10 -20Z"/></g>
+<g fill="#D94E5A" opacity=".85"><ellipse cx="400" cy="200" rx="16" ry="8" transform="rotate(30 400 200)"/><ellipse cx="760" cy="150" rx="14" ry="7" transform="rotate(-20 760 150)"/><ellipse cx="520" cy="680" rx="16" ry="8" transform="rotate(40 520 680)"/></g>
+<g><rect x="420" y="760" width="200" height="34" rx="6" fill="#7FA6D6"/><rect x="430" y="726" width="180" height="34" rx="6" fill="#F28B82"/><rect x="440" y="692" width="160" height="34" rx="6" fill="#8EC07C"/><g fill="#FFFFFF" opacity=".8"><rect x="430" y="774" width="180" height="6"/><rect x="440" y="740" width="160" height="6"/><rect x="450" y="706" width="140" height="6"/></g></g>
+<g><circle cx="250" cy="820" r="26" fill="#9C6B43"/><path d="M228 806 q22 -24 44 0Z" fill="#6E4A2C"/></g>
+</svg>

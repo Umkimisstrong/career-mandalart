@@ -5,6 +5,7 @@ import { AGE_BANDS, AgeBand, categoryById } from '../categories/data';
 import { parseAction, planFromTemplate, templateOf, TEMPLATES } from '../categories/templates';
 import { composeText } from '../categories/units';
 import { Plan } from '../model';
+import { Tap } from '../components/Motion';
 import { useTheme } from '../theme';
 
 type Props = {
@@ -60,7 +61,7 @@ export default function Templates({ age, onBack, onUse, onStory, onOhtani }: Pro
               <Text style={[styles.basis, { color: t.sub }]}>고교 1학년 오타니 쇼헤이가 쓴 81칸 — 핵심 목표 「8구단 드래프트 1순위」. 구도 앱이 시작된 이야기예요.</Text>
             </View>
             <Pressable style={ui.btn} onPress={onStory}><Text style={ui.btnText}>이야기 보기 ›</Text></Pressable>
-            <Pressable style={ui.btnPrimary} onPress={onOhtani}><Text style={ui.btnPrimaryText}>★ 오타니의 81칸으로 시작</Text></Pressable>
+            <Tap style={ui.btnPrimary} onPress={onOhtani}><Text style={ui.btnPrimaryText}>★ 오타니의 81칸으로 시작</Text></Tap>
           </>
         ) : (<>
         <View style={[styles.box, card]}>
@@ -79,9 +80,9 @@ export default function Templates({ age, onBack, onUse, onStory, onOhtani }: Pro
           })}
         </View>
 
-        <Pressable style={ui.btnPrimary} onPress={() => onUse(planFromTemplate(tpl, label), sel as AgeBand)}>
+        <Tap style={ui.btnPrimary} onPress={() => onUse(planFromTemplate(tpl, label), sel as AgeBand)}>
           <Text style={ui.btnPrimaryText}>✨ {label} 템플릿으로 81칸 채우기</Text>
-        </Pressable>
+        </Tap>
 
         <Text style={[styles.h2, { color: t.text }]}>세부 목표 8 · 실행 과제 64 미리보기</Text>
         {tpl.goals.map((g, i) => {
@@ -110,16 +111,16 @@ const styles = StyleSheet.create({
   wrap: { padding: 16, gap: 14, maxWidth: 560, width: '100%', alignSelf: 'center' },
   lead: { fontSize: 14, lineHeight: 21 },
   ages: { flexDirection: 'row', flexWrap: 'wrap', gap: 6 },
-  age: { paddingHorizontal: 12, paddingVertical: 7, borderRadius: 16, borderWidth: 1 },
-  box: { borderWidth: 1, borderRadius: 14, padding: 14, gap: 6 },
+  age: { paddingHorizontal: 12, paddingVertical: 7, borderRadius: 999, borderWidth: 1 },
+  box: { borderWidth: 1, borderRadius: 22, padding: 14, gap: 6 },
   theme: { fontSize: 15, fontWeight: '800', lineHeight: 22 },
   basis: { fontSize: 12, lineHeight: 18 },
-  grid: { flexDirection: 'row', flexWrap: 'wrap', gap: 5, alignSelf: 'center', width: 300, padding: 5, borderWidth: 1, borderRadius: 14 },
-  cell: { width: 91, height: 76, borderRadius: 10, alignItems: 'center', justifyContent: 'center', padding: 5 },
+  grid: { flexDirection: 'row', flexWrap: 'wrap', gap: 5, alignSelf: 'center', width: 300, padding: 5, borderWidth: 1, borderRadius: 22 },
+  cell: { width: 91, height: 76, borderRadius: 16, alignItems: 'center', justifyContent: 'center', padding: 5 },
   cellText: { fontSize: 12, fontWeight: '700', textAlign: 'center' },
   core: { fontSize: 11, fontWeight: '800' },
   h2: { fontSize: 15, fontWeight: '800', marginTop: 4 },
-  goal: { borderWidth: 1, borderRadius: 12, padding: 12, gap: 4 },
+  goal: { borderWidth: 1, borderRadius: 18, padding: 12, gap: 4 },
   goalTitle: { fontSize: 14, fontWeight: '800' },
   act: { fontSize: 13, lineHeight: 19 },
   more: { fontSize: 12, fontWeight: '700' },

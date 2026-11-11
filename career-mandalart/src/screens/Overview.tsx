@@ -1,5 +1,6 @@
 // 목표 전체 보기 (81칸 · 또는 1 · 3 · 5 · 7칸 버전의 모양대로). 칸을 누르면 그 블록 편집 화면으로 들어간다.
 import { Pressable, ScrollView, StyleSheet, Text, TextInput, useWindowDimensions, View } from 'react-native';
+import BoardCell, { Ink, paintCell } from '../components/BoardCell';
 import { layoutPlan } from '../components/ShapeLayout';
 import { CENTER, cellRole, cellsIn, getCell, Plan, progress, sizeOf } from '../model';
 import { useTheme } from '../theme';
@@ -23,7 +24,8 @@ export default function Overview({ plan, onBack, onRename, onOpenBlock, onQr, on
   const { t, ui } = useTheme();
   const size = Math.min(width, 640) - 32;
   const shape = sizeOf(plan);
-  const lay = layoutPlan(shape, size, 6, shape === 1 ? 180 : 110, b => cellsIn(plan, b)); // 블록 사이 간격 6px
+  // 판 받침 둘레 TRAY px 를 빼고 놓는다. 블록 사이 간격 6px
+  const lay = layoutPlan(shape, size - TRAY * 2, 6, shape === 1 ? 180 : 110, b => cellsIn(plan, b));
   const cell = lay.cell;
   const pr = progress(plan);
 
@@ -46,41 +48,44 @@ export default function Overview({ plan, onBack, onRename, onOpenBlock, onQr, on
             <Text style={[ui.sub, { color: t.accent }]} numberOfLines={1}>↖ 「{parentTitle}」의 실행 과제에서 펼친 목표</Text>
           </Pressable>
         )}
-        <View style={{ width: lay.width, height: lay.height }}>
-          {lay.cells.map(({ block: b, cell: c, x, y }) => {
-            const v = getCell(plan, b, c);
-            const role = cellRole(b, c);
-            const tracked = role === 'action' || shape === 1;
-            const bg = tracked && role === 'action'
-              ? (v.done ? t.done : t.surface)
-              : t.blocks[role === 'core' ? CENTER : b === CENTER ? c : b];
-            return (
-              <Pressable
-                key={`${b}-${c}`}
-                onPress={() => onOpenBlock(b)}
-                style={[styles.cell, {
-                  left: x, top: y, width: cell, height: cell, backgroundColor: bg, borderColor: t.border,
-                  borderRadius: shape === 9 ? 0 : 6,
-                }, shape === 1 && v.done && { borderColor: t.doneBorder, borderWidth: 3 }]}
-              >
-                <Text
-                  numberOfLines={shape === 1 ? 6 : 3}
-                  style={[
-                    styles.txt,
-                    { fontSize: Math.min(16, Math.max(7, cell / 5.2)), color: role === 'action' ? t.text : t.on(bg) },
-                    role === 'core' && { fontWeight: '800' },
-                    role === 'goal' && { fontWeight: '700' },
-                    role === 'action' && v.done && { color: t.doneText },
-                  ]}
+        <View style={[styles.tray, { backgroundColor: t.mat, borderRadius: t.radius.card }]}>
+          <View style={{ width: lay.width, height: lay.height }}>
+            {lay.cells.map(({ block: b, cell: c, x, y }) => {
+              const v = getCell(plan, b, c);
+              const role = cellRole(b, c);
+              const tracked = role === 'action' || shape === 1;
+              const paint = paintCell(t, b, c, { done: tracked && v.done });
+              const owner = role === 'goal' ? plan.team?.owners[b === CENTER ? c : b] : undefined;
+              const text = (v.text || (shape !== 9 && role !== 'action' ? (role === 'core' ? '핵심 목표' : '세부 목표') : ''))
+                + (owner ? `\n· ${owner}` : ''); // 팀 목표: 세부 목표 칸에 담당자 이름
+              return (
+                <BoardCell
+                  key={`${t.key}-${b}-${c}`}
+                  x={x} y={y} size={cell} inset={shape === 9 ? 1.5 : 2}
+                  paint={paint} picture={lay.picture}
+                  // 왼쪽 위에서 오른쪽 아래로 물결처럼 차례로
+                  delay={Math.round((x + y) / cell) * 18}
+                  label={text || undefined}
+                  onPress={() => onOpenBlock(b)}
                 >
-                  {v.text || (shape !== 9 && role !== 'action' ? (role === 'core' ? '핵심 목표' : '세부 목표') : '')}
-                  {/* 팀 목표: 세부 목표 칸에 담당자 이름 */}
-                  {role === 'goal' && plan.team?.owners[b === CENTER ? c : b] ? `
-· ${plan.team.owners[b === CENTER ? c : b]}` : ''}
-                </Text>
-              </Pressable>
-            );
-          })}
+                  {!!text && (
+                    <Ink paint={paint}>
+                      <Text
+                        numberOfLines={shape === 1 ? 6 : paint.motif ? 2 : 3}
+                        style={[
+                          styles.txt,
+                          { fontSize: Math.min(16, Math.max(7, cell / 5.2)), color: paint.ink },
+                          role !== 'action' && [{ fontWeight: role === 'core' ? '800' : '700' }, ui.titleFont],
+                        ]}
+                      >
+                        {text}
+                      </Text>
+                    </Ink>
+                  )}
+                </BoardCell>
+              );
+            })}
+          </View>
         </View>
 
         <View style={{ width: size, gap: 6 }}>
@@ -94,9 +99,9 @@ export default function Overview({ plan, onBack, onRename, onOpenBlock, onQr, on
   );
 }
 
+const TRAY = 6;
+
 const styles = StyleSheet.create({
-  cell: {
-    position: 'absolute', borderWidth: StyleSheet.hairlineWidth, alignItems: 'center', justifyContent: 'center', padding: 1,
-  },
+  tray: { padding: TRAY },
   txt: { textAlign: 'center' },
 });

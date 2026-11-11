@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { Linking, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { desktop, DesktopInfo } from '../desktop';
+import { Tap } from '../components/Motion';
 import { useTheme } from '../theme';
 
 const REPO = 'Umkimisstrong/career-mandalart';
@@ -69,9 +70,9 @@ export default function Version({ onBack }: { onBack: () => void }) {
                     <Text style={ui.btnText}>업데이트 확인</Text>
                   </Pressable>
                   {!!info.ready && (
-                    <Pressable style={[ui.btnPrimary, { flex: 1 }]} onPress={() => desktop?.installUpdate?.()}>
+                    <Tap style={[ui.btnPrimary, { flex: 1 }]} onPress={() => desktop?.installUpdate?.()}>
                       <Text style={ui.btnPrimaryText}>v{info.ready} 지금 적용</Text>
-                    </Pressable>
+                    </Tap>
                   )}
                 </View>
               </>
@@ -95,9 +96,9 @@ export default function Version({ onBack }: { onBack: () => void }) {
           <Text style={[ui.sub, { lineHeight: 19 }]}>
             처음 설치 · 예전 버전 덮어 설치 모두 이 링크 하나예요. 목표는 그대로 남아요. 「Windows의 PC 보호」가 뜨면 추가 정보 → 실행.
           </Text>
-          <Pressable style={ui.btnPrimary} onPress={() => Linking.openURL(DOWNLOAD_URL)}>
+          <Tap style={ui.btnPrimary} onPress={() => Linking.openURL(DOWNLOAD_URL)}>
             <Text style={ui.btnPrimaryText}>최신 설치 파일 받기{latest ? ` (v${latest})` : ''}</Text>
-          </Pressable>
+          </Tap>
           <Text selectable style={{ color: t.sub, fontSize: 11 }}>{DOWNLOAD_URL}</Text>
         </View>
 
@@ -135,8 +136,8 @@ function Line({ k, v }: { k: string; v: string }) {
 
 const styles = StyleSheet.create({
   wrap: { padding: 16, gap: 12, maxWidth: 560, width: '100%', alignSelf: 'center' },
-  card: { borderWidth: 1, borderRadius: 14, padding: 14, gap: 8 },
+  card: { borderWidth: 1, borderRadius: 22, padding: 14, gap: 8 },
   h: { fontSize: 15, fontWeight: '800' },
   ver: { fontSize: 15, fontWeight: '800' },
-  tag: { fontSize: 11, fontWeight: '800', borderRadius: 8, paddingHorizontal: 6, paddingVertical: 2, overflow: 'hidden' },
+  tag: { fontSize: 11, fontWeight: '800', borderRadius: 999, paddingHorizontal: 6, paddingVertical: 2, overflow: 'hidden' },
 });

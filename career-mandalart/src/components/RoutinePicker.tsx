@@ -108,14 +108,14 @@ function Row({ label, color, children }: { label: string; color: string; childre
 }
 
 const styles = StyleSheet.create({
-  group: { borderWidth: 1, borderRadius: 12, padding: 10, gap: 8 },
+  group: { borderWidth: 1, borderRadius: 18, padding: 10, gap: 8 },
   title: { fontSize: 13, fontWeight: '800' },
   small: { fontSize: 12, lineHeight: 18, fontWeight: '400' },
   wrap: { flexDirection: 'row', flexWrap: 'wrap', gap: 6, alignItems: 'center' },
-  chip: { paddingHorizontal: 10, paddingVertical: 6, borderRadius: 16, borderWidth: 1 },
+  chip: { paddingHorizontal: 10, paddingVertical: 6, borderRadius: 999, borderWidth: 1 },
   chipText: { fontSize: 13 },
   row: { flexDirection: 'row', gap: 8, alignItems: 'flex-start' },
   rowLabel: { width: 56, fontSize: 12, paddingTop: 7 },
-  input: { borderWidth: 1, borderRadius: 8, paddingHorizontal: 8, paddingVertical: 6, fontSize: 13, textAlign: 'center' },
-  suggest: { borderWidth: 1, borderStyle: 'dashed', borderRadius: 10, padding: 10 },
+  input: { borderWidth: 1, borderRadius: 12, paddingHorizontal: 8, paddingVertical: 6, fontSize: 13, textAlign: 'center' },
+  suggest: { borderWidth: 1, borderStyle: 'dashed', borderRadius: 16, padding: 10 },
 });

@@ -4,6 +4,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import { Plan } from '../model';
 import { decodePlan, isPlanQr } from '../qr/codec';
+import { Tap } from '../components/Motion';
 import { useTheme } from '../theme';
 
 type Props = { onBack: () => void; onImport: (plan: Plan) => void };
@@ -38,9 +39,9 @@ export default function QrScan({ onBack, onImport }: Props) {
       {!permission ? null : !permission.granted ? (
         <View style={{ padding: 16, gap: 12 }}>
           <Text style={ui.sub}>QR 을 읽으려면 카메라 권한이 필요합니다.</Text>
-          <Pressable style={ui.btnPrimary} onPress={requestPermission}>
+          <Tap style={ui.btnPrimary} onPress={requestPermission}>
             <Text style={ui.btnPrimaryText}>카메라 허용</Text>
-          </Pressable>
+          </Tap>
         </View>
       ) : (
         <View style={{ flex: 1 }}>

@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { Alert, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { BellIcon, InfoIcon, ShapeIcon, TrashIcon } from '../components/Icons';
+import { Appear, Tap } from '../components/Motion';
 import { APP_NAME, APP_NAME_EN, APP_TAGLINE_EN } from '../brand';
 import { AGE_BANDS, AgeBand } from '../categories/data';
 import { buildPlan, templateOf } from '../categories/templates';
@@ -55,10 +56,10 @@ export default function PlanList(props: Props) {
   const tab = (id: Home['tab'], label: string) => {
     const on = home.tab === id;
     return (
-      <Pressable key={id} onPress={() => onHome({ ...home, tab: id })}
+      <Tap key={id} onPress={() => onHome({ ...home, tab: id })} shadow={on}
         style={[styles.tab, { backgroundColor: on ? t.primary : 'transparent' }]}>
-        <Text style={{ color: on ? t.onPrimary : t.sub, fontWeight: on ? '800' : '600', fontSize: 15 }}>{label}</Text>
-      </Pressable>
+        <Text style={[{ color: on ? t.onPrimary : t.sub, fontWeight: on ? '800' : '600', fontSize: 15 }, on && ui.titleFont]}>{label}</Text>
+      </Tap>
     );
   };
 
@@ -71,7 +72,7 @@ export default function PlanList(props: Props) {
           </Text>
           <InfoIcon color={t.accent} />
         </Pressable>
-        <Pressable onPress={() => onHome({ tab: 'list', filter: 'check' })} hitSlop={6}
+        <Tap onPress={() => onHome({ tab: 'list', filter: 'check' })} hitSlop={6}
           style={[styles.iconBtn, { borderColor: t.border, backgroundColor: t.surface }]} accessibilityLabel="오늘의 점검 알림">
           <BellIcon color={left ? t.primary : t.sub} />
           {left > 0 && (
@@ -79,10 +80,10 @@ export default function PlanList(props: Props) {
               <Text style={[styles.badgeText, { color: t.on(t.accent) }]}>{left}</Text>
             </View>
           )}
-        </Pressable>
-        <Pressable onPress={onTheme} hitSlop={6} style={[styles.themeBtn, { borderColor: t.border, backgroundColor: t.surface }]}>
+        </Tap>
+        <Tap onPress={onTheme} hitSlop={6} style={[styles.themeBtn, { borderColor: t.border, backgroundColor: t.surface }]}>
           <Text style={[styles.themeText, { color: t.text }]}>테마변경</Text>
-        </Pressable>
+        </Tap>
       </View>
 
       <View style={[styles.tabs, { borderColor: t.border, backgroundColor: t.surface }]}>
@@ -115,12 +116,12 @@ function ListTab({ plans, home, onHome, onOpen, onDelete, onScanQr, onBackup, on
     const on = home.filter === f;
     const fg = on ? t.onPrimary : t.sub;
     return (
-      <Pressable key={String(f)} onPress={() => onHome({ ...home, filter: f })} accessibilityLabel={label}
+      <Tap key={String(f)} onPress={() => onHome({ ...home, filter: f })} accessibilityLabel={label} hover={1.08}
         style={[styles.filter, { borderColor: on ? t.primary : t.border, backgroundColor: on ? t.primary : t.surface }]}>
         {f === 'all' ? <Text style={{ color: on ? t.onPrimary : t.text, fontWeight: '800', fontSize: 13 }}>{label}</Text>
           : f === 'check' ? <BellIcon color={fg} size={18} />
           : <ShapeIcon color={on ? t.onPrimary : t.text} shape={f} size={24} />}
-      </Pressable>
+      </Tap>
     );
   };
 
@@ -133,7 +134,7 @@ function ListTab({ plans, home, onHome, onOpen, onDelete, onScanQr, onBackup, on
       </View>
 
       {home.filter === 'check' && (
-        <Pressable onPress={onToday} style={[styles.story, { backgroundColor: t.surface, borderColor: missed ? t.accent : t.primary, borderWidth: 2 }]}>
+        <Appear><Tap onPress={onToday} hover={1.02} style={[styles.story, { backgroundColor: t.surface, borderColor: missed ? t.accent : t.primary, borderWidth: 2 }]}>
           <Text style={styles.storyStar}>{items.length && !left ? '✅' : '📋'}</Text>
           <View style={{ flex: 1 }}>
             <Text style={[styles.storyTitle, { color: t.text }]}>
@@ -145,7 +146,7 @@ function ListTab({ plans, home, onHome, onOpen, onDelete, onScanQr, onBackup, on
             </Text>
           </View>
           <Text style={{ color: t.sub, fontSize: 18 }}>›</Text>
-        </Pressable>
+        </Tap></Appear>
       )}
 
       {!shown.length && (
@@ -154,22 +155,26 @@ function ListTab({ plans, home, onHome, onOpen, onDelete, onScanQr, onBackup, on
             {!plans.length ? '아직 목표가 없어요.' : home.filter === 'check' ? '반복 점검이 걸린 목표가 없어요.' : '이 크기의 목표가 없어요.'}
           </Text>
           {!plans.length && (
-            <Pressable style={ui.btnPrimary} onPress={() => onHome({ ...home, tab: 'create' })}>
+            <Tap style={ui.btnPrimary} onPress={() => onHome({ ...home, tab: 'create' })}>
               <Text style={ui.btnPrimaryText}>＋ 첫 목표 만들기</Text>
-            </Pressable>
+            </Tap>
           )}
         </View>
       )}
 
-      {shown.map(p => {
+      {shown.map((p, i) => {
         const pr = progress(p);
         const core = p.blocks[CENTER][CENTER].text;
         const n = sizeOf(p);
         const due = items.filter(i => i.planId === p.id && i.dueToday && !i.stats.checked).length;
         return (
-          <Pressable key={p.id} style={[styles.card, { backgroundColor: t.surface, borderColor: t.border, borderLeftColor: t.primary }]} onPress={() => onOpen(p.id)}>
+          <Appear key={p.id} delay={Math.min(i, 8) * 45}>
+          <Tap hover={1.02} style={[styles.card, { backgroundColor: t.surface, borderColor: t.border }]} onPress={() => onOpen(p.id)}>
+            <View style={[styles.cardMark, { backgroundColor: t.blocks[CENTER] }]}>
+              <Text style={[styles.cardMarkText, { color: t.on(t.blocks[CENTER]) }]}>★</Text>
+            </View>
             <View style={{ flex: 1 }}>
-              <Text style={[styles.cardTitle, { color: t.text }]}>
+              <Text style={[styles.cardTitle, { color: t.text }, ui.titleFont]}>
                 {p.title}<Text style={{ color: t.sub, fontSize: 12, fontWeight: '600' }}>  {n}칸{p.team ? ` · 👥 ${p.team.role === 'admin' ? '팀 관리자' : '팀'}` : ''}</Text>
               </Text>
               <Text style={[styles.cardCore, { color: t.sub }]} numberOfLines={1}>{core || '핵심 목표를 정해보세요'}</Text>
@@ -193,17 +198,18 @@ function ListTab({ plans, home, onHome, onOpen, onDelete, onScanQr, onBackup, on
               onPress={() => confirm(`'${p.title}'을(를) 삭제할까요?`, () => onDelete(p.id))}>
               <TrashIcon color="#DC2626" />
             </Pressable>
-          </Pressable>
+          </Tap>
+          </Appear>
         );
       })}
 
       <View style={{ flexDirection: 'row', gap: 8, marginTop: 16 }}>
-        <Pressable style={[ui.btn, { flex: 1 }]} onPress={onScanQr}>
+        <Tap style={[ui.btn, { flex: 1 }]} onPress={onScanQr}>
           <Text style={ui.btnText}>QR로 불러오기</Text>
-        </Pressable>
-        <Pressable style={[ui.btn, { flex: 1 }]} onPress={onBackup}>
+        </Tap>
+        <Tap style={[ui.btn, { flex: 1 }]} onPress={onBackup}>
           <Text style={ui.btnText}>백업 · 복원</Text>
-        </Pressable>
+        </Tap>
       </View>
     </View>
   );
@@ -235,10 +241,10 @@ function CreateTab({ age, onCreate }: Props) {
   const open = () => { if (size !== null) setPreview(buildPlan(title.trim(), size, choice)); };
 
   const card = (on: boolean, label: string, sub: string, onPress: () => void) => (
-    <Pressable onPress={onPress} style={[styles.choice, { borderColor: on ? t.primary : t.border, backgroundColor: on ? t.primary : t.surface }]}>
-      <Text style={{ color: on ? t.onPrimary : t.text, fontWeight: '800', fontSize: 15 }}>{label}</Text>
+    <Tap onPress={onPress} style={[styles.choice, { borderColor: on ? t.primary : t.border, backgroundColor: on ? t.primary : t.surface }]}>
+      <Text style={[{ color: on ? t.onPrimary : t.text, fontWeight: '800', fontSize: 15 }, ui.titleFont]}>{label}</Text>
       <Text style={{ color: on ? t.onPrimary : t.sub, fontSize: 11, marginTop: 2, opacity: 0.9 }}>{sub}</Text>
-    </Pressable>
+    </Tap>
   );
   // 아직 열리지 않은 단계 — 흐리게, 누를 수 없게
   const lock = (on: boolean) => (on ? null : { opacity: 0.35, pointerEvents: 'none' as const });
@@ -256,21 +262,21 @@ function CreateTab({ age, onCreate }: Props) {
   return (
     <View style={{ gap: 10 }}>
       {head('1', '크기', step2, undefined, (
-        <Pressable onPress={open} disabled={size === null} accessibilityLabel="미리보기"
+        <Tap onPress={open} disabled={size === null} accessibilityLabel="미리보기"
           style={[styles.peek, { borderColor: size === null ? t.border : t.primary, opacity: size === null ? 0.4 : 1 }]}>
           <Text style={{ color: size === null ? t.sub : t.primary, fontSize: 12, fontWeight: '800' }}>미리보기</Text>
-        </Pressable>
+        </Tap>
       ))}
       {/* 81칸이 부담되면 작은 버전으로 — 9 가 시그니처 */}
       <View style={styles.sizeRow}>
         {PLAN_SIZES.map(n => {
           const on = n === size;
           return (
-            <Pressable key={n} onPress={() => setSize(n)} accessibilityLabel={`${n * n}칸으로 만들기`}
+            <Tap key={n} onPress={() => setSize(n)} accessibilityLabel={`${n * n}칸으로 만들기`} hover={1.08}
               style={[styles.sizeChip, { borderColor: on ? t.primary : t.border, backgroundColor: on ? t.primary : t.surface }]}>
               <ShapeIcon color={on ? t.onPrimary : t.text} shape={n} size={26} />
               <Text style={{ color: on ? t.onPrimary : t.sub, fontSize: 10 }}>{n * n}칸</Text>
-            </Pressable>
+            </Tap>
           );
         })}
       </View>
@@ -296,17 +302,17 @@ function CreateTab({ age, onCreate }: Props) {
             {AGE_BANDS.map(a => {
               const on = a.id === pick;
               return (
-                <Pressable key={a.id} onPress={() => setPick(a.id)}
+                <Tap key={a.id} onPress={() => setPick(a.id)} hover={1.08}
                   style={[styles.chip, { borderColor: on || (a.id === age && !pick) ? t.primary : t.border, backgroundColor: on ? t.primary : t.surface }]}>
                   <Text style={{ color: on ? t.onPrimary : t.text, fontWeight: on ? '800' : '500', fontSize: 13 }}>{a.label}</Text>
-                </Pressable>
+                </Tap>
               );
             })}
             {/* 시그니처 — 연령대와 상관없이 항상 마지막 */}
-            <Pressable onPress={() => setPick('ohtani')}
+            <Tap onPress={() => setPick('ohtani')} hover={1.08}
               style={[styles.chip, { borderColor: t.accent, backgroundColor: pick === 'ohtani' ? t.accent : t.surface }]}>
               <Text style={{ color: pick === 'ohtani' ? t.on(t.accent) : t.accent, fontWeight: '800', fontSize: 13 }}>★ 16살 오타니</Text>
-            </Pressable>
+            </Tap>
           </View>
           {step3 && pick !== null && (
             <Text style={[ui.sub, { fontSize: 12 }]} numberOfLines={2}>
@@ -326,9 +332,9 @@ function CreateTab({ age, onCreate }: Props) {
           style={ui.input}
           onSubmitEditing={create}
         />
-        <Pressable style={[ui.btnPrimary, { marginTop: 4 }]} onPress={create}>
+        <Tap style={[ui.btnPrimary, { marginTop: 4 }]} onPress={create}>
           <Text style={ui.btnPrimaryText}>{mode === 'team' ? '👥 팀 목표 만들기' : useTpl ? '✨ 템플릿으로 만들기' : '만들기'}</Text>
-        </Pressable>
+        </Tap>
       </View>
 
       {/* 다 고르기 전에는 모양만 보는 미리보기 — 「이대로 만들기」 대신 닫기만 */}
@@ -343,36 +349,35 @@ const styles = StyleSheet.create({
   titleRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   titleBtn: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: 6 },
   nameEn: { fontSize: 14, fontWeight: '700', letterSpacing: 0.5 },
-  iconBtn: { width: 40, height: 38, borderRadius: 12, borderWidth: 1, alignItems: 'center', justifyContent: 'center' },
+  iconBtn: { width: 40, height: 38, borderRadius: 14, borderWidth: 1, alignItems: 'center', justifyContent: 'center' },
   badge: { position: 'absolute', top: -5, right: -5, minWidth: 18, height: 18, borderRadius: 9, paddingHorizontal: 4, alignItems: 'center', justifyContent: 'center' },
   badgeText: { fontSize: 11, fontWeight: '800' },
-  themeBtn: { borderWidth: 1, borderRadius: 12, paddingHorizontal: 10, height: 38, justifyContent: 'center' },
+  themeBtn: { borderWidth: 1, borderRadius: 14, paddingHorizontal: 12, height: 38, justifyContent: 'center' },
   themeText: { fontSize: 13, fontWeight: '700' },
-  tabs: { flexDirection: 'row', borderWidth: 1, borderRadius: 12, padding: 4, gap: 4 },
-  tab: { flex: 1, alignItems: 'center', paddingVertical: 9, borderRadius: 9 },
+  tabs: { flexDirection: 'row', borderWidth: 1, borderRadius: 999, padding: 4, gap: 4 },
+  tab: { flex: 1, alignItems: 'center', paddingVertical: 9, borderRadius: 999 },
   chips: { flexDirection: 'row', flexWrap: 'wrap', gap: 6 },
   filters: { flexDirection: 'row', gap: 5 },
-  filter: { flex: 1, height: 36, borderRadius: 10, borderWidth: 1, alignItems: 'center', justifyContent: 'center' },
-  chip: { paddingHorizontal: 11, paddingVertical: 6, borderRadius: 16, borderWidth: 1 },
+  filter: { flex: 1, height: 38, borderRadius: 999, borderWidth: 1, alignItems: 'center', justifyContent: 'center' },
+  chip: { paddingHorizontal: 12, paddingVertical: 7, borderRadius: 999, borderWidth: 1 },
   step: { fontSize: 14, fontWeight: '800' },
-  peek: { marginLeft: 'auto', borderWidth: 1, borderRadius: 14, paddingHorizontal: 12, paddingVertical: 5 },
+  peek: { marginLeft: 'auto', borderWidth: 1, borderRadius: 999, paddingHorizontal: 12, paddingVertical: 5 },
   stepRow: { flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 6 },
   stepNum: { width: 22, height: 22, borderRadius: 11, borderWidth: 1, alignItems: 'center', justifyContent: 'center' },
-  choice: { flex: 1, borderWidth: 1, borderRadius: 12, paddingVertical: 10, alignItems: 'center' },
+  choice: { flex: 1, borderWidth: 1, borderRadius: 18, paddingVertical: 12, alignItems: 'center' },
   sizeRow: { flexDirection: 'row', gap: 6 },
-  sizeChip: { flex: 1, alignItems: 'center', paddingVertical: 7, gap: 3, borderRadius: 10, borderWidth: 1 },
-  story: { flexDirection: 'row', alignItems: 'center', gap: 12, padding: 14, borderRadius: 14, borderWidth: 1 },
+  sizeChip: { flex: 1, alignItems: 'center', paddingVertical: 8, gap: 3, borderRadius: 16, borderWidth: 1 },
+  story: { flexDirection: 'row', alignItems: 'center', gap: 12, padding: 16, borderRadius: 22, borderWidth: 1 },
   storyStar: { fontSize: 24 },
   storyTitle: { fontSize: 15, fontWeight: '700' },
   storySub: { fontSize: 12, marginTop: 2 },
-  empty: { borderWidth: 1, borderStyle: 'dashed', borderRadius: 14, padding: 20, gap: 12 },
-  card: {
-    flexDirection: 'row', alignItems: 'flex-start', gap: 12, padding: 16,
-    borderRadius: 14, borderWidth: 1, borderLeftWidth: 4,
-  },
+  empty: { borderWidth: 1, borderStyle: 'dashed', borderRadius: 22, padding: 20, gap: 12 },
+  card: { flexDirection: 'row', alignItems: 'flex-start', gap: 12, padding: 16, borderRadius: 22, borderWidth: 1 },
+  cardMark: { width: 40, height: 40, borderRadius: 14, alignItems: 'center', justifyContent: 'center' },
+  cardMarkText: { fontSize: 20 },
   cardTitle: { fontSize: 17, fontWeight: '700' },
   cardCore: { fontSize: 14, marginTop: 4, marginBottom: 10 },
   meta: { fontSize: 12, marginTop: 6 },
   del: { padding: 2 },
-  pin: { alignSelf: 'flex-start', marginTop: 10, borderWidth: 1, borderRadius: 8, paddingHorizontal: 10, paddingVertical: 5 },
+  pin: { alignSelf: 'flex-start', marginTop: 10, borderWidth: 1, borderRadius: 999, paddingHorizontal: 10, paddingVertical: 5 },
 });

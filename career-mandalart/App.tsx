@@ -3,6 +3,7 @@ import { ReactNode, useEffect, useMemo, useRef, useState } from 'react';
 import { ActivityIndicator, Platform, View } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import InstallBanner from './src/components/InstallBanner';
+import { Appear } from './src/components/Motion';
 import { buildPlan } from './src/categories/templates';
 import { Cell, CENTER, getCell, newPlan, ohtaniPlan, Plan, setCell, setExtra, Store } from './src/model';
 import { syncReminders } from './src/notify';
@@ -324,7 +325,10 @@ function App() {
     <ThemeProvider value={theme}>
       <SafeAreaProvider>
         <SafeAreaView style={{ flex: 1, backgroundColor: theme.bg }}>
-          <View style={{ flex: 1, width: '100%', maxWidth: 720, alignSelf: 'center' }}>{screen}</View>
+          <View style={{ flex: 1, width: '100%', maxWidth: 720, alignSelf: 'center' }}>
+            {/* 화면이 바뀔 때마다 새 화면이 살짝 떠오르며 들어온다 */}
+            <Appear key={store ? JSON.stringify(route) : 'loading'} kind="screen" style={{ flex: 1 }}>{screen}</Appear>
+          </View>
           <InstallBanner />
           <StatusBar style={isDark(theme) ? 'light' : 'dark'} />
         </SafeAreaView>

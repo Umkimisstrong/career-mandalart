@@ -1,6 +1,7 @@
 // 이 앱이 시작된 이야기 — 오타니 쇼헤이가 16살에 쓴 81칸.
 // 사실은 공개 보도 · 위키백과로 확인한 내용만 담고, 문장은 직접 요약했다.
 import { Linking, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Tap } from '../components/Motion';
 import { useTheme } from '../theme';
 
 type Props = { onBack: () => void; onStart: () => void };
@@ -104,9 +105,9 @@ export default function Story({ onBack, onStart }: Props) {
           <Text style={[styles.body, { color: t.sub, textAlign: 'center' }]}>
             그의 표를 펼쳐 구조를 살펴보고, 빈 칸을 내 방식으로 채워 보세요.
           </Text>
-          <Pressable style={[ui.btnPrimary, { alignSelf: 'stretch' }]} onPress={onStart}>
+          <Tap style={[ui.btnPrimary, { alignSelf: 'stretch' }]} onPress={onStart}>
             <Text style={ui.btnPrimaryText}>★ 오타니의 81칸 펼쳐보기</Text>
-          </Pressable>
+          </Tap>
         </View>
 
         <View style={{ gap: 6 }}>
@@ -134,13 +135,13 @@ const styles = StyleSheet.create({
   lead: { fontSize: 15, lineHeight: 24, textAlign: 'center' },
   grid: {
     flexDirection: 'row', flexWrap: 'wrap', gap: 6, alignSelf: 'center', width: 300, padding: 6,
-    borderWidth: 1, borderRadius: 16,
+    borderWidth: 1, borderRadius: 22,
   },
-  cell: { width: 90, height: 90, borderRadius: 12, alignItems: 'center', justifyContent: 'center', padding: 6 },
+  cell: { width: 90, height: 90, borderRadius: 16, alignItems: 'center', justifyContent: 'center', padding: 6 },
   cellText: { fontSize: 14, fontWeight: '700', textAlign: 'center' },
   coreText: { fontSize: 13, fontWeight: '800', lineHeight: 18 },
   caption: { fontSize: 12, textAlign: 'center', lineHeight: 18 },
-  box: { borderWidth: 1, borderRadius: 16, padding: 18, gap: 12 },
+  box: { borderWidth: 1, borderRadius: 22, padding: 18, gap: 12 },
   h2: { fontSize: 18, fontWeight: '800' },
   lesson: { flexDirection: 'row', gap: 12 },
   lessonIcon: { fontSize: 20, width: 22, textAlign: 'center' },

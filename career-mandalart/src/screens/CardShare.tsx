@@ -5,6 +5,7 @@ import { Plan } from '../model';
 import { saveQrPng } from '../qr/image';
 import { cardModel } from '../share/card';
 import { renderCard } from '../share/render';
+import { Tap } from '../components/Motion';
 import { useTheme } from '../theme';
 
 type Props = { plan: Plan; onBack: () => void };
@@ -47,9 +48,9 @@ export default function CardShare({ plan, onBack }: Props) {
         </View>
 
         {png && (
-          <Pressable style={[ui.btnPrimary, { width: size }]} onPress={() => saveQrPng(png, fileName).catch(e => setError(e.message))}>
+          <Tap style={[ui.btnPrimary, { width: size }]} onPress={() => saveQrPng(png, fileName).catch(e => setError(e.message))}>
             <Text style={ui.btnPrimaryText}>이미지 저장 / 공유</Text>
-          </Pressable>
+          </Tap>
         )}
         <Text style={[ui.sub, { width: size }]}>
           {Platform.OS === 'web'

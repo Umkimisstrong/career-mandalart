@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 900">
+<defs><pattern id="grain" width="40" height="12" patternUnits="userSpaceOnUse"><rect width="40" height="12" fill="#E9C99A"/><path d="M0 6 Q10 2 20 6 T40 6" stroke="#D6AE77" stroke-width="2" fill="none"/></pattern>
+<pattern id="grain2" width="40" height="12" patternUnits="userSpaceOnUse"><rect width="40" height="12" fill="#D9A86E"/><path d="M0 6 Q10 2 20 6 T40 6" stroke="#C48F55" stroke-width="2" fill="none"/></pattern></defs>
+<rect width="900" height="900" fill="#F6EBDA"/>
+<circle cx="150" cy="150" r="70" fill="#F5C76A"/>
+<path d="M0 560 Q220 470 450 540 T900 520 V900 H0Z" fill="#CFE0A8"/>
+<rect x="0" y="700" width="900" height="200" fill="url(#grain)"/>
+<g><rect x="80" y="420" width="180" height="200" rx="14" fill="url(#grain2)"/><path d="M60 430 L170 320 L280 430Z" fill="#E07A5F"/><rect x="145" y="520" width="50" height="100" rx="10" fill="#8A5A36"/><rect x="100" y="460" width="40" height="40" rx="8" fill="#BFE3F0"/><rect x="200" y="460" width="40" height="40" rx="8" fill="#BFE3F0"/></g>
+<g><rect x="340" y="360" width="220" height="260" rx="14" fill="url(#grain)"/><path d="M320 370 L450 240 L580 370Z" fill="#7FA6D6"/><rect x="420" y="520" width="60" height="100" rx="12" fill="#8A5A36"/><circle cx="450" cy="320" r="22" fill="#FFF4C2"/><rect x="370" y="410" width="50" height="50" rx="8" fill="#BFE3F0"/><rect x="480" y="410" width="50" height="50" rx="8" fill="#BFE3F0"/></g>
+<g><rect x="630" y="450" width="190" height="170" rx="14" fill="url(#grain2)"/><path d="M615 460 L725 370 L835 460Z" fill="#8EC07C"/><rect x="700" y="530" width="46" height="90" rx="10" fill="#8A5A36"/></g>
+<g><circle cx="150" cy="790" r="40" fill="#F28B82"/><rect x="250" y="760" width="80" height="80" rx="12" fill="#7FA6D6"/><path d="M380 840 L420 760 L460 840Z" fill="#F5D547"/><rect x="520" y="770" width="120" height="60" rx="14" fill="#8EC07C"/><circle cx="545" cy="845" r="16" fill="#5A3B1E"/><circle cx="615" cy="845" r="16" fill="#5A3B1E"/><circle cx="760" cy="780" r="36" fill="#C9B6F2"/><rect x="740" y="810" width="40" height="40" rx="8" fill="#F2A65A"/></g>
+<g fill="#FFFFFF" opacity=".85"><ellipse cx="520" cy="120" rx="90" ry="28"/><ellipse cx="760" cy="200" rx="70" ry="22"/></g>
+</svg>

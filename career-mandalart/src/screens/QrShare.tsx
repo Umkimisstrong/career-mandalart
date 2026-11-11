@@ -6,6 +6,7 @@ import { SvgXml } from 'react-native-svg';
 import { Plan, sizeOf } from '../model';
 import { encodePlan } from '../qr/codec';
 import { makeQrPng, saveQrPng } from '../qr/image';
+import { Tap } from '../components/Motion';
 import { useTheme } from '../theme';
 
 type Props = { plan: Plan; onBack: () => void };
@@ -72,9 +73,9 @@ export default function QrShare({ plan, onBack }: Props) {
         )}
 
         {png && (
-          <Pressable style={[ui.btnPrimary, { width: size }]} onPress={() => saveQrPng(png, fileName).catch(e => setError(e.message))}>
+          <Tap style={[ui.btnPrimary, { width: size }]} onPress={() => saveQrPng(png, fileName).catch(e => setError(e.message))}>
             <Text style={ui.btnPrimaryText}>이미지 저장 / 공유</Text>
-          </Pressable>
+          </Tap>
         )}
         <Text style={[ui.sub, { width: size }]}>
           {Platform.OS === 'web'

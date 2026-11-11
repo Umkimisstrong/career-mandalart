@@ -7,7 +7,9 @@ import {
 import { AgeBand, catInfo, categoryById } from '../categories/data';
 import { guideSub } from '../categories/tree';
 import { composeText } from '../categories/units';
+import BoardCell, { Ink, paintCell } from '../components/BoardCell';
 import { ActionBuilder, GoalCategoryPicker } from '../components/CategoryPicker';
+import { Appear, Tap } from '../components/Motion';
 import RoutinePicker from '../components/RoutinePicker';
 import { layoutBlock } from '../components/ShapeLayout';
 import { ActionSpec, blocksOf, canGrow, CENTER, Cell, cellRole, cellsIn, getCell, growSlots, Plan, PlanSize, progress, Routine, sizeOf, SubItem } from '../model';
@@ -73,10 +75,11 @@ export default function BlockEditor({
             // 아직 열지 않은 자리 — 누르면 칸을 열고 바로 입력
             if (slots.includes(c)) {
               return (
-                <Pressable key={c} accessibilityLabel="실행 과제 칸 더하기" onPress={() => { onGrow(block, c, true); setEditing(c); }}
-                  style={[styles.cell, styles.ghost, { left: x, top: y, width: cellSize, height: cellSize, borderColor: t.border }]}>
+                <BoardCell key={`${t.key}-${c}`} x={x} y={y} size={cellSize} delay={c * 40}
+                  paint={{ bg: 'transparent', ink: t.sub }} style={[styles.ghost, { borderColor: t.sub }]}
+                  label="실행 과제 칸 더하기" onPress={() => { onGrow(block, c, true); setEditing(c); }}>
                   <Text style={{ fontSize: 26, color: t.sub }}>＋</Text>
-                </Pressable>
+                </BoardCell>
               );
             }
             const v = getCell(plan, block, c);
@@ -84,53 +87,53 @@ export default function BlockEditor({
             const isAction = role === 'action';
             // 완료 · 반복 점검을 다는 칸 (1칸 버전은 핵심 목표 칸)
             const tracked = isAction || shape === 1;
-            const color = role === 'core' ? t.blocks[CENTER] : role === 'goal' ? t.blocks[block === CENTER ? c : block]
-              : v.done ? t.done : t.surface;
-            const fg = isAction ? (v.done ? t.doneText : t.text) : t.on(color);
+            const paint = paintCell(t, block, c, { done: tracked && v.done });
+            // 퍼즐 그림 위 작은 표시는 흰 알약 위 진한 글자, 그 밖은 칸 글자색
+            const mark = paint.pill ? t.text : paint.ink;
             // 비어 있는 실행 과제 칸에는 블록 카테고리의 세부 카테고리를 미리 안내한다
             const guide = isAction && !v.text ? guideSub(blockCat, c, age) : undefined;
             return (
-              <Pressable
-                key={c}
+              <BoardCell
+                key={`${t.key}-${c}`}
+                x={x} y={y} size={cellSize} paint={paint} picture={lay.picture}
+                delay={c * 40}
+                label={v.text || ROLE_LABEL[role]}
                 onPress={() => (canEdit && !canEdit(block, c) ? setLocked(true) : setEditing(c))}
                 onLongPress={() => block === CENTER && c !== CENTER && onChangeBlock(c)}
-                style={[
-                  styles.cell,
-                  { left: x, top: y, width: cellSize, height: cellSize, backgroundColor: color, borderColor: t.border },
-                  v.done && tracked && { borderColor: t.doneBorder, borderWidth: isAction ? 1 : 3 },
-                ]}
+                style={styles.big}
               >
-                <Text style={[styles.role, { color: fg, opacity: 0.6 }]}>
+                <Text style={[styles.role, { color: mark, opacity: paint.pill ? 0.9 : 0.6 }, !!paint.pill && styles.badge]}>
                   {ROLE_LABEL[role]}{role !== 'action' && catInfo(v.cat) ? ` · ${catInfo(v.cat)!.emoji}` : ''}
                 </Text>
-                <Text
-                  numberOfLines={4}
-                  style={[
-                    styles.txt,
-                    { color: fg },
-                    role === 'core' && { fontWeight: '800' },
-                    role === 'goal' && { fontWeight: '700' },
-                    !v.text && { opacity: 0.45, fontWeight: '400' },
-                  ]}
-                >
-                  {v.text || (guide ? `+ ${guide.label}` : '+ 입력')}
-                </Text>
-                {v.done && <Text style={[styles.check, { color: t.doneBorder }]}>✓</Text>}
+                <Ink paint={paint} style={styles.pill}>
+                  <Text
+                    numberOfLines={paint.motif ? 3 : 4}
+                    style={[
+                      styles.txt,
+                      { color: paint.ink },
+                      role !== 'action' && [{ fontWeight: role === 'core' ? '800' : '700' } as const, ui.titleFont],
+                      !v.text && { opacity: 0.6, fontWeight: '400' },
+                    ]}
+                  >
+                    {v.text || (guide ? `+ ${guide.label}` : '+ 입력')}
+                  </Text>
+                </Ink>
+                {v.done && <Text style={[styles.check, { color: t.doneBorder }, !!paint.pill && styles.badge]}>✓</Text>}
                 {/* 하위 할 일 · 펼친 목표 표시 */}
                 {(!!v.items?.length || !!v.child) && (
-                  <Text style={[styles.sub, { color: t.sub }]} numberOfLines={1}>
+                  <Text style={[styles.sub, { color: mark }, !!paint.pill && styles.badge]} numberOfLines={1}>
                     {v.items?.length ? `☑ ${v.items.filter(i => i.done).length}/${v.items.length}` : ''}{v.items?.length && v.child ? ' ' : ''}{v.child ? '↗' : ''}
                   </Text>
                 )}
                 {tracked && v.routine && !v.done && (() => {
                   const st = routineStats(v.routine, v.log);
                   return (
-                    <Text style={[styles.loop, { color: st.checked ? t.doneBorder : t.sub }]} numberOfLines={1}>
+                    <Text style={[styles.loop, { color: st.checked ? t.doneBorder : mark }, !!paint.pill && styles.badge]} numberOfLines={1}>
                       {st.checked ? '✓' : '🔁'}{st.streak > 1 ? ` 🔥${st.streak}` : ''}
                     </Text>
                   );
                 })()}
-              </Pressable>
+              </BoardCell>
             );
           })}
         </View>
@@ -156,15 +159,20 @@ export default function BlockEditor({
         {/* 블록 빠른 이동 — 이 크기에서 쓰는 블록만 */}
         {shape !== 1 && <View style={[styles.mini, { width: 3 * 40 + 8 }]}>
           {IDX.map(b => !blocksOf(shape).includes(b) ? <View key={b} style={styles.miniCell} /> : (
-            <Pressable
+            <Tap
               key={b}
               onPress={() => onChangeBlock(b)}
+              hover={1.1}
               style={[styles.miniCell, { backgroundColor: t.blocks[b] }, b === block && [styles.miniActive, { borderColor: t.text }]]}
             >
-              <Text style={{ fontSize: 10, color: t.on(t.blocks[b]) }} numberOfLines={1}>
-                {b === CENTER ? '핵심' : getCell(plan, CENTER, b).text.slice(0, 3) || b + 1}
-              </Text>
-            </Pressable>
+              {t.art?.mode === 'motif'
+                ? <Text style={{ fontSize: 18 }}>{t.art.motifs[b]}</Text>
+                : (
+                  <Text style={{ fontSize: 10, color: t.on(t.blocks[b]) }} numberOfLines={1}>
+                    {b === CENTER ? '핵심' : getCell(plan, CENTER, b).text.slice(0, 3) || b + 1}
+                  </Text>
+                )}
+            </Tap>
           ))}
         </View>}
       </ScrollView>
@@ -241,11 +249,12 @@ function CellEditor({ role, trackable, cell, blockCat, guide, age, custom, onAge
   });
 
   return (
-    <Modal transparent animationType="slide" onRequestClose={onClose}>
+    <Modal transparent animationType="fade" onRequestClose={onClose}>
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={styles.backdrop}>
         {/* 시트 바깥(어두운 배경)을 누르면 취소와 같이 닫는다 */}
         <Pressable style={StyleSheet.absoluteFill} onPress={onClose} accessibilityLabel="편집 닫기" />
-        <ScrollView style={[styles.sheetScroll, { backgroundColor: t.bg }]} contentContainerStyle={styles.sheet} keyboardShouldPersistTaps="handled">
+        <Appear kind="sheet" style={styles.sheetWrap}>
+        <ScrollView style={[styles.sheetScroll, { backgroundColor: t.bg, borderTopLeftRadius: t.radius.card, borderTopRightRadius: t.radius.card }]} contentContainerStyle={styles.sheet} keyboardShouldPersistTaps="handled">
           <Text style={[styles.sheetTitle, { color: t.text }]}>{ROLE_LABEL[role]}</Text>
           {/* 카테고리를 먼저 고르고, 그 아래에서 내용을 입력한다 */}
           {role !== 'action' && <GoalCategoryPicker selected={cat} onSelect={selectCat} />}
@@ -309,12 +318,12 @@ function CellEditor({ role, trackable, cell, blockCat, guide, age, custom, onAge
           )}
           <View style={{ flexDirection: 'row', gap: 8 }}>
             <Pressable style={[ui.btn, { flex: 1 }]} onPress={onClose}><Text style={ui.btnText}>취소</Text></Pressable>
-            <Pressable
+            <Tap
               style={[ui.btnPrimary, { flex: 1 }]}
               onPress={() => onSave(patch())}
             >
               <Text style={ui.btnPrimaryText}>저장</Text>
-            </Pressable>
+            </Tap>
           </View>
           {/* 실행 과제를 핵심 목표로 — 새 목표로 펼치기 */}
           {role === 'action' && (
@@ -328,11 +337,11 @@ function CellEditor({ role, trackable, cell, blockCat, guide, age, custom, onAge
                   <Text style={[styles.label, { color: t.text }]}>새 목표로 펼치기 <Text style={{ color: t.sub, fontWeight: '400' }}>이 과제를 핵심 목표로</Text></Text>
                   <View style={{ flexDirection: 'row', gap: 6 }}>
                     {([9, 7, 5, 3] as PlanSize[]).map(n => (
-                      <Pressable key={n} disabled={!text.trim()} onPress={() => onExpand(n, patch())} accessibilityLabel={`${n * n}칸으로 펼치기`}
+                      <Tap key={n} disabled={!text.trim()} onPress={() => onExpand(n, patch())} accessibilityLabel={`${n * n}칸으로 펼치기`}
                         style={[styles.sizeBtn, { borderColor: t.border, backgroundColor: t.surface, opacity: text.trim() ? 1 : 0.4 }]}>
                         <ShapeIcon color={t.text} shape={n} size={22} />
                         <Text style={{ color: t.sub, fontSize: 10 }}>{n * n}칸</Text>
-                      </Pressable>
+                      </Tap>
                     ))}
                   </View>
                 </>
@@ -345,6 +354,7 @@ function CellEditor({ role, trackable, cell, blockCat, guide, age, custom, onAge
             </Pressable>
           )}
         </ScrollView>
+        </Appear>
       </KeyboardAvoidingView>
     </Modal>
   );
@@ -355,24 +365,22 @@ const styles = StyleSheet.create({
   item: { flexDirection: 'row', alignItems: 'center', gap: 10, paddingVertical: 2 },
   box: { width: 22, height: 22, borderRadius: 6, borderWidth: 1.5, alignItems: 'center', justifyContent: 'center' },
   expand: { borderTopWidth: StyleSheet.hairlineWidth, paddingTop: 10, gap: 8 },
-  sizeBtn: { flex: 1, alignItems: 'center', paddingVertical: 6, gap: 2, borderRadius: 10, borderWidth: 1 },
-  ghost: { borderStyle: 'dashed', borderWidth: 1.5, backgroundColor: 'transparent' },
-  cell: {
-    position: 'absolute', borderRadius: 12, borderWidth: 1, padding: 8,
-    alignItems: 'center', justifyContent: 'center',
-  },
+  sizeBtn: { flex: 1, alignItems: 'center', paddingVertical: 6, gap: 2, borderRadius: 16, borderWidth: 1 },
+  ghost: { borderStyle: 'dashed', borderWidth: 1.5, opacity: 0.7 },
+  big: { padding: 8 },
+  pill: { paddingHorizontal: 8, paddingVertical: 4, borderRadius: 12 },
+  // 퍼즐 그림 위 작은 표시 — 흰 알약
+  badge: { backgroundColor: 'rgba(255,255,255,0.88)', borderRadius: 999, paddingHorizontal: 5, overflow: 'hidden' },
   role: { position: 'absolute', top: 6, left: 8, fontSize: 9 },
   txt: { fontSize: 14, textAlign: 'center' },
   check: { position: 'absolute', bottom: 6, right: 8, fontWeight: '800' },
   loop: { position: 'absolute', bottom: 5, left: 8, fontSize: 10, fontWeight: '700' },
   mini: { flexDirection: 'row', flexWrap: 'wrap', gap: 4 },
-  miniCell: { width: 40, height: 40, borderRadius: 6, alignItems: 'center', justifyContent: 'center', opacity: 0.6 },
+  miniCell: { width: 40, height: 40, borderRadius: 12, alignItems: 'center', justifyContent: 'center', opacity: 0.6 },
   miniActive: { opacity: 1, borderWidth: 2 },
   backdrop: { flex: 1, justifyContent: 'flex-end', backgroundColor: 'rgba(0,0,0,0.35)' },
-  sheetScroll: {
-    flexGrow: 0, maxHeight: '88%',
-    borderTopLeftRadius: 20, borderTopRightRadius: 20,
-  },
+  sheetWrap: { maxHeight: '88%' },
+  sheetScroll: { flexGrow: 0 },
   sheet: { padding: 20, gap: 12, paddingBottom: 36 },
   sheetTitle: { fontSize: 16, fontWeight: '700' },
   label: { fontSize: 13, fontWeight: '800' },

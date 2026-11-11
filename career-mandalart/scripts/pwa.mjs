@@ -69,6 +69,12 @@ const head = [
   `<meta property="og:description" content="${description}">`,
   '<link rel="apple-touch-icon" href="/apple-touch-icon.png">',
   '<link rel="manifest" href="/manifest.json">',
+  // 글꼴: 제목 Jua · 본문 Gowun Dodum. 본문은 여기 규칙으로 모든 글자에 (react-native-web 의 글자는 dir="auto" 를 단다),
+  // 제목은 src/theme.ts 의 FONT.title 을 인라인으로 덮는다
+  '<link rel="preconnect" href="https://fonts.googleapis.com">',
+  '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>',
+  '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=Jua&display=swap">',
+  "<style>[dir=auto]{font-family:'Gowun Dodum',system-ui,-apple-system,'Apple SD Gothic Neo','Malgun Gothic',sans-serif}</style>",
   "<script>if('serviceWorker' in navigator)addEventListener('load',()=>navigator.serviceWorker.register('/sw.js'))</script>",
 ].join('\n    ');
 

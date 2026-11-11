@@ -5,8 +5,9 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Animated, LayoutChangeEvent, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { catInfo } from '../categories/data';
+import BoardCell, { Ink, paintCell } from '../components/BoardCell';
 import { ChevronIcon, HomeIcon } from '../components/Icons';
-import { layoutBlock } from '../components/ShapeLayout';
+import { layoutBlock, Picture } from '../components/ShapeLayout';
 import { desktop } from '../desktop';
 import { cellsIn, CENTER, getCell, Plan, progress, setCell, sizeOf, Store } from '../model';
 import { periodKey, RoutineItem, routineItems, routineLabel, Scope, toggleKey } from '../routine';
@@ -151,10 +152,11 @@ function Grid({ plan, todo, onOpen }: { plan: Plan; todo: RoutineItem[]; onOpen:
           const core = c.cell === CENTER;
           const pr = core ? progress(plan) : progress(plan, c.cell);
           return (
-            <Cell key={c.cell} x={c.x} y={c.y} size={lay.cell} core={core}
-              emoji={core ? '★' : catInfo(g.cat)?.emoji}
+            <Cell key={`${t.key}-${c.cell}`} x={c.x} y={c.y} size={lay.cell} cell={c.cell} picture={lay.picture}
+              // 그림 테마는 칸 그림이 따로 있으니 카테고리 그림은 색상 테마에서만
+              emoji={core ? '★' : t.art ? undefined : catInfo(g.cat)?.emoji}
               label={core ? g.text || '핵심 목표' : short(g.text)}
-              ratio={pr.ratio} color={t.blocks[c.cell]} due={due.get(c.cell) ?? 0}
+              ratio={pr.ratio} due={due.get(c.cell) ?? 0}
               onPress={() => onOpen(c.cell)} />
           );
         })}
@@ -162,26 +164,35 @@ function Grid({ plan, todo, onOpen }: { plan: Plan; todo: RoutineItem[]; onOpen:
   );
 }
 
-function Cell({ x, y, size, core, emoji, label, ratio, color, due, onPress }: {
-  x: number; y: number; size: number; core: boolean; emoji?: string; label: string; ratio: number; color: string; due: number; onPress: () => void;
+function Cell({ x, y, size, cell, picture, emoji, label, ratio, due, onPress }: {
+  x: number; y: number; size: number; cell: number; picture: Picture; emoji?: string; label: string; ratio: number; due: number; onPress: () => void;
 }) {
   const { t } = useTheme();
   const pulse = usePulse(due > 0);
-  const fg = t.on(color);
+  const core = cell === CENTER;
+  const paint = paintCell(t, CENTER, cell);
+  const fg = paint.pill ? t.text : paint.ink;
   return (
-    <Pressable accessibilityRole="button" onPress={onPress} accessibilityLabel={label}
-      style={[styles.cell, { left: x, top: y, width: size, height: size, backgroundColor: color }]}>
+    <BoardCell x={x} y={y} size={size} paint={paint} picture={picture} delay={cell * 45} label={label} onPress={onPress} style={styles.cell}>
       {due > 0 && (
         <Animated.View pointerEvents="none" style={[StyleSheet.absoluteFill, styles.glow, {
           borderColor: t.accent, opacity: pulse.interpolate({ inputRange: [0, 1], outputRange: [0.25, 1] }),
         }]} />
       )}
-      {/* 핵심 목표 칸은 별 하나만 */}
-      {!!emoji && <Text style={[styles.emoji, { color: fg }, core && styles.star]}>{emoji}</Text>}
-      {!core && <Text style={[styles.label, { color: fg }]} numberOfLines={2}>{label}</Text>}
+      {/* 핵심 목표 칸은 별 하나만 (블록마다 그림 테마는 BoardCell 이 ★ 을 그린다) */}
+      {!!emoji && !paint.motif && (
+        <Ink paint={paint} style={core && styles.starPill}>
+          <Text style={[styles.emoji, { color: paint.ink }, core && styles.star]}>{emoji}</Text>
+        </Ink>
+      )}
+      {!core && (
+        <Ink paint={paint} style={{ marginTop: 2 }}>
+          <Text style={[styles.label, { color: paint.ink }]} numberOfLines={2}>{label}</Text>
+        </Ink>
+      )}
       {/* 실행 과제 완료 비율 — 칸 아래 얇은 줄 */}
       {!core && ratio > 0 && (
-        <View style={[styles.track, { backgroundColor: 'rgba(127,127,127,0.25)' }]}>
+        <View style={[styles.track, { backgroundColor: paint.pill ? 'rgba(255,255,255,0.7)' : 'rgba(127,127,127,0.25)' }]}>
           <View style={{ width: `${Math.round(ratio * 100)}%`, height: '100%', backgroundColor: fg, opacity: 0.75, borderRadius: 2 }} />
         </View>
       )}
@@ -190,7 +201,7 @@ function Cell({ x, y, size, core, emoji, label, ratio, color, due, onPress }: {
           <Text style={[styles.badgeText, { color: t.on(t.accent) }]}>{due}</Text>
         </View>
       )}
-    </Pressable>
+    </BoardCell>
   );
 }
 
@@ -303,18 +314,19 @@ function usePulse(on: boolean) {
 }
 
 const styles = StyleSheet.create({
-  shell: { position: 'absolute', top: 0, left: 0, borderWidth: 1, borderRadius: 18, padding: PAD, overflow: 'hidden' },
+  shell: { position: 'absolute', top: 0, left: 0, borderWidth: 1, borderRadius: 22, padding: PAD, overflow: 'hidden' },
   folded: { paddingVertical: 6 },
   head: { height: 26, flexDirection: 'row', alignItems: 'center', gap: 4 },
   headBtn: { width: 24, height: 24, borderRadius: 8, alignItems: 'center', justifyContent: 'center' },
   headDot: { position: 'absolute', top: 1, right: 1, width: 7, height: 7, borderRadius: 4 },
   title: { flex: 1, fontSize: 12, fontWeight: '800', letterSpacing: -0.2, textAlign: 'center' },
-  cell: { position: 'absolute', borderRadius: 14, alignItems: 'center', justifyContent: 'center', padding: 6, paddingBottom: 10, overflow: 'hidden' },
-  emoji: { fontSize: 15, marginBottom: 2 },
+  cell: { padding: 6, paddingBottom: 10 },
+  emoji: { fontSize: 15 },
+  starPill: { paddingHorizontal: 8, paddingVertical: 4 },
   label: { fontSize: 11.5, fontWeight: '700', textAlign: 'center', letterSpacing: -0.3 },
-  star: { fontSize: 30, marginBottom: 0 },
+  star: { fontSize: 30 },
   track: { position: 'absolute', left: 12, right: 12, bottom: 5, height: 3, borderRadius: 2, overflow: 'hidden' },
-  glow: { borderWidth: 3, borderRadius: 14 },
+  glow: { borderWidth: 3, borderRadius: 16 },
   badge: { position: 'absolute', top: 4, right: 4, minWidth: 16, height: 16, borderRadius: 8, paddingHorizontal: 4, alignItems: 'center', justifyContent: 'center' },
   badgeText: { fontSize: 9.5, fontWeight: '900' },
   dHead: { flexDirection: 'row', alignItems: 'center', gap: 6, borderRadius: 12, paddingHorizontal: 10, paddingVertical: 8, marginBottom: 4 },

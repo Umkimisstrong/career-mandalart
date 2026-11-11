@@ -7,6 +7,7 @@ import { blocksOf, CENTER, Plan, progress, sizeOf } from '../model';
 import { QR_CAPACITY } from '../qr/codec';
 import { makeQrPng, pickQrFromImage, saveQrPng } from '../qr/image';
 import { isAdmin, TeamKind, teamCode } from '../team';
+import { Tap } from '../components/Motion';
 import { useTheme } from '../theme';
 
 type Props = {
@@ -103,9 +104,9 @@ export default function Team({ plan, onBack, onOwners, onReceive, onCopy, onDele
         {/* 보내기 */}
         <Text style={[styles.h2, { color: t.text }]}>보내기</Text>
         {(admin || team.block !== undefined) ? (
-          <Pressable style={ui.btnPrimary} onPress={() => setSending({ kind: 'update', label: admin ? '모두에게 갱신' : '내 블록 갱신' })}>
+          <Tap style={ui.btnPrimary} onPress={() => setSending({ kind: 'update', label: admin ? '모두에게 갱신' : '내 블록 갱신' })}>
             <Text style={ui.btnPrimaryText}>{admin ? '📤 모두에게 갱신 보내기' : '📤 관리자에게 내 블록 보내기'}</Text>
-          </Pressable>
+          </Tap>
         ) : <Text style={ui.sub}>보기 전용이라 보낼 내용이 없어요.</Text>}
         <Text style={[ui.sub, { fontSize: 12 }]}>
           {admin ? '전체 목표가 담긴 코드예요. 팀 단톡방에 한 번 올리면 모두 같은 내용으로 맞춰져요.' : '내 블록 내용만 담겨요. 관리자가 받으면 그 블록만 바뀌어요.'}
@@ -203,7 +204,7 @@ function Send({ plan, sending, onBack }: { plan: Plan; sending: Sending; onBack:
             : '이 링크(또는 QR)를 받은 사람의 구도에 바뀐 블록이 반영돼요.'}
         </Text>
         <View style={{ flexDirection: 'row', gap: 8 }}>
-          <Pressable style={[ui.btnPrimary, { flex: 1 }]} onPress={share}><Text style={ui.btnPrimaryText}>보내기</Text></Pressable>
+          <Tap style={[ui.btnPrimary, { flex: 1 }]} onPress={share}><Text style={ui.btnPrimaryText}>보내기</Text></Tap>
           {Platform.OS === 'web' && <Pressable style={[ui.btn, { flex: 1 }]} onPress={copy}><Text style={ui.btnText}>링크 복사</Text></Pressable>}
         </View>
         {!!note && <Text style={[ui.sub, { color: t.primary, fontWeight: '700' }]}>{note}</Text>}
@@ -224,11 +225,11 @@ function Send({ plan, sending, onBack }: { plan: Plan; sending: Sending; onBack:
 const styles = StyleSheet.create({
   wrap: { padding: 16, gap: 10, maxWidth: 560, width: '100%', alignSelf: 'center' },
   h2: { fontSize: 15, fontWeight: '800', marginTop: 10 },
-  box: { borderWidth: 1, borderRadius: 14, paddingHorizontal: 12 },
+  box: { borderWidth: 1, borderRadius: 22, paddingHorizontal: 12 },
   row: { flexDirection: 'row', alignItems: 'center', gap: 10, paddingVertical: 10, borderBottomWidth: StyleSheet.hairlineWidth },
-  dot: { width: 28, height: 28, borderRadius: 8, alignItems: 'center', justifyContent: 'center' },
+  dot: { width: 28, height: 28, borderRadius: 10, alignItems: 'center', justifyContent: 'center' },
   title: { fontSize: 13, fontWeight: '700' },
   who: { fontSize: 13, fontWeight: '700' },
   name: { width: 84, paddingVertical: 6, fontSize: 13 },
-  small: { borderWidth: 1, borderRadius: 8, paddingHorizontal: 8, paddingVertical: 6 },
+  small: { borderWidth: 1, borderRadius: 12, paddingHorizontal: 8, paddingVertical: 6 },
 });
