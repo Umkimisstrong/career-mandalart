@@ -45,6 +45,7 @@ career-mandalart/
   src/categories/         data.ts(개인 매슬로우 + 팀 BSC 카테고리) · tree.ts · units.ts · templates.ts(연령대 템플릿 · buildPlan)
   src/components/         CategoryPicker · RoutinePicker · ShapeLayout · PlanPreview · Icons(휴지통 · 종 · 모양 아이콘) · InstallBanner
   src/screens/            PlanList(목록 · 만들기 탭) · Overview · BlockEditor(칸 편집 · 하위 할 일 · 펼치기 · 칸 늘리기) · Today · Team · Widget · Version · Backup · QrShare · QrScan · Templates · Story · About · ThemeSettings
+  src/share/              이미지 카드: card.ts(배치 모델 cardModel) · render.web.ts(캔버스 그리기), 화면 CardShare
   src/qr/                 QR 코덱(codec.ts, base45 공용), 웹 이미지 생성 · 읽기(image.web.ts)
   desktop/                Windows 데스크톱 앱(Electron): main.cjs(큰 창 · 작은 창 · 트레이) · preload.cjs · updater.cjs(자동 업데이트) · release.cjs(npm run release)
   scripts/pwa.mjs         웹 빌드 후 PWA 메타 · manifest · 서비스 워커 · 화면 빌드 표시(gudo-build) 주입
@@ -77,13 +78,12 @@ npm run deploy:dry      # EAS 호출 없이 배포 파이프라인 점검
 - 배포: 웹 https://career-mandalart.vercel.app (GitHub `main` push → Vercel 자동). Windows 앱 1.2.1 — 설치 · 업데이트 링크 https://github.com/Umkimisstrong/career-mandalart/releases/latest/download/GUDO-Setup.exe, 설치본은 GitHub 릴리스로 자동 업데이트.
 - 기능 목록 · 이력은 FEATURES.md. 크기(1 · 3 · 5 · 7 · 9) · 단계별 만들기 · 미리보기 · 반복 점검 · 팀 목표 · 칸 늘리기 · 하위 할 일 · 펼치기 · 데스크톱 작은 창 · 버전 화면까지.
 - 검증: 2026-11-11 verify-gudo 로 목록 · 만들기 · 칸 편집 · 팀 · 작은 창 5개 기능을 실제 앱에서 증명. 미검증: 실제 iPhone · Android 화면, 휴대폰 알림, 네이티브 카메라 QR, 작은 창 실제 마우스 클릭.
-- 판매 시작 기준(사용자 결정): ① 사용자 10명 피드백 ② 디자인 · 테마 확정 ③ 9×9 이미지 카드 — ③ 미구현, ② 미정.
+- 판매 시작 기준(사용자 결정): ① 사용자 10명 피드백 ② 디자인 · 테마 확정 ③ 9×9 이미지 카드 — ③ 완료(2026-11-11, 목표 화면 「카드」 · `src/share/`), ② 미정.
 - 알려진 빈틈: 팀 목표 실행 과제 편집 창에 개인(매슬로우) 추천이 뜸. 기기끼리 데이터 자동 동기화 없음(백업 코드 · QR 로 옮김).
 - GitHub: https://github.com/Umkimisstrong/career-mandalart (public). 루트 `vercel.json` 이 `career-mandalart/` 를 빌드.
 - 환경: Node 26.13, Git · GitHub CLI · Vercel CLI 로그인. PowerShell 에서는 `vercel.cmd`. 데스크톱 빌드는 `career-mandalart/desktop` 에서 (npm 12 는 electron 바이너리를 `node node_modules/electron/install.js` 로 직접 받음).
 
 ## 다음 할 일 후보
-- 9×9 이미지 카드 내보내기 (판매 시작 기준 ③, my-goals 07-5)
 - 팀 목표 실행 과제 편집 창을 BSC 에 맞는 추천으로 (지금은 개인 카테고리 추천)
 - 디자인 · 테마 확정 (판매 시작 기준 ②)
 - 실제 휴대폰 점검 (화면 · 알림 · 카메라 QR)

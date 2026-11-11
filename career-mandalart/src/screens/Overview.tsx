@@ -10,6 +10,7 @@ type Props = {
   onRename?: (title: string) => void; // 없으면 이름 고치기 막음 (팀 담당자)
   onOpenBlock: (block: number) => void;
   onQr: () => void;
+  onCard: () => void;
   onTeam?: () => void; // 팀 목표만
   parentTitle?: string; // 다른 목표의 실행 과제에서 펼친 목표면 그 목표 이름
   onParent?: () => void;
@@ -17,7 +18,7 @@ type Props = {
   notice?: { text: string; error?: boolean };
 };
 
-export default function Overview({ plan, onBack, onRename, onOpenBlock, onQr, onTeam, parentTitle, onParent, notice }: Props) {
+export default function Overview({ plan, onBack, onRename, onOpenBlock, onQr, onCard, onTeam, parentTitle, onParent, notice }: Props) {
   const { width } = useWindowDimensions();
   const { t, ui } = useTheme();
   const size = Math.min(width, 640) - 32;
@@ -31,6 +32,7 @@ export default function Overview({ plan, onBack, onRename, onOpenBlock, onQr, on
       <View style={ui.header}>
         <Pressable onPress={onBack}><Text style={ui.back}>‹ 목록</Text></Pressable>
         <TextInput value={plan.title} onChangeText={onRename} editable={!!onRename} style={ui.headerTitle} />
+        <Pressable onPress={onCard} hitSlop={8}><Text style={ui.back}>카드</Text></Pressable>
         {onTeam
           ? <Pressable onPress={onTeam} hitSlop={8}><Text style={ui.back}>👥 팀</Text></Pressable>
           : <Pressable onPress={onQr} hitSlop={8}><Text style={ui.back}>QR 저장</Text></Pressable>}

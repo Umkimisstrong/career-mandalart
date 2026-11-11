@@ -15,6 +15,7 @@ import Overview from './src/screens/Overview';
 import PlanList, { Home } from './src/screens/PlanList';
 import QrScan from './src/screens/QrScan';
 import QrShare from './src/screens/QrShare';
+import CardShare from './src/screens/CardShare';
 import Story from './src/screens/Story';
 import Team from './src/screens/Team';
 import Version from './src/screens/Version';
@@ -39,6 +40,7 @@ type Route =
   | { name: 'templates'; age?: AgeBand }
   | { name: 'today' }
   | { name: 'qr'; id: string }
+  | { name: 'card'; id: string }
   | { name: 'team'; id: string }
   | { name: 'version' }
   | { name: 'plan'; id: string; block: number | null };
@@ -257,6 +259,11 @@ function App() {
       if (plan) {
         screen = <QrShare plan={plan} onBack={() => setRoute({ name: 'plan', id: plan.id, block: null })} />;
       }
+    } else if (route.name === 'card') {
+      const plan = store.plans.find(p => p.id === route.id);
+      if (plan) {
+        screen = <CardShare plan={plan} onBack={() => setRoute({ name: 'plan', id: plan.id, block: null })} />;
+      }
     } else {
       const plan = store.plans.find(p => p.id === route.id);
       if (!plan) {
@@ -270,6 +277,7 @@ function App() {
             onRename={!plan.team || isAdmin(plan) ? title => updatePlan(plan.id, p => ({ ...p, title, updatedAt: Date.now() })) : undefined}
             onOpenBlock={block => { setNotice(undefined); setRoute({ ...route, block }); }}
             onQr={() => setRoute({ name: 'qr', id: plan.id })}
+            onCard={() => setRoute({ name: 'card', id: plan.id })}
             onTeam={plan.team ? () => setRoute({ name: 'team', id: plan.id }) : undefined}
             parentTitle={plan.parent ? store.plans.find(p => p.id === plan.parent!.plan)?.title : undefined}
             onParent={() => plan.parent && setRoute({ name: 'plan', id: plan.parent.plan, block: plan.parent.block })}
