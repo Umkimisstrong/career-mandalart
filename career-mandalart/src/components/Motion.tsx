@@ -1,6 +1,7 @@
 // 움직임 공용 부품 — 게임처럼 손에 붙는 느낌.
 //  Tap    누르는 것: 마우스를 올리면 살짝 떠오르고(웹), 누르면 찌그러졌다가 튕기며 돌아온다
 //  Appear 나타나는 것: 아래에서 통통 튀어 오르며 나타난다. delay 로 차례차례
+//  useEase 값 하나를 천천히 바꾸기 (투명도 등)
 // 기기에서 「동작 줄이기」를 켰으면 움직이지 않고 바로 보인다.
 import { ReactNode, useEffect, useRef, useState } from 'react';
 import { AccessibilityInfo, Animated, Platform, Pressable, PressableProps, StyleProp, ViewStyle } from 'react-native';
@@ -41,6 +42,18 @@ export function Appear({ delay = 0, kind = 'rise', style, children, pointerEvent
     ],
   };
   return <Animated.View pointerEvents={pointerEvents} style={[style, motion]}>{children}</Animated.View>;
+}
+
+// 숫자 하나를 바뀐 값 쪽으로 천천히 옮긴다 (처음 값은 그대로) — 퍼즐 조각이 또렷해지는 것처럼
+export function useEase(value: number, duration = 600) {
+  const v = useRef(new Animated.Value(value)).current;
+  useEffect(() => {
+    if (reduced) return v.setValue(value);
+    const a = Animated.timing(v, { toValue: value, duration, useNativeDriver: NATIVE });
+    a.start();
+    return () => a.stop();
+  }, [v, value, duration]);
+  return v;
 }
 
 // 떠오르기 · 누르기 스프링. raised = 마우스가 올라와 있거나 누르는 중 (그림자 · 앞으로 꺼내기에 쓴다)

@@ -3,7 +3,7 @@ import { Pressable, ScrollView, StyleSheet, Text, TextInput, useWindowDimensions
 import BoardCell, { Ink, paintCell } from '../components/BoardCell';
 import { layoutPlan } from '../components/ShapeLayout';
 import { CENTER, cellRole, cellsIn, getCell, Plan, progress, sizeOf } from '../model';
-import { useTheme } from '../theme';
+import { useBoard, useTheme } from '../theme';
 
 type Props = {
   plan: Plan;
@@ -12,6 +12,7 @@ type Props = {
   onOpenBlock: (block: number) => void;
   onQr: () => void;
   onCard: () => void;
+  onLook: () => void; // 이 목표의 블록 테마
   onTeam?: () => void; // 팀 목표만
   parentTitle?: string; // 다른 목표의 실행 과제에서 펼친 목표면 그 목표 이름
   onParent?: () => void;
@@ -19,9 +20,10 @@ type Props = {
   notice?: { text: string; error?: boolean };
 };
 
-export default function Overview({ plan, onBack, onRename, onOpenBlock, onQr, onCard, onTeam, parentTitle, onParent, notice }: Props) {
+export default function Overview({ plan, onBack, onRename, onOpenBlock, onQr, onCard, onLook, onTeam, parentTitle, onParent, notice }: Props) {
   const { width } = useWindowDimensions();
   const { t, ui } = useTheme();
+  const board = useBoard();
   const size = Math.min(width, 640) - 32;
   const shape = sizeOf(plan);
   // 판 받침 둘레 TRAY px 를 빼고 놓는다. 블록 사이 간격 6px
@@ -34,6 +36,7 @@ export default function Overview({ plan, onBack, onRename, onOpenBlock, onQr, on
       <View style={ui.header}>
         <Pressable onPress={onBack}><Text style={ui.back}>‹ 목록</Text></Pressable>
         <TextInput value={plan.title} onChangeText={onRename} editable={!!onRename} style={ui.headerTitle} />
+        <Pressable onPress={onLook} hitSlop={8} accessibilityLabel="이 목표의 블록 테마"><Text style={ui.back}>테마</Text></Pressable>
         <Pressable onPress={onCard} hitSlop={8}><Text style={ui.back}>카드</Text></Pressable>
         {onTeam
           ? <Pressable onPress={onTeam} hitSlop={8}><Text style={ui.back}>👥 팀</Text></Pressable>
@@ -48,19 +51,19 @@ export default function Overview({ plan, onBack, onRename, onOpenBlock, onQr, on
             <Text style={[ui.sub, { color: t.accent }]} numberOfLines={1}>↖ 「{parentTitle}」의 실행 과제에서 펼친 목표</Text>
           </Pressable>
         )}
-        <View style={[styles.tray, { backgroundColor: t.mat, borderRadius: t.radius.card }]}>
+        <View style={[styles.tray, { backgroundColor: board.mat, borderRadius: t.radius.card }]}>
           <View style={{ width: lay.width, height: lay.height }}>
             {lay.cells.map(({ block: b, cell: c, x, y }) => {
               const v = getCell(plan, b, c);
               const role = cellRole(b, c);
               const tracked = role === 'action' || shape === 1;
-              const paint = paintCell(t, b, c, { done: tracked && v.done });
+              const paint = paintCell(board, b, c, { done: tracked && v.done });
               const owner = role === 'goal' ? plan.team?.owners[b === CENTER ? c : b] : undefined;
               const text = (v.text || (shape !== 9 && role !== 'action' ? (role === 'core' ? '핵심 목표' : '세부 목표') : ''))
                 + (owner ? `\n· ${owner}` : ''); // 팀 목표: 세부 목표 칸에 담당자 이름
               return (
                 <BoardCell
-                  key={`${t.key}-${b}-${c}`}
+                  key={`${board.key}-${b}-${c}`}
                   x={x} y={y} size={cell} inset={shape === 9 ? 1.5 : 2}
                   paint={paint} picture={lay.picture}
                   // 왼쪽 위에서 오른쪽 아래로 물결처럼 차례로

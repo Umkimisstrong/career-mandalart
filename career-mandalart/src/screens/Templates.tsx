@@ -6,7 +6,7 @@ import { parseAction, planFromTemplate, templateOf, TEMPLATES } from '../categor
 import { composeText } from '../categories/units';
 import { Plan } from '../model';
 import { Tap } from '../components/Motion';
-import { useTheme } from '../theme';
+import { useBoard, useTheme } from '../theme';
 
 type Props = {
   age?: AgeBand;
@@ -18,6 +18,7 @@ type Props = {
 
 export default function Templates({ age, onBack, onUse, onStory, onOhtani }: Props) {
   const { t, ui } = useTheme();
+  const board = useBoard();
   const [sel, setSel] = useState<AgeBand | 'ohtani'>(age ?? '30s');
   const [open, setOpen] = useState<number | null>(null);
   const tpl = (sel !== 'ohtani' && templateOf(sel)) || TEMPLATES[0];
@@ -71,10 +72,10 @@ export default function Templates({ age, onBack, onUse, onStory, onOhtani }: Pro
 
         <View style={[styles.grid, { borderColor: t.border }]}>
           {grid.map((g, i) => {
-            const bg = t.blocks[i];
+            const bg = board.blocks[i];
             return (
               <View key={i} style={[styles.cell, { backgroundColor: bg }]}>
-                <Text style={[styles.cellText, { color: t.on(bg) }, i === 4 && styles.core]} numberOfLines={4}>{g}</Text>
+                <Text style={[styles.cellText, { color: board.on(bg) }, i === 4 && styles.core]} numberOfLines={4}>{g}</Text>
               </View>
             );
           })}

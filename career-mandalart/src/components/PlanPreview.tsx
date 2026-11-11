@@ -2,7 +2,7 @@
 // 핵심 · 세부 목표 칸은 블록 색으로 진하게, 실행 과제 칸은 연하게.
 import { Modal, Pressable, ScrollView, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
 import { CENTER, getCell, Plan, sizeLabel, sizeOf } from '../model';
-import { useTheme } from '../theme';
+import { useBoard, useTheme } from '../theme';
 import BoardCell, { Ink, paintCell } from './BoardCell';
 import { Appear, Tap } from './Motion';
 import { layoutPlan } from './ShapeLayout';
@@ -12,6 +12,7 @@ type Props = { plan: Plan | null; sub?: string; onClose: () => void; onCreate?: 
 
 export default function PlanPreview({ plan, sub, onClose, onCreate }: Props) {
   const { t, ui } = useTheme();
+  const board = useBoard();
   const { width } = useWindowDimensions();
   if (!plan) return null;
   const size = sizeOf(plan);
@@ -30,15 +31,15 @@ export default function PlanPreview({ plan, sub, onClose, onCreate }: Props) {
                 <Text style={[styles.title, { color: t.text }, ui.titleFont]} numberOfLines={2}>{plan.title}</Text>
                 <Text style={[ui.sub, { fontSize: 12, marginTop: 2 }]}>{size * size}칸 · {sizeLabel(size)}{sub ? ` · ${sub}` : ''}</Text>
               </View>
-              <View style={[styles.tray, { backgroundColor: t.mat }]}>
+              <View style={[styles.tray, { backgroundColor: board.mat }]}>
                 <View style={{ width: lay.width, height: lay.height }}>
                   {lay.cells.map(c => {
                     const cell = getCell(plan, c.block, c.cell);
                     const head = c.block === CENTER || c.cell === CENTER;
-                    const paint = paintCell(t, c.block, c.cell, { tint: true });
+                    const paint = paintCell(board, c.block, c.cell, { tint: true });
                     const text = cell.text || (c.block === CENTER && c.cell === CENTER ? '핵심 목표' : head ? '세부 목표' : '');
                     return (
-                      <BoardCell key={`${t.key}-${c.block}-${c.cell}`} x={c.x} y={c.y} size={lay.cell} inset={1}
+                      <BoardCell key={`${board.key}-${c.block}-${c.cell}`} x={c.x} y={c.y} size={lay.cell} inset={1}
                         paint={paint} picture={lay.picture} delay={120 + Math.round((c.x + c.y) / lay.cell) * 16}>
                         {!!text && (
                           <Ink paint={paint} style={{ paddingHorizontal: 3, paddingVertical: 1 }}>

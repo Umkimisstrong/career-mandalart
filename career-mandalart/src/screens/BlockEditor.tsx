@@ -15,7 +15,7 @@ import { layoutBlock } from '../components/ShapeLayout';
 import { ActionSpec, blocksOf, canGrow, CENTER, Cell, cellRole, cellsIn, getCell, growSlots, Plan, PlanSize, progress, Routine, sizeOf, SubItem } from '../model';
 import { ShapeIcon } from '../components/Icons';
 import { routineLabel, routineStats } from '../routine';
-import { useTheme } from '../theme';
+import { useBoard, useTheme } from '../theme';
 
 type Props = {
   plan: Plan;
@@ -44,6 +44,7 @@ export default function BlockEditor({
 }: Props) {
   const { width } = useWindowDimensions();
   const { t, ui } = useTheme();
+  const board = useBoard();
   const size = Math.min(width, 520) - 32;
   const shape = sizeOf(plan);
   // 칸을 더 열 수 있는 블록은 3×3 전체 자리로 그리고, 빈 자리에 ＋ 를 둔다
@@ -75,7 +76,7 @@ export default function BlockEditor({
             // 아직 열지 않은 자리 — 누르면 칸을 열고 바로 입력
             if (slots.includes(c)) {
               return (
-                <BoardCell key={`${t.key}-${c}`} x={x} y={y} size={cellSize} delay={c * 40}
+                <BoardCell key={`${board.key}-${c}`} x={x} y={y} size={cellSize} delay={c * 40}
                   paint={{ bg: 'transparent', ink: t.sub }} style={[styles.ghost, { borderColor: t.sub }]}
                   label="실행 과제 칸 더하기" onPress={() => { onGrow(block, c, true); setEditing(c); }}>
                   <Text style={{ fontSize: 26, color: t.sub }}>＋</Text>
@@ -87,14 +88,14 @@ export default function BlockEditor({
             const isAction = role === 'action';
             // 완료 · 반복 점검을 다는 칸 (1칸 버전은 핵심 목표 칸)
             const tracked = isAction || shape === 1;
-            const paint = paintCell(t, block, c, { done: tracked && v.done });
+            const paint = paintCell(board, block, c, { done: tracked && v.done });
             // 퍼즐 그림 위 작은 표시는 흰 알약 위 진한 글자, 그 밖은 칸 글자색
-            const mark = paint.pill ? t.text : paint.ink;
+            const mark = paint.pill ? board.text : paint.ink;
             // 비어 있는 실행 과제 칸에는 블록 카테고리의 세부 카테고리를 미리 안내한다
             const guide = isAction && !v.text ? guideSub(blockCat, c, age) : undefined;
             return (
               <BoardCell
-                key={`${t.key}-${c}`}
+                key={`${board.key}-${c}`}
                 x={x} y={y} size={cellSize} paint={paint} picture={lay.picture}
                 delay={c * 40}
                 label={v.text || ROLE_LABEL[role]}
@@ -118,7 +119,7 @@ export default function BlockEditor({
                     {v.text || (guide ? `+ ${guide.label}` : '+ 입력')}
                   </Text>
                 </Ink>
-                {v.done && <Text style={[styles.check, { color: t.doneBorder }, !!paint.pill && styles.badge]}>✓</Text>}
+                {v.done && <Text style={[styles.check, { color: board.doneBorder }, !!paint.pill && styles.badge]}>✓</Text>}
                 {/* 하위 할 일 · 펼친 목표 표시 */}
                 {(!!v.items?.length || !!v.child) && (
                   <Text style={[styles.sub, { color: mark }, !!paint.pill && styles.badge]} numberOfLines={1}>
@@ -128,7 +129,7 @@ export default function BlockEditor({
                 {tracked && v.routine && !v.done && (() => {
                   const st = routineStats(v.routine, v.log);
                   return (
-                    <Text style={[styles.loop, { color: st.checked ? t.doneBorder : mark }, !!paint.pill && styles.badge]} numberOfLines={1}>
+                    <Text style={[styles.loop, { color: st.checked ? board.doneBorder : mark }, !!paint.pill && styles.badge]} numberOfLines={1}>
                       {st.checked ? '✓' : '🔁'}{st.streak > 1 ? ` 🔥${st.streak}` : ''}
                     </Text>
                   );
@@ -163,12 +164,12 @@ export default function BlockEditor({
               key={b}
               onPress={() => onChangeBlock(b)}
               hover={1.1}
-              style={[styles.miniCell, { backgroundColor: t.blocks[b] }, b === block && [styles.miniActive, { borderColor: t.text }]]}
+              style={[styles.miniCell, { backgroundColor: board.blocks[b] }, b === block && [styles.miniActive, { borderColor: t.text }]]}
             >
-              {t.art?.mode === 'motif'
-                ? <Text style={{ fontSize: 18 }}>{t.art.motifs[b]}</Text>
+              {board.art?.mode === 'motif'
+                ? <Text style={{ fontSize: 18 }}>{board.art.motifs[b]}</Text>
                 : (
-                  <Text style={{ fontSize: 10, color: t.on(t.blocks[b]) }} numberOfLines={1}>
+                  <Text style={{ fontSize: 10, color: board.on(board.blocks[b]) }} numberOfLines={1}>
                     {b === CENTER ? '핵심' : getCell(plan, CENTER, b).text.slice(0, 3) || b + 1}
                   </Text>
                 )}

@@ -1,6 +1,6 @@
 // 메인 화면 — 「목록」(크기 · 점검 필터)과 「만들기」(크기 → 템플릿 여부 → 연령대)를 탭으로 나눈다.
 import { useState } from 'react';
-import { Alert, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Alert, Image, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { BellIcon, InfoIcon, ShapeIcon, TrashIcon } from '../components/Icons';
 import { Appear, Tap } from '../components/Motion';
 import { APP_NAME, APP_NAME_EN, APP_TAGLINE_EN } from '../brand';
@@ -9,7 +9,7 @@ import { buildPlan, templateOf } from '../categories/templates';
 import PlanPreview from '../components/PlanPreview';
 import { CENTER, Plan, PLAN_SIZES, PlanSize, progress, sizeLabel, sizeOf } from '../model';
 import { routineItems } from '../routine';
-import { useTheme } from '../theme';
+import { Board, useTheme } from '../theme';
 
 // 목록 필터 — 전체 · 크기별 · 반복 점검이 걸린 목표
 export type Filter = 'all' | PlanSize | 'check';
@@ -19,6 +19,8 @@ export type TemplatePick = AgeBand | 'ohtani' | 'team' | null;
 
 type Props = {
   plans: Plan[];
+  // 목표마다의 판 — 카드 표시에 그 목표의 블록 테마를 살짝 보인다
+  boardOf: (plan: Plan) => Board;
   home: Home;
   onHome: (home: Home) => void;
   age?: AgeBand;
@@ -100,7 +102,7 @@ export default function PlanList(props: Props) {
   );
 }
 
-function ListTab({ plans, home, onHome, onOpen, onDelete, onScanQr, onBackup, onToday, widget, onWidget }: Props) {
+function ListTab({ plans, boardOf, home, onHome, onOpen, onDelete, onScanQr, onBackup, onToday, widget, onWidget }: Props) {
   const { t, ui } = useTheme();
   const items = routineItems(plans);
   const today = items.filter(i => i.scope === 'day' && i.dueToday);
@@ -167,11 +169,14 @@ function ListTab({ plans, home, onHome, onOpen, onDelete, onScanQr, onBackup, on
         const core = p.blocks[CENTER][CENTER].text;
         const n = sizeOf(p);
         const due = items.filter(i => i.planId === p.id && i.dueToday && !i.stats.checked).length;
+        const board = boardOf(p);
         return (
           <Appear key={p.id} delay={Math.min(i, 8) * 45}>
           <Tap hover={1.02} style={[styles.card, { backgroundColor: t.surface, borderColor: t.border }]} onPress={() => onOpen(p.id)}>
-            <View style={[styles.cardMark, { backgroundColor: t.blocks[CENTER] }]}>
-              <Text style={[styles.cardMarkText, { color: t.on(t.blocks[CENTER]) }]}>★</Text>
+            <View style={[styles.cardMark, { backgroundColor: board.blocks[CENTER] }]}>
+              {board.art?.mode === 'puzzle'
+                ? <Image source={board.art.scene} style={styles.cardScene} accessibilityLabel="퍼즐 그림" />
+                : <Text style={[styles.cardMarkText, { color: board.on(board.blocks[CENTER]) }]}>{board.art?.motifs[CENTER] ?? '★'}</Text>}
             </View>
             <View style={{ flex: 1 }}>
               <Text style={[styles.cardTitle, { color: t.text }, ui.titleFont]}>
@@ -373,7 +378,8 @@ const styles = StyleSheet.create({
   storySub: { fontSize: 12, marginTop: 2 },
   empty: { borderWidth: 1, borderStyle: 'dashed', borderRadius: 22, padding: 20, gap: 12 },
   card: { flexDirection: 'row', alignItems: 'flex-start', gap: 12, padding: 16, borderRadius: 22, borderWidth: 1 },
-  cardMark: { width: 40, height: 40, borderRadius: 14, alignItems: 'center', justifyContent: 'center' },
+  cardMark: { width: 40, height: 40, borderRadius: 14, alignItems: 'center', justifyContent: 'center', overflow: 'hidden' },
+  cardScene: { width: 40, height: 40 },
   cardMarkText: { fontSize: 20 },
   cardTitle: { fontSize: 17, fontWeight: '700' },
   cardCore: { fontSize: 14, marginTop: 4, marginBottom: 10 },

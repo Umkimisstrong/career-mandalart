@@ -1,10 +1,27 @@
 // 웹 전용: 이미지 카드 배치(card.ts)를 캔버스에 그려 PNG 로 만든다. 저장 · 공유는 qr/image 의 saveQrPng.
 import type { CardCell, CardModel } from './card';
 
-const FONT = '-apple-system, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif';
+const FONT = '-apple-system, "Apple SD Gothic Neo", "Malgun Gothic", "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif';
 const font = (px: number, weight: string) => `${weight} ${px}px ${FONT}`;
 
+// 퍼즐 그림은 한 번만 내려받는다 — 흐리게 정도를 바꿀 때마다 다시 그리므로
+const images = new Map<string, Promise<HTMLImageElement>>();
+function loadImage(uri: string): Promise<HTMLImageElement> {
+  let p = images.get(uri);
+  if (!p) {
+    p = new Promise((ok, fail) => {
+      const img = new Image();
+      img.onload = () => ok(img);
+      img.onerror = () => { images.delete(uri); fail(new Error('퍼즐 그림을 불러오지 못했어요.')); };
+      img.src = uri;
+    });
+    images.set(uri, p);
+  }
+  return p;
+}
+
 export async function renderCard(m: CardModel): Promise<string> {
+  const img = m.scene ? await loadImage(m.scene.uri) : undefined;
   const canvas = document.createElement('canvas');
   canvas.width = m.width;
   canvas.height = m.height;
@@ -20,27 +37,60 @@ export async function renderCard(m: CardModel): Promise<string> {
   ctx.font = font(32, '500');
   ctx.fillText(m.subtitle.text, m.width / 2, m.subtitle.y, m.width - 120);
 
-  for (const c of m.cells) drawCell(ctx, c, m);
+  roundRect(ctx, m.tray.x, m.tray.y, m.tray.w, m.tray.h, m.tray.r);
+  ctx.fillStyle = m.tray.color;
+  ctx.fill();
+  for (const c of m.cells) drawCell(ctx, c, m, img);
 
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'alphabetic';
   ctx.fillStyle = m.sub;
   ctx.font = font(26, '600');
   ctx.fillText(m.brand.text, m.width / 2, m.brand.y);
   return canvas.toDataURL('image/png');
 }
 
-function drawCell(ctx: CanvasRenderingContext2D, c: CardCell, m: CardModel) {
-  roundRect(ctx, c.x, c.y, c.size, c.size, Math.min(m.radius, c.size / 6));
-  ctx.fillStyle = c.fill;
+function drawCell(ctx: CanvasRenderingContext2D, c: CardCell, m: CardModel, img?: HTMLImageElement) {
+  const r = Math.min(m.radius, c.size * 0.24);
+  roundRect(ctx, c.x, c.y, c.size, c.size, r);
+  ctx.fillStyle = c.paint.bg;
   ctx.fill();
-  // 1칸 버전의 핵심 목표처럼 블록 색 칸이 완료면 완료색이 블록 색과 겹칠 수 있어 글자색으로 표시한다
-  const check = c.role === 'action' ? m.check : c.ink;
-  ctx.strokeStyle = c.done ? check : m.border;
-  ctx.lineWidth = c.done ? 3 : 1.5;
-  ctx.stroke();
+  // 퍼즐 조각 — 판 전체 그림에서 이 칸 자리만 잘라, 흐리게 한 만큼 받침 색이 비치게
+  const piece = m.scene && img ? m.scene : undefined;
+  if (piece && img) {
+    const k = img.naturalWidth / piece.size;
+    ctx.save();
+    ctx.clip();
+    ctx.globalAlpha = c.paint.alpha ?? 1;
+    ctx.drawImage(img, (c.x - piece.x) * k, (c.y - piece.y) * k, c.size * k, c.size * k, c.x, c.y, c.size, c.size);
+    ctx.restore();
+  }
+  // 1칸 버전의 핵심 목표처럼 블록 색 칸이 완료면 완료색이 블록 색과 겹칠 수 있어 ✓ 는 글자색으로 표시한다
+  const check = c.role === 'action' ? m.check : c.paint.ink;
+  const stroke = c.paint.ring ?? (c.done ? check : piece ? undefined : m.border);
+  if (stroke) {
+    roundRect(ctx, c.x, c.y, c.size, c.size, r);
+    ctx.strokeStyle = stroke;
+    ctx.lineWidth = c.done ? 3 : 1.5;
+    ctx.stroke();
+  }
 
-  if (c.done) {
+  if (c.done && piece) {
+    // 그림 위 ✓ 는 오른쪽 위 흰 동그라미 위에 — 크게 그리면 다 맞춘 조각을 가린다
+    const cx = c.x + c.size * 0.8;
+    const cy = c.y + c.size * 0.2;
+    ctx.beginPath();
+    ctx.arc(cx, cy, c.size * 0.13, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(255,255,255,0.92)';
+    ctx.fill();
+    ctx.fillStyle = m.check;
+    ctx.font = font(Math.round(c.size * 0.17), '800');
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('✓', cx, cy + c.size * 0.01);
+  } else if (c.done) {
     // 글자를 숨긴 칸은 ✓ 만 남으니 가운데에 크게, 글자가 있으면 오른쪽 위 구석에 작게
-    const big = !c.text;
+    const big = !c.text && !c.paint.motif;
     const px = Math.round(c.size * (big ? 0.42 : 0.2));
     ctx.fillStyle = check;
     ctx.font = font(px, '800');
@@ -48,23 +98,50 @@ function drawCell(ctx: CanvasRenderingContext2D, c: CardCell, m: CardModel) {
     ctx.textBaseline = big ? 'middle' : 'top';
     ctx.fillText('✓', big ? c.x + c.size / 2 : c.x + c.size - c.size * 0.06, big ? c.y + c.size / 2 : c.y + c.size * 0.04);
   }
-  if (!c.text) return;
 
   const pad = c.size * 0.09;
   // ✓ 가 글자를 가리지 않도록 완료 칸은 위쪽 띠를 비운다
   const band = c.done ? c.size * 0.14 : 0;
-  const boxH = c.size - pad * 2 - band;
+  const inner = c.size - pad * 2 - band;
+  // 블록마다 그림 — 글자 위에 그림 하나 (앱의 칸과 같은 비율)
+  const motifH = c.paint.motif ? c.size * 0.32 : 0;
+  if (!c.text) {
+    if (c.paint.motif) drawMotif(ctx, c, c.y + c.size / 2);
+    return;
+  }
+
+  const boxH = inner - motifH;
   const weight = c.role === 'core' ? '800' : c.role === 'goal' ? '700' : '500';
   const maxPx = Math.max(14, c.size * (c.role === 'action' ? 0.2 : 0.23));
   const minPx = Math.max(13, Math.min(22, c.size * 0.14));
-  const { lines, px } = fitText(ctx, c.text, c.size - pad * 2, boxH, weight, maxPx, minPx);
+  const textW = c.size - pad * 2 - (c.pill ? c.size * 0.06 : 0);
+  const { lines, px } = fitText(ctx, c.text, textW, boxH, weight, maxPx, minPx);
   const lh = px * 1.22;
-  ctx.fillStyle = c.ink;
+  const top = c.y + pad + band + (inner - motifH - lines.length * lh) / 2;
+  if (c.paint.motif) drawMotif(ctx, c, top + motifH / 2);
+  const textTop = top + motifH;
+  ctx.font = font(px, weight);
+  if (c.pill) {
+    const tw = Math.max(...lines.map(ln => ctx.measureText(ln).width));
+    const pw = Math.min(tw + px * 0.9, c.size - pad);
+    const ph = lines.length * lh + px * 0.3;
+    roundRect(ctx, c.x + (c.size - pw) / 2, textTop - px * 0.15, pw, ph, Math.min(pw, ph) / 2);
+    ctx.fillStyle = c.pill;
+    ctx.fill();
+  }
+  ctx.fillStyle = c.paint.ink;
   ctx.font = font(px, weight);
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
-  const top = c.y + pad + band + boxH / 2 - (lines.length * lh) / 2 + lh / 2;
-  lines.forEach((ln, i) => ctx.fillText(ln, c.x + c.size / 2, top + i * lh));
+  lines.forEach((ln, i) => ctx.fillText(ln, c.x + c.size / 2, textTop + lh / 2 + i * lh));
+}
+
+function drawMotif(ctx: CanvasRenderingContext2D, c: CardCell, y: number) {
+  ctx.font = font(Math.round(c.size * 0.26), '400');
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillStyle = c.paint.ink;
+  ctx.fillText(c.paint.motif!, c.x + c.size / 2, y);
 }
 
 // 한국어는 띄어쓰기 없이 길게 쓰는 경우가 많아 글자 단위로 줄을 나눈다 (띄어쓰기가 있으면 그 자리를 먼저 쓴다).

@@ -17,6 +17,7 @@ import PlanList, { Home } from './src/screens/PlanList';
 import QrScan from './src/screens/QrScan';
 import QrShare from './src/screens/QrShare';
 import CardShare from './src/screens/CardShare';
+import PlanTheme from './src/screens/PlanTheme';
 import Story from './src/screens/Story';
 import Team from './src/screens/Team';
 import Version from './src/screens/Version';
@@ -28,7 +29,7 @@ import { routineItems, toggleKey } from './src/routine';
 import { desktop, WIDGET_ID } from './src/desktop';
 import WidgetApp from './src/screens/Widget';
 import { loadStore, saveStore, STORE_KEY } from './src/storage';
-import { buildTheme, isDark, ThemeProvider } from './src/theme';
+import { blockThemeFor, BoardProvider, buildBoard, buildTheme, isDark, ThemeProvider } from './src/theme';
 import type { AgeBand } from './src/categories/data';
 
 type Route =
@@ -43,6 +44,7 @@ type Route =
   | { name: 'qr'; id: string }
   | { name: 'card'; id: string }
   | { name: 'team'; id: string }
+  | { name: 'look'; id: string }
   | { name: 'version' }
   | { name: 'plan'; id: string; block: number | null };
 
@@ -59,6 +61,9 @@ function App() {
   const [home, setHome] = useState<Home>({ tab: 'list', filter: 'all' });
   const loaded = useRef(false);
   const theme = useMemo(() => buildTheme(store?.theme), [store?.theme]);
+  // 목표의 판 — 목표마다 고른 블록 테마 › 블록 기본 테마 › 앱 테마와 같은 모양 (같은 테마면 같은 객체)
+  const boardOf = (plan?: Plan) => buildBoard(blockThemeFor(store ?? {}, plan));
+  const onBoard = (plan: Plan, node: ReactNode) => <BoardProvider value={boardOf(plan)}>{node}</BoardProvider>;
 
   useEffect(() => {
     loadStore().then(s => {
@@ -159,6 +164,7 @@ function App() {
       screen = (
         <PlanList
           plans={store.plans}
+          boardOf={boardOf}
           home={home}
           onHome={h => { setHome(h); setNotice(undefined); }}
           age={store.age}
@@ -235,8 +241,10 @@ function App() {
       screen = (
         <ThemeSettings
           setting={store.theme}
+          block={store.blockTheme}
           onBack={() => setRoute({ name: 'list' })}
           onChange={theme => setStore(s => s && { ...s, theme })}
+          onBlock={blockTheme => setStore(s => s && { ...s, blockTheme })}
         />
       );
     } else if (route.name === 'scan') {
@@ -244,7 +252,7 @@ function App() {
     } else if (route.name === 'team') {
       const plan = store.plans.find(p => p.id === route.id);
       if (plan?.team) {
-        screen = (
+        screen = onBoard(plan,
           <Team
             plan={plan}
             onBack={() => setRoute({ name: 'plan', id: plan.id, block: null })}
@@ -252,7 +260,7 @@ function App() {
             onReceive={receiveTeam}
             onCopy={() => addPlan(copyTeam(plan))}
             onDelete={() => { setStore(s => s && { ...s, plans: s.plans.filter(p => p.id !== plan.id), widget: s.widget?.filter(w => w !== plan.id) }); setRoute({ name: 'list' }); }}
-          />
+          />,
         );
       }
     } else if (route.name === 'qr') {
@@ -263,14 +271,28 @@ function App() {
     } else if (route.name === 'card') {
       const plan = store.plans.find(p => p.id === route.id);
       if (plan) {
-        screen = <CardShare plan={plan} onBack={() => setRoute({ name: 'plan', id: plan.id, block: null })} />;
+        screen = onBoard(plan, <CardShare plan={plan} look={blockThemeFor(store, plan)} onBack={() => setRoute({ name: 'plan', id: plan.id, block: null })} />);
+      }
+    } else if (route.name === 'look') {
+      const plan = store.plans.find(p => p.id === route.id);
+      if (plan) {
+        screen = onBoard(plan,
+          <PlanTheme
+            plan={plan}
+            look={blockThemeFor(store, plan)}
+            fallback={blockThemeFor(store)}
+            // 판 모양만 바꾸는 것이라 수정 시각(목록 순서 · 팀 갱신)은 그대로 둔다
+            onChange={blockTheme => updatePlan(plan.id, p => ({ ...p, blockTheme }))}
+            onBack={() => setRoute({ name: 'plan', id: plan.id, block: null })}
+          />,
+        );
       }
     } else {
       const plan = store.plans.find(p => p.id === route.id);
       if (!plan) {
         queueMicrotask(() => setRoute({ name: 'list' }));
       } else if (route.block === null) {
-        screen = (
+        screen = onBoard(plan,
           <Overview
             plan={plan}
             notice={notice}
@@ -279,13 +301,14 @@ function App() {
             onOpenBlock={block => { setNotice(undefined); setRoute({ ...route, block }); }}
             onQr={() => setRoute({ name: 'qr', id: plan.id })}
             onCard={() => setRoute({ name: 'card', id: plan.id })}
+            onLook={() => setRoute({ name: 'look', id: plan.id })}
             onTeam={plan.team ? () => setRoute({ name: 'team', id: plan.id }) : undefined}
             parentTitle={plan.parent ? store.plans.find(p => p.id === plan.parent!.plan)?.title : undefined}
             onParent={() => plan.parent && setRoute({ name: 'plan', id: plan.parent.plan, block: plan.parent.block })}
-          />
+          />,
         );
       } else {
-        screen = (
+        screen = onBoard(plan,
           <BlockEditor
             plan={plan}
             block={route.block}
@@ -315,7 +338,7 @@ function App() {
               ...s,
               custom: { ...s.custom, [catId]: [...(s.custom?.[catId] ?? []), label] },
             })}
-          />
+          />,
         );
       }
     }
@@ -323,6 +346,7 @@ function App() {
 
   return (
     <ThemeProvider value={theme}>
+      <BoardProvider value={boardOf()}>
       <SafeAreaProvider>
         <SafeAreaView style={{ flex: 1, backgroundColor: theme.bg }}>
           <View style={{ flex: 1, width: '100%', maxWidth: 720, alignSelf: 'center' }}>
@@ -333,6 +357,7 @@ function App() {
           <StatusBar style={isDark(theme) ? 'light' : 'dark'} />
         </SafeAreaView>
       </SafeAreaProvider>
+      </BoardProvider>
     </ThemeProvider>
   );
 }

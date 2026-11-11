@@ -6,7 +6,7 @@
 // 그래서 바깥 블록의 가운데 칸은 저장하지 않고 blocks[4][b] 를 참조한다.
 
 import type { AgeBand } from './categories/data';
-import type { ThemeSetting } from './theme';
+import type { BlockTheme, ThemeSetting } from './theme';
 import type { Team } from './team';
 
 export const CENTER = 4;
@@ -70,6 +70,8 @@ export type Plan = {
   extra?: Record<number, number[]>;
   // 다른 목표의 실행 과제에서 펼쳐 만든 목표면 그 자리 (목표 id · 블록 · 칸)
   parent?: { plan: string; block: number; cell: number };
+  // 이 목표만의 블록 테마 (판의 색 · 그림). 없으면 블록 기본 테마 — src/theme.ts blockThemeFor
+  blockTheme?: BlockTheme;
 };
 
 // 1 · 3 · 5 · 7 · 9칸 버전 — N칸 한 묶음 = 가운데 1 + 둘레 N-1.
@@ -140,8 +142,10 @@ export type Store = {
   custom?: Record<string, string[]>;
   // 추천 아이템을 고를 때 기준이 되는 내 연령대
   age?: AgeBand;
-  // 화면 테마 (src/theme.ts)
+  // 앱 테마 — 판을 뺀 화면 (src/theme.ts)
   theme?: ThemeSetting;
+  // 블록 기본 테마 — 자기 블록 테마가 없는 목표의 판. 없으면 앱 테마와 같은 모양
+  blockTheme?: BlockTheme;
   // 반복 점검 알림을 켰는지 (네이티브: 로컬 알림 예약, 웹: 앱 아이콘 배지 · 열려 있을 때 알림)
   notify?: boolean;
   // 바탕화면 작은 창으로 띄워 둘 목표 id (Windows 데스크톱 앱)

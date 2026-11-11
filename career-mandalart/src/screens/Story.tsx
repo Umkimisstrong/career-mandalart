@@ -2,7 +2,7 @@
 // 사실은 공개 보도 · 위키백과로 확인한 내용만 담고, 문장은 직접 요약했다.
 import { Linking, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { Tap } from '../components/Motion';
-import { useTheme } from '../theme';
+import { useBoard, useTheme } from '../theme';
 
 type Props = { onBack: () => void; onStart: () => void };
 
@@ -36,6 +36,7 @@ const SOURCES: [string, string][] = [
 
 export default function Story({ onBack, onStart }: Props) {
   const { t, ui } = useTheme();
+  const board = useBoard();
   const card = { backgroundColor: t.surface, borderColor: t.border };
 
   return (
@@ -59,10 +60,10 @@ export default function Story({ onBack, onStart }: Props) {
         <View style={[styles.grid, { borderColor: t.border }]}>
           {GOALS.map((g, i) => {
             const core = i === 4;
-            const bg = core ? t.blocks[4] : t.blocks[i];
+            const bg = core ? board.blocks[4] : board.blocks[i];
             return (
               <View key={i} style={[styles.cell, { backgroundColor: bg }]}>
-                <Text style={[styles.cellText, { color: t.on(bg) }, core && styles.coreText]}>{g}</Text>
+                <Text style={[styles.cellText, { color: board.on(bg) }, core && styles.coreText]}>{g}</Text>
               </View>
             );
           })}

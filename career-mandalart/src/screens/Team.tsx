@@ -8,7 +8,7 @@ import { QR_CAPACITY } from '../qr/codec';
 import { makeQrPng, pickQrFromImage, saveQrPng } from '../qr/image';
 import { isAdmin, TeamKind, teamCode } from '../team';
 import { Tap } from '../components/Motion';
-import { useTheme } from '../theme';
+import { useBoard, useTheme } from '../theme';
 
 type Props = {
   plan: Plan;
@@ -29,6 +29,7 @@ type Sending = { kind: TeamKind; to?: number; label: string };
 
 export default function Team({ plan, onBack, onOwners, onReceive, onCopy, onDelete }: Props) {
   const { t, ui } = useTheme();
+  const board = useBoard();
   const team = plan.team!;
   const admin = isAdmin(plan);
   const size = sizeOf(plan);
@@ -78,14 +79,14 @@ export default function Team({ plan, onBack, onOwners, onReceive, onCopy, onDele
         {/* 블록 · 담당자 */}
         <Text style={[styles.h2, { color: t.text }]}>블록 담당</Text>
         <View style={[styles.box, { backgroundColor: t.surface, borderColor: t.border }]}>
-          <Row color={t.blocks[CENTER]} emoji="★" title={plan.blocks[CENTER][CENTER].text || '핵심 목표'} sub="관리자">
+          <Row color={board.blocks[CENTER]} emoji="★" title={plan.blocks[CENTER][CENTER].text || '핵심 목표'} sub="관리자">
             {admin ? <TextInput value={owner(CENTER)} onChangeText={v => setOwner(CENTER, v)} placeholder="관리자 이름" style={[ui.input, styles.name]} />
               : <Text style={[styles.who, { color: t.text }]}>{owner(CENTER) || '관리자'}</Text>}
           </Row>
           {goals.map(b => {
             const pr = progress(plan, b);
             return (
-              <Row key={b} color={t.blocks[b]} emoji={catInfo(plan.blocks[CENTER][b].cat)?.emoji} title={goalText(b)}
+              <Row key={b} color={board.blocks[b]} emoji={catInfo(plan.blocks[CENTER][b].cat)?.emoji} title={goalText(b)}
                 sub={`${pr.done}/${pr.filled} 완료${team.block === b ? ' · 내 블록' : ''}`}>
                 {admin ? (
                   <View style={{ flexDirection: 'row', gap: 6, alignItems: 'center' }}>
@@ -146,9 +147,10 @@ export default function Team({ plan, onBack, onOwners, onReceive, onCopy, onDele
 
 function Row({ color, emoji, title, sub, children }: { color: string; emoji?: string; title: string; sub: string; children: React.ReactNode }) {
   const { t } = useTheme();
+  const board = useBoard();
   return (
     <View style={[styles.row, { borderBottomColor: t.border }]}>
-      <View style={[styles.dot, { backgroundColor: color }]}><Text style={{ fontSize: 13, color: t.on(color) }}>{emoji ?? ''}</Text></View>
+      <View style={[styles.dot, { backgroundColor: color }]}><Text style={{ fontSize: 13, color: board.on(color) }}>{emoji ?? ''}</Text></View>
       <View style={{ flex: 1 }}>
         <Text style={[styles.title, { color: t.text }]} numberOfLines={1}>{title}</Text>
         <Text style={{ color: t.sub, fontSize: 11 }}>{sub}</Text>

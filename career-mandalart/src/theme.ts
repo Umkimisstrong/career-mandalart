@@ -1,4 +1,7 @@
-// 테마: 사용자가 고른 설정(ThemeSetting)으로 색 토큰(Theme)과 공통 스타일(ui)을 만든다.
+// 테마 두 겹 — 같은 가족 표에서 만든다.
+//  앱 테마(Store.theme → Theme, useTheme)   판을 뺀 모든 화면: 바탕 · 글자 · 버튼 · 칩 · 글꼴
+//  블록 테마(BlockTheme → Board, useBoard)  판의 칸: 블록 색 · 받침 · 그림 · 완료 색. 목표마다 고를 수 있고(Plan.blockTheme),
+//    없으면 블록 기본 테마(Store.blockTheme), 그것도 없으면 앱 테마와 같은 모양 — 예전 사용자의 판은 그대로다
 //  색상 가족 — default 파스텔 · northstar 북극성 · mono 흑백 · signature 만다라트 시그니처 · custom 2~4색 섞기
 //  그림 가족 — 우드 · 음식 · 계절 (하위 테마 표는 src/pictures.ts). 그림은 「블록마다 그림」 또는 「퍼즐 그림」
 import { createContext, useContext, useMemo } from 'react';
@@ -9,11 +12,15 @@ import { isPictureId, PictureFamily, PictureId, PICTURES, picturesOf } from './p
 export type ThemeId = 'default' | 'northstar' | 'mono' | 'signature' | 'custom';
 export type Family = 'color' | PictureFamily;
 export type ArtMode = 'motif' | 'puzzle';
-// family 가 없으면 색상 가족 (예전에 저장한 { id, colors } 그대로). 그림 가족을 골라도 id · colors 는 남겨
-// 색상으로 돌아오면 섞던 색이 그대로 있다
+// 앱 테마 (저장 형식). family 가 없으면 색상 가족 (예전에 저장한 { id, colors } 그대로). 그림 가족을 골라도 id · colors 는 남겨
+// 색상으로 돌아오면 섞던 색이 그대로 있다. art 는 판 그림 방식을 여기 담던 때의 값 — 블록 기본 테마를 고르기 전까지 판이 따른다
 export type ThemeSetting = { id: ThemeId; colors?: string[]; family?: Family; variant?: string; art?: ArtMode };
 
-export type Theme = {
+// 블록 테마. variant = 색상 가족이면 ThemeId, 그림 가족이면 PictureId. colors 는 나만의 색 섞기 (다른 가족을 골라도 남긴다)
+// reveal = 「완료할수록 그림 완성」 — 퍼즐 그림에서 아직 못 한 칸은 흐리게, 끝낸 칸은 또렷하게
+export type BlockTheme = { family: Family; variant: string; colors?: string[]; art?: ArtMode; reveal?: boolean };
+
+type Palette = {
   // 고른 모양 하나의 이름 — 바뀌면 판의 칸들이 다시 차례로 나타난다
   key: string;
   family: Family;
@@ -41,6 +48,20 @@ export type Theme = {
   // 배경색 위에 올릴 글자색 (밝기에 따라 흰색/진한색 자동)
   on: (color: string) => string;
 };
+
+// 앱 테마 — 판을 뺀 화면
+export type Theme = Omit<Palette, 'blocks' | 'mat' | 'art'>;
+
+// 판 하나의 색 · 그림. 바탕 · 글자색은 이미지 카드가 판과 같은 색으로 그리려고 함께 둔다
+export type Board = Omit<Palette, 'family' | 'variant' | 'primary' | 'onPrimary' | 'accent' | 'radius' | 'font'> & {
+  // 퍼즐 그림 조각을 흐리게 하는 정도 0~1 (0 = 또렷)
+  fade: number;
+  // true = 끝낸 조각은 또렷하게 (완료할수록 그림 완성) · false = 모든 조각을 fade 만큼 (이미지 카드의 배경 흐리게)
+  reveal: boolean;
+};
+
+// 「완료할수록 그림 완성」에서 아직 못 한 조각을 흐리게 하는 정도
+export const REVEAL = 0.7;
 
 export const RADIUS = { card: 22, button: 16, input: 14, chip: 999 };
 // 웹만: 제목은 Jua, 본문은 Gowun Dodum (scripts/pwa.mjs 가 index.html 에 글꼴과 본문 규칙을 넣는다). 앱은 시스템 글꼴
@@ -113,13 +134,13 @@ function deepen(color: string, toward: string, against: string) {
 const onColor = (dark: string) => (color: string) => (luminance(color) > 0.4 ? dark : '#FFFFFF');
 
 // 어두운 배경 테마인지 (상태 표시줄 색 등에 사용)
-export const isDark = (t: Theme) => luminance(t.bg) < 0.2;
+export const isDark = (t: { bg: string }) => luminance(t.bg) < 0.2;
 
 // ---- 테마 정의 ----
-type Tokens = Omit<Theme, 'key' | 'family' | 'variant' | 'on' | 'radius' | 'font'>;
-type Id = Pick<Theme, 'key' | 'family' | 'variant'>;
+type Tokens = Omit<Palette, 'key' | 'family' | 'variant' | 'on' | 'radius' | 'font'>;
+type Id = Pick<Palette, 'key' | 'family' | 'variant'>;
 
-function base(id: Id, t: Tokens): Theme {
+function base(id: Id, t: Tokens): Palette {
   // 밝은 칸 위 글자는 진한색 — 어두운 테마라도 본문 글자색(밝은색)을 쓰면 안 보이므로 고정 남색 사용
   return {
     ...id, ...t, radius: RADIUS, font: FONT,
@@ -127,7 +148,7 @@ function base(id: Id, t: Tokens): Theme {
   };
 }
 
-function custom(colors: string[]): Theme {
+function custom(colors: string[]): Palette {
   const cs = colors.length >= 2 ? colors.slice(0, 4) : DEFAULT_CUSTOM;
   const main = cs[0];
   const rest = cs.slice(1);
@@ -157,8 +178,8 @@ function custom(colors: string[]): Theme {
   });
 }
 
-function colorTheme(setting?: ThemeSetting): Theme {
-  switch (setting?.id) {
+function colorTheme(id: string, colors?: string[]): Palette {
+  switch (id) {
     case 'northstar': {
       const gold = '#F5C451';
       const deep = '#24386E';
@@ -218,7 +239,7 @@ function colorTheme(setting?: ThemeSetting): Theme {
       });
     }
     case 'custom':
-      return custom(setting.colors ?? DEFAULT_CUSTOM);
+      return custom(colors ?? DEFAULT_CUSTOM);
     default:
       return base({ key: 'color:default', family: 'color', variant: 'default' }, {
         bg: '#F7F4FB',
@@ -238,7 +259,7 @@ function colorTheme(setting?: ThemeSetting): Theme {
   }
 }
 
-function pictureTheme(id: PictureId, mode: ArtMode): Theme {
+function pictureTheme(id: PictureId, mode: ArtMode): Palette {
   const p = PICTURES[id];
   // 강조색을 글자색 쪽으로 진하게 — 바탕 위 링크 글자로도, 흰 글자를 얹는 버튼으로도 4.5:1
   const deep = deepen(p.accent, p.ink, p.bg);
@@ -261,15 +282,53 @@ function pictureTheme(id: PictureId, mode: ArtMode): Theme {
   });
 }
 
-// 저장된 설정은 바깥에서 온 값 — 모르는 가족 · 하위 테마면 그 가족의 첫 그림, 그래도 없으면 색상으로
-export function buildTheme(setting?: ThemeSetting): Theme {
-  const family = setting?.family;
-  if (family && family !== 'color' && FAMILIES.some(f => f.id === family)) {
-    const id = isPictureId(setting.variant) && PICTURES[setting.variant].family === family ? setting.variant : picturesOf(family)[0];
-    const mode: ArtMode = setting.art === 'puzzle' ? 'puzzle' : 'motif';
-    return pictureTheme(id, mode);
+// 저장된 값은 바깥에서 온 것 (백업 · QR) — 모르는 가족 · 하위 테마면 그 가족의 첫 그림, 그래도 없으면 색상으로
+function palette(bt: BlockTheme): Palette {
+  const { family } = bt;
+  if (family !== 'color' && FAMILIES.some(f => f.id === family)) {
+    const id = isPictureId(bt.variant) && PICTURES[bt.variant].family === family ? bt.variant : picturesOf(family)[0];
+    return pictureTheme(id, bt.art === 'puzzle' ? 'puzzle' : 'motif');
   }
-  return colorTheme(setting);
+  return colorTheme(bt.variant, bt.colors);
+}
+
+// 앱 테마 설정과 같은 모양의 블록 테마 — 블록 기본 테마를 따로 고르지 않았을 때의 판
+export function blockThemeOf(s?: ThemeSetting): BlockTheme {
+  if (s?.family && s.family !== 'color' && FAMILIES.some(f => f.id === s.family)) {
+    return { family: s.family, variant: s.variant ?? '', colors: s.colors, art: s.art };
+  }
+  return { family: 'color', variant: s?.id ?? 'default', colors: s?.colors };
+}
+
+export const buildTheme = (setting?: ThemeSetting): Theme => palette(blockThemeOf(setting));
+
+const boards = new Map<string, Board>();
+// 같은 블록 테마면 같은 객체 — 화면을 다시 그려도 판을 다시 계산하지 않고, 판을 받는 effect 도 다시 돌지 않는다
+export function buildBoard(bt: BlockTheme): Board {
+  const id = JSON.stringify([bt.family, bt.variant, bt.colors, bt.art, !!bt.reveal]);
+  let board = boards.get(id);
+  if (!board) {
+    const p = palette(bt);
+    const reveal = !!bt.reveal && p.art?.mode === 'puzzle';
+    board = { ...p, fade: reveal ? REVEAL : 0, reveal };
+    boards.set(id, board);
+  }
+  return board;
+}
+
+// 목표의 블록 테마 — 그 목표에서 고른 것 › 블록 기본 테마 › 앱 테마와 같은 모양
+export function blockThemeFor(store: { theme?: ThemeSetting; blockTheme?: BlockTheme }, plan?: { blockTheme?: BlockTheme }): BlockTheme {
+  return plan?.blockTheme ?? store.blockTheme ?? blockThemeOf(store.theme);
+}
+
+// 「음식 · 케이크 · 퍼즐 그림」
+export function lookLabel(bt: BlockTheme): string {
+  if (bt.family === 'color' || !FAMILIES.some(f => f.id === bt.family)) {
+    return `색상 · ${THEME_LABELS[bt.variant as ThemeId]?.label ?? THEME_LABELS.default.label}`;
+  }
+  const family = bt.family as PictureFamily;
+  const id = isPictureId(bt.variant) && PICTURES[bt.variant].family === family ? bt.variant : picturesOf(family)[0];
+  return `${FAMILIES.find(f => f.id === family)!.label} · ${PICTURES[id].name} · ${ART_LABELS[bt.art === 'puzzle' ? 'puzzle' : 'motif'].label}`;
 }
 
 // 공통 스타일. StyleSheet.create 를 쓰지 않는 까닭: 웹에서는 CSS 클래스가 되어 index.html 의 본문 글꼴 규칙에 밀린다.
@@ -302,7 +361,8 @@ export function makeUi(t: Theme) {
       borderBottomWidth: 1, borderBottomColor: t.border, backgroundColor: t.surface,
     },
     back: { fontSize: 15, color: t.accent, paddingRight: 8, fontWeight: '600' },
-    headerTitle: { flex: 1, fontSize: 18, fontWeight: '700', color: t.text, ...titleFont },
+    // minWidth 0 — 웹의 입력칸(목표 이름)은 글자 수만큼 최소 너비가 있어 머리 줄 버튼을 화면 밖으로 민다
+    headerTitle: { flex: 1, minWidth: 0, fontSize: 18, fontWeight: '700', color: t.text, ...titleFont },
   } satisfies Record<string, ViewStyle | TextStyle>;
   return ui;
 }
@@ -311,6 +371,11 @@ export type Ui = ReturnType<typeof makeUi>;
 
 const ThemeContext = createContext<Theme>(buildTheme());
 export const ThemeProvider = ThemeContext.Provider;
+
+// App 은 맨 바깥을 블록 기본 테마로(만들기 미리보기 · 소개 · 템플릿), 목표 화면 · 작은 창은 그 목표의 판으로 감싼다
+const BoardContext = createContext<Board>(buildBoard(blockThemeOf()));
+export const BoardProvider = BoardContext.Provider;
+export const useBoard = () => useContext(BoardContext);
 
 export function useTheme(): { t: Theme; ui: Ui } {
   const t = useContext(ThemeContext);

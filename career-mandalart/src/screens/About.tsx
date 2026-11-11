@@ -1,12 +1,13 @@
 // 앱 이름 "구도(GUDO)" 의 세 가지 뜻 — 九道 · 求道 · 構圖. 해외 사용자를 위해 영문 설명을 함께 싣는다.
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { APP_NAME, APP_NAME_EN, APP_TAGLINE_EN, DESCRIPTION, DESCRIPTION_EN, MEANINGS } from '../brand';
-import { useTheme } from '../theme';
+import { useBoard, useTheme } from '../theme';
 
 type Props = { onBack: () => void; onStory: () => void; onVersion: () => void };
 
 export default function About({ onBack, onStory, onVersion }: Props) {
   const { t, ui } = useTheme();
+  const board = useBoard();
   const card = { backgroundColor: t.surface, borderColor: t.border };
 
   return (
@@ -32,8 +33,8 @@ export default function About({ onBack, onStory, onVersion }: Props) {
         {MEANINGS.map((m, i) => (
           <View key={m.hanja} style={[styles.box, card]}>
             <View style={styles.head}>
-              <View style={[styles.badge, { backgroundColor: t.blocks[4] }]}>
-                <Text style={[styles.hanja, { color: t.on(t.blocks[4]) }]}>{m.hanja}</Text>
+              <View style={[styles.badge, { backgroundColor: board.blocks[4] }]}>
+                <Text style={[styles.hanja, { color: board.on(board.blocks[4]) }]}>{m.hanja}</Text>
               </View>
               <View style={{ flex: 1 }}>
                 <Text style={[styles.num, { color: t.accent }]}>{i + 1}</Text>

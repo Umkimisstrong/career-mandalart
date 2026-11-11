@@ -6,6 +6,7 @@
 //  - JSON 튜플은 키 이름 없이 저장 칸 73개(바깥 블록 중심 제외)만 담아 크기를 줄인다.
 import { deflateSync, inflateSync, strFromU8, strToU8 } from 'fflate';
 import { CENTER, newPlan, Plan, PLAN_SIZES, PlanSize, sizeOf } from '../model';
+import { BlockTheme, FAMILIES, Family } from '../theme';
 
 const PREFIX = 'MDA1:';
 // QR 버전 40 · 오류정정 L 의 영숫자 최대 용량
@@ -21,8 +22,26 @@ for (let b = 0; b < 9; b++) {
 }
 
 // cats(5번째)는 가운데 블록 9칸의 카테고리 id, size(6번째)는 1 · 3 · 5 · 7칸 버전일 때만 — 이전 버전 QR 에는 없을 수 있다
-// extra(7번째)는 3 · 5칸 버전에서 더 연 실행 과제 칸 — 있을 때만
-type Packed = [title: string, texts: string[], notes: string[] | 0, done: number[], cats?: string[], size?: number, extra?: Record<number, number[]>];
+// extra(7번째)는 3 · 5칸 버전에서 더 연 실행 과제 칸 — 있을 때만 (look 이 있으면 자리만 0 으로)
+// look(8번째)는 이 목표만의 블록 테마 [가족, 하위 테마, 퍼즐 그림 1/0, 완료할수록 그림 완성 1/0, (나만의 색) 섞은 색] — 있을 때만
+type Look = [family: string, variant: string, puzzle: number, reveal: number, colors?: string[]];
+type Packed = [title: string, texts: string[], notes: string[] | 0, done: number[], cats?: string[], size?: number, extra?: Record<number, number[]> | 0, look?: Look];
+
+function packLook(bt: BlockTheme): Look {
+  const look: Look = [bt.family, bt.variant, bt.art === 'puzzle' ? 1 : 0, bt.reveal ? 1 : 0];
+  if (bt.family === 'color' && bt.variant === 'custom' && bt.colors) look.push(bt.colors);
+  return look;
+}
+
+// QR 은 바깥에서 온 값 — 모르는 가족이면 블록 테마 없이 (기본을 따른다)
+function unpackLook(v: unknown): BlockTheme | undefined {
+  if (!Array.isArray(v) || !FAMILIES.some(f => f.id === v[0]) || typeof v[1] !== 'string') return undefined;
+  const colors = Array.isArray(v[4]) ? v[4].filter((c): c is string => typeof c === 'string' && /^#[0-9A-Fa-f]{6}$/.test(c)) : [];
+  return {
+    family: v[0] as Family, variant: v[1], art: v[2] ? 'puzzle' : 'motif',
+    ...(v[3] ? { reveal: true } : {}), ...(colors.length ? { colors } : {}),
+  };
+}
 
 const trimEnd = (a: string[]) => {
   let n = a.length;
@@ -37,9 +56,12 @@ function pack(plan: Plan, withNotes: boolean): Packed {
   const cats = trimEnd(plan.blocks[CENTER].map(c => c.cat ?? ''));
   const packed: Packed = [plan.title, texts, notes.length ? notes : 0, done];
   const size = sizeOf(plan);
-  if (cats.length || size !== 9) packed.push(cats);
-  if (size !== 9) packed.push(size);
-  if (size !== 9 && plan.extra && Object.keys(plan.extra).length) packed.push(plan.extra);
+  const extra = size !== 9 && plan.extra && Object.keys(plan.extra).length ? plan.extra : undefined;
+  const look = plan.blockTheme ? packLook(plan.blockTheme) : undefined;
+  if (cats.length || size !== 9 || look) packed.push(cats);
+  if (size !== 9 || look) packed.push(size);
+  if (extra || look) packed.push(extra ?? 0);
+  if (look) packed.push(look);
   return packed;
 }
 
@@ -69,7 +91,7 @@ export function decodePlan(text: string): Plan {
   } catch {
     throw new Error('QR 데이터가 손상되었습니다.');
   }
-  const [title, texts, notes, done, cats = [], size = 9, extra] = packed;
+  const [title, texts, notes, done, cats = [], size = 9, extra, look] = packed;
   const plan = newPlan(title || '불러온 목표', PLAN_SIZES.includes(size as PlanSize) ? (size as PlanSize) : 9);
   const doneSet = new Set(done);
   SLOTS.forEach(([b, c], i) => {
@@ -81,6 +103,8 @@ export function decodePlan(text: string): Plan {
   });
   cats.forEach((id, i) => { if (id) plan.blocks[CENTER][i].cat = id; });
   if (extra) plan.extra = extra;
+  const blockTheme = unpackLook(look);
+  if (blockTheme) plan.blockTheme = blockTheme;
   return plan;
 }
 

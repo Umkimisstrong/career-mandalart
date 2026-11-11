@@ -1,4 +1,5 @@
 // 바탕화면에 띄워 두는 작은 창 — 목표 하나의 가운데 묶음(핵심 목표 + 세부 목표)을 그 크기 모양대로 보여 준다.
+// 판은 그 목표의 블록 테마 — 「완료할수록 그림 완성」이면 세부 목표 조각이 그 블록을 끝낸 만큼 또렷해진다.
 // 오늘 해야 할 반복 점검이 남은 세부 목표 칸은 천천히 깜빡인다. 칸을 누르면 이 창 안에서 그 칸의 실행 과제를 펼친다
 // (핵심 목표 칸 = 오늘 할 일 모음). 펼친 목록의 줄을 누르면 체크 — 반복 점검은 이번 기간 체크, 그 밖은 완료.
 // 큰 창과 같은 저장소를 쓰고, 서로 저장하면 storage 이벤트로 바로 따라 바뀐다.
@@ -12,7 +13,7 @@ import { desktop } from '../desktop';
 import { cellsIn, CENTER, getCell, Plan, progress, setCell, sizeOf, Store } from '../model';
 import { periodKey, RoutineItem, routineItems, routineLabel, Scope, toggleKey } from '../routine';
 import { loadStore, saveStore, STORE_KEY } from '../storage';
-import { buildTheme, ThemeProvider, useTheme } from '../theme';
+import { blockThemeFor, BoardProvider, buildBoard, buildTheme, ThemeProvider, useBoard, useTheme } from '../theme';
 
 const CELL = 76;
 const GAP = 5;
@@ -55,7 +56,9 @@ export default function WidgetApp({ id }: { id: string }) {
   const plan = store?.plans.find(p => p.id === id);
   return (
     <ThemeProvider value={theme}>
-      {plan ? <WidgetBody plan={plan} now={now} onToggle={toggle} /> : <Missing loaded={!!store} />}
+      {plan && store
+        ? <BoardProvider value={buildBoard(blockThemeFor(store, plan))}><WidgetBody plan={plan} now={now} onToggle={toggle} /></BoardProvider>
+        : <Missing loaded={!!store} />}
     </ThemeProvider>
   );
 }
@@ -139,7 +142,7 @@ function Head({ title, folded, onFold, due }: { title: string; folded: boolean; 
 }
 
 function Grid({ plan, todo, onOpen }: { plan: Plan; todo: RoutineItem[]; onOpen: (cell: number) => void }) {
-  const { t } = useTheme();
+  const board = useBoard();
   const size = sizeOf(plan);
   const lay = layoutBlock(size, CENTER, 10_000, GAP, CELL);
   const due = new Map<number, number>();
@@ -152,9 +155,9 @@ function Grid({ plan, todo, onOpen }: { plan: Plan; todo: RoutineItem[]; onOpen:
           const core = c.cell === CENTER;
           const pr = core ? progress(plan) : progress(plan, c.cell);
           return (
-            <Cell key={`${t.key}-${c.cell}`} x={c.x} y={c.y} size={lay.cell} cell={c.cell} picture={lay.picture}
+            <Cell key={`${board.key}-${c.cell}`} x={c.x} y={c.y} size={lay.cell} cell={c.cell} picture={lay.picture}
               // 그림 테마는 칸 그림이 따로 있으니 카테고리 그림은 색상 테마에서만
-              emoji={core ? '★' : t.art ? undefined : catInfo(g.cat)?.emoji}
+              emoji={core ? '★' : board.art ? undefined : catInfo(g.cat)?.emoji}
               label={core ? g.text || '핵심 목표' : short(g.text)}
               ratio={pr.ratio} due={due.get(c.cell) ?? 0}
               onPress={() => onOpen(c.cell)} />
@@ -168,10 +171,12 @@ function Cell({ x, y, size, cell, picture, emoji, label, ratio, due, onPress }: 
   x: number; y: number; size: number; cell: number; picture: Picture; emoji?: string; label: string; ratio: number; due: number; onPress: () => void;
 }) {
   const { t } = useTheme();
+  const board = useBoard();
   const pulse = usePulse(due > 0);
   const core = cell === CENTER;
-  const paint = paintCell(t, CENTER, cell);
-  const fg = paint.pill ? t.text : paint.ink;
+  // 이 칸은 묶음 전체(핵심 = 목표 전체, 세부 = 그 블록)를 대표한다
+  const paint = paintCell(board, CENTER, cell, { ratio });
+  const fg = paint.pill ? board.text : paint.ink;
   return (
     <BoardCell x={x} y={y} size={size} paint={paint} picture={picture} delay={cell * 45} label={label} onPress={onPress} style={styles.cell}>
       {due > 0 && (
@@ -206,8 +211,8 @@ function Cell({ x, y, size, cell, picture, emoji, label, ratio, due, onPress }: 
 }
 
 function DetailHead({ emoji, title, right, color, onBack }: { emoji?: string; title: string; right?: string; color: string; onBack: () => void }) {
-  const { t } = useTheme();
-  const fg = t.on(color);
+  const board = useBoard();
+  const fg = board.on(color);
   return (
     <Pressable accessibilityRole="button" onPress={onBack} style={[styles.dHead, { backgroundColor: color }]} accessibilityLabel="뒤로">
       <Text style={[styles.back, { color: fg }]}>‹</Text>
@@ -223,6 +228,7 @@ function Detail({ plan, block, all, onToggle, onBack }: {
   plan: Plan; block: number; all: RoutineItem[]; onToggle: (b: number, c: number) => void; onBack: () => void;
 }) {
   const { t } = useTheme();
+  const board = useBoard();
   const g = plan.blocks[CENTER][block];
   const pr = progress(plan, block);
   const rows = cellsIn(plan, block).filter(c => c !== CENTER)
@@ -230,7 +236,7 @@ function Detail({ plan, block, all, onToggle, onBack }: {
     .filter(r => r.cell.text.trim());
   return (
     <View>
-      <DetailHead emoji={catInfo(g.cat)?.emoji} title={g.text || '세부 목표'} right={`${pr.done}/${pr.filled}`} color={t.blocks[block]} onBack={onBack} />
+      <DetailHead emoji={catInfo(g.cat)?.emoji} title={g.text || '세부 목표'} right={`${pr.done}/${pr.filled}`} color={board.blocks[block]} onBack={onBack} />
       {!rows.length && <Text style={[styles.empty, { color: t.sub }]}>아직 실행 과제가 없어요</Text>}
       <ScrollView style={{ maxHeight: LIST_MAX }} {...NODRAG}>
         {rows.map(({ c, cell, item }) => (
@@ -250,11 +256,12 @@ function Today({ plan, all, onToggle, onBack }: {
   plan: Plan; all: RoutineItem[]; onToggle: (b: number, c: number) => void; onBack: () => void;
 }) {
   const { t } = useTheme();
+  const board = useBoard();
   const due = all.filter(i => i.dueToday);
   const todo = due.filter(i => !i.stats.checked);
   return (
     <View>
-      <DetailHead emoji="★" title="오늘 할 일" right={todo.length ? `${todo.length}` : '✓'} color={t.blocks[CENTER]} onBack={onBack} />
+      <DetailHead emoji="★" title="오늘 할 일" right={todo.length ? `${todo.length}` : '✓'} color={board.blocks[CENTER]} onBack={onBack} />
       {!due.length && <Text style={[styles.empty, { color: t.sub }]}>오늘 할 점검이 없어요</Text>}
       <ScrollView style={{ maxHeight: LIST_MAX }} {...NODRAG}>
         {GROUPS.map(([scope, label]) => {
