@@ -6,6 +6,7 @@
 // 그래서 바깥 블록의 가운데 칸은 저장하지 않고 blocks[4][b] 를 참조한다.
 
 import type { AgeBand } from './categories/data';
+import type { CalEvent } from './calendar';
 import type { BlockTheme, ThemeSetting } from './theme';
 import type { Team } from './team';
 
@@ -150,6 +151,8 @@ export type Store = {
   notify?: boolean;
   // 바탕화면 작은 창으로 띄워 둘 목표 id (Windows 데스크톱 앱)
   widget?: string[];
+  // 캘린더 일정 — 목표와 별개 (src/calendar.ts)
+  events?: CalEvent[];
 };
 
 const emptyCell = (): Cell => ({ text: '', note: '', done: false });
@@ -208,7 +211,9 @@ export function isStore(v: unknown): v is Store {
   return (
     !!s && s.version === 1 && Array.isArray(s.plans) &&
     s.plans.every(p => typeof p.id === 'string' && Array.isArray(p.blocks) && p.blocks.length === 9 &&
-      p.blocks.every(r => Array.isArray(r) && r.length === 9))
+      p.blocks.every(r => Array.isArray(r) && r.length === 9)) &&
+    (s.events === undefined || (Array.isArray(s.events) &&
+      s.events.every(e => !!e && typeof e.id === 'string' && typeof e.date === 'string' && typeof e.title === 'string')))
   );
 }
 

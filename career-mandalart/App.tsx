@@ -25,7 +25,8 @@ import { canEditBlock, copyTeam, isAdmin, isTeamQr, receiveTeamCode, storedBlock
 import Templates from './src/screens/Templates';
 import ThemeSettings from './src/screens/ThemeSettings';
 import Today from './src/screens/Today';
-import { routineItems, toggleKey } from './src/routine';
+import CalendarScreen from './src/screens/Calendar';
+import { dateKey, routineItems, toggleKey } from './src/routine';
 import { desktop, WIDGET_ID } from './src/desktop';
 import WidgetApp from './src/screens/Widget';
 import { loadStore, saveStore, STORE_KEY } from './src/storage';
@@ -41,6 +42,7 @@ type Route =
   | { name: 'about' }
   | { name: 'templates'; age?: AgeBand }
   | { name: 'today' }
+  | { name: 'calendar' }
   | { name: 'qr'; id: string }
   | { name: 'card'; id: string }
   | { name: 'team'; id: string }
@@ -124,10 +126,10 @@ function App() {
     const timer = setTimeout(() => {
       const items = routineItems(store.plans);
       const remaining = items.filter(i => i.scope === 'day' && i.dueToday && !i.stats.checked).length;
-      syncReminders(items, !!store.notify, remaining).catch(() => {});
+      syncReminders(items, store.events ?? [], !!store.notify, remaining).catch(() => {});
     }, 800);
     return () => clearTimeout(timer);
-  }, [store?.plans, store?.notify]);
+  }, [store?.plans, store?.notify, store?.events]);
 
   // 새 목표를 목록에 추가하고 바로 펼친다 (만들기 · 템플릿 · QR)
   const addPlan = (plan: Plan) => {
@@ -184,6 +186,8 @@ function App() {
           onAbout={() => setRoute({ name: 'about' })}
           onTemplates={age => setRoute({ name: 'templates', age })}
           onToday={() => setRoute({ name: 'today' })}
+          onCalendar={() => setRoute({ name: 'calendar' })}
+          eventsToday={(store.events ?? []).filter(e => !e.done && e.date === dateKey(new Date())).length}
           notice={notice}
         />
       );
@@ -209,6 +213,19 @@ function App() {
           notify={!!store.notify}
           onBack={() => setRoute({ name: 'list' })}
           onToggle={toggleRoutine}
+          onOpenBlock={(id, block) => setRoute({ name: 'plan', id, block })}
+          onNotify={on => setStore(s => s && { ...s, notify: on })}
+        />
+      );
+    } else if (route.name === 'calendar') {
+      screen = (
+        <CalendarScreen
+          plans={store.plans}
+          events={store.events ?? []}
+          notify={!!store.notify}
+          onBack={() => setRoute({ name: 'list' })}
+          onEvents={fn => setStore(s => s && { ...s, events: fn(s.events ?? []) })}
+          onToggleRoutine={toggleRoutine}
           onOpenBlock={(id, block) => setRoute({ name: 'plan', id, block })}
           onNotify={on => setStore(s => s && { ...s, notify: on })}
         />

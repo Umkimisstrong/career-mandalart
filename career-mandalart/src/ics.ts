@@ -1,5 +1,6 @@
 // 반복 점검을 캘린더 파일(.ics)로 — iPhone 웹 앱은 닫혀 있을 때 알림을 보낼 수 없어서,
 // 알림 시각이 있는 칸을 반복 일정 + 알림(VALARM)으로 만들어 기기 캘린더가 대신 울리게 한다.
+import type { CalEvent } from './calendar';
 import { addDays, dateKey, dueOn, parseKey, RoutineItem } from './routine';
 
 const APP_URL = 'https://career-mandalart.vercel.app';
@@ -47,7 +48,35 @@ function firstDay(item: RoutineItem): Date {
   return parseKey(r.start);
 }
 
-export function buildIcs(items: RoutineItem[], now = new Date()): { text: string; count: number } {
+// 「1시간」 · 「30분」 · 「1.5시간」 · 「1시간30분」 → 분
+function minutesOf(dur?: string): number {
+  if (!dur) return 30;
+  const h = dur.match(/([\d.]+)시간/);
+  const m = dur.match(/(\d+)분/);
+  return Math.max(5, Math.round((h ? Number(h[1]) * 60 : 0) + (m ? Number(m[1]) : 0)) || 30);
+}
+
+// 캘린더 일정 — 끝내지 않은 오늘 이후 일정만
+function eventLines(events: CalEvent[], stamp: string, now: Date): string[][] {
+  const today = dateKey(now);
+  return events.filter(e => !e.done && e.date >= today).map(e => {
+    const day = e.date.replace(/-/g, '');
+    const when = e.time
+      ? [`DTSTART:${day}T${e.time.replace(':', '')}00`, `DURATION:PT${minutesOf(e.dur)}M`]
+      : [`DTSTART;VALUE=DATE:${day}`, `DTEND;VALUE=DATE:${dateKey(addDays(parseKey(e.date), 1)).replace(/-/g, '')}`];
+    const alarm = e.alarm === undefined ? [] : [
+      'BEGIN:VALARM', 'ACTION:DISPLAY', `DESCRIPTION:${esc(e.title)}`,
+      // 하루 종일 일정은 그날 0시 기준이라 아침 9시로 맞춘다
+      `TRIGGER:${e.time ? `-PT${e.alarm}M` : `PT${Math.max(0, 9 * 60 - e.alarm)}M`}`, 'END:VALARM',
+    ];
+    return [
+      'BEGIN:VEVENT', `UID:${e.id}@gudo`, `DTSTAMP:${stamp}`, ...when,
+      `SUMMARY:📌 ${esc(e.title)}`, ...alarm, 'END:VEVENT',
+    ];
+  });
+}
+
+export function buildIcs(items: RoutineItem[], now = new Date(), cal: CalEvent[] = []): { text: string; count: number } {
   const stamp = now.toISOString().replace(/[-:]/g, '').replace(/\.\d+/, '');
   const events = items.filter(i => i.routine.time).map(item => {
     const day = dateKey(firstDay(item)).replace(/-/g, '');
@@ -69,13 +98,14 @@ export function buildIcs(items: RoutineItem[], now = new Date()): { text: string
       'END:VEVENT',
     ];
   });
+  events.push(...eventLines(cal, stamp, now));
   const lines = [
     'BEGIN:VCALENDAR',
     'VERSION:2.0',
-    'PRODID:-//GUDO//Routine//KO',
+    'PRODID:-//GUDO//Calendar//KO',
     'CALSCALE:GREGORIAN',
     'METHOD:PUBLISH',
-    'X-WR-CALNAME:구도 반복 점검',
+    'X-WR-CALNAME:구도',
     ...events.flat(),
     'END:VCALENDAR',
   ];

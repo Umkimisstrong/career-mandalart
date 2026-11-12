@@ -21,6 +21,17 @@ export function BellIcon({ color, size = 20 }: P) {
   );
 }
 
+export function CalendarIcon({ color, size = 20 }: P) {
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24">
+      <Rect x={4} y={5.5} width={16} height={14.5} rx={3} {...line(color)} />
+      <Path d="M4 10h16M8.5 3.5v4M15.5 3.5v4" {...line(color)} />
+      <Circle cx={9} cy={14.5} r={0.6} {...line(color)} />
+      <Circle cx={15} cy={14.5} r={0.6} {...line(color)} />
+    </Svg>
+  );
+}
+
 export function InfoIcon({ color, size = 18 }: P) {
   return (
     <Svg width={size} height={size} viewBox="0 0 24 24">

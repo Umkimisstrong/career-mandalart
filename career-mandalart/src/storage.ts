@@ -38,5 +38,8 @@ export function importJson(current: Store, text: string): Store {
   for (const [k, v] of Object.entries(parsed.custom ?? {})) {
     custom[k] = [...new Set([...(current.custom?.[k] ?? []), ...v])];
   }
-  return { ...current, plans: [...byId.values()], custom };
+  // 일정도 같은 id 는 덮어쓴다
+  const events = new Map((current.events ?? []).map(e => [e.id, e]));
+  parsed.events?.forEach(e => events.set(e.id, e));
+  return { ...current, plans: [...byId.values()], custom, ...(events.size ? { events: [...events.values()] } : {}) };
 }

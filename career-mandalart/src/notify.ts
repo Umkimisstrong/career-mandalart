@@ -1,8 +1,9 @@
-// 반복 점검 알림 — iOS · Android: 기기 로컬 알림 (서버 없음).
+// 반복 점검 · 캘린더 일정 알림 — iOS · Android: 기기 로컬 알림 (서버 없음).
 // 앞으로 35일의 알림을 하나씩 예약하고, 체크한 기간의 알림은 빼고 다시 예약한다 (iOS 예약 한도 64개 → 60개까지).
 // 웹은 notify.web.ts
 import * as Notifications from 'expo-notifications';
 import { Platform } from 'react-native';
+import { alarmText, CalEvent, eventAlarms } from './calendar';
 import { RoutineItem, routineLabel, upcoming } from './routine';
 
 export const NOTIFY_KIND: 'native' | 'web' = 'native';
@@ -21,7 +22,7 @@ export async function requestNotify(): Promise<boolean> {
   return (await Notifications.requestPermissionsAsync()).granted;
 }
 
-export async function syncReminders(items: RoutineItem[], enabled: boolean, remainingToday: number): Promise<number> {
+export async function syncReminders(items: RoutineItem[], events: CalEvent[], enabled: boolean, remainingToday: number): Promise<number> {
   await Notifications.cancelAllScheduledNotificationsAsync();
   if (!enabled || !(await notifyGranted())) {
     await Notifications.setBadgeCountAsync(0).catch(() => {});
@@ -33,10 +34,14 @@ export async function syncReminders(items: RoutineItem[], enabled: boolean, rema
       name: '반복 점검', importance: Notifications.AndroidImportance.HIGH,
     });
   }
-  const list = upcoming(items);
-  for (const { at, item } of list) {
+  // 반복 점검과 일정을 시각 순으로 섞어 가까운 60개만 (iOS 예약 한도)
+  const list = [
+    ...upcoming(items).map(({ at, item }) => ({ at, title: `🔁 ${routineLabel(item.routine)}`, body: item.text, data: { planId: item.planId } })),
+    ...eventAlarms(events).map(({ at, event }) => ({ at, ...alarmText(event), data: { event: event.id } })),
+  ].sort((a, b) => +a.at - +b.at).slice(0, 60);
+  for (const { at, title, body, data } of list) {
     await Notifications.scheduleNotificationAsync({
-      content: { title: `🔁 ${routineLabel(item.routine)}`, body: item.text, data: { planId: item.planId } },
+      content: { title, body, data },
       trigger: { type: Notifications.SchedulableTriggerInputTypes.DATE, date: at, channelId: 'routine' },
     });
   }

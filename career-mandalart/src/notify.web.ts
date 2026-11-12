@@ -1,8 +1,9 @@
-// 반복 점검 알림 — 웹(iPhone 홈 화면 앱 포함).
+// 반복 점검 · 캘린더 일정 알림 — 웹(iPhone 홈 화면 앱 포함) · Windows 데스크톱 앱(Windows 알림으로 뜬다).
 // 서버가 없으니 앱이 닫혀 있을 때 알림을 보낼 수 없다. 그래서
 //  1) 앱이 열려 있는 동안: 알림 시각에 브라우저 알림
 //  2) 홈 화면 앱 아이콘: 오늘 남은 점검 수 배지 (지원하는 브라우저만)
 //  3) 닫혀 있을 때: 캘린더 파일(.ics)을 기기 캘린더에 등록해 캘린더가 알림을 울린다 (exportCalendar)
+import { alarmText, CalEvent, eventAlarms } from './calendar';
 import { RoutineItem, routineLabel, upcoming } from './routine';
 
 export const NOTIFY_KIND: 'native' | 'web' = 'web';
@@ -30,7 +31,7 @@ async function show(title: string, opts: NotificationOptions) {
 
 type BadgeNavigator = Navigator & { setAppBadge?: (n?: number) => Promise<void>; clearAppBadge?: () => Promise<void> };
 
-export async function syncReminders(items: RoutineItem[], enabled: boolean, remainingToday: number): Promise<number> {
+export async function syncReminders(items: RoutineItem[], events: CalEvent[], enabled: boolean, remainingToday: number): Promise<number> {
   timers.forEach(clearTimeout);
   timers = [];
   const nav = navigator as BadgeNavigator;
@@ -41,11 +42,14 @@ export async function syncReminders(items: RoutineItem[], enabled: boolean, rema
   } catch { /* 배지를 지원하지 않는 브라우저 */ }
   if (!enabled || !granted) return 0;
   // 열려 있는 동안 24시간 안의 알림만 타이머로
-  const soon = upcoming(items, new Date(), 2).filter(u => +u.at - Date.now() < 24 * 3600 * 1000);
-  for (const { at, item } of soon) {
-    timers.push(setTimeout(() => {
-      show(`🔁 ${routineLabel(item.routine)}`, { body: item.text, tag: `${item.planId}-${item.block}-${item.cell}`, icon: '/icon-192.png' });
-    }, +at - Date.now()));
+  const soon = [
+    ...upcoming(items, new Date(), 2).map(({ at, item }) => ({
+      at, title: `🔁 ${routineLabel(item.routine)}`, body: item.text, tag: `${item.planId}-${item.block}-${item.cell}`,
+    })),
+    ...eventAlarms(events, new Date(), 2).map(({ at, event }) => ({ at, ...alarmText(event), tag: event.id })),
+  ].filter(u => +u.at - Date.now() < 24 * 3600 * 1000);
+  for (const { at, title, body, tag } of soon) {
+    timers.push(setTimeout(() => show(title, { body, tag, icon: '/icon-192.png' }), +at - Date.now()));
   }
   return soon.length;
 }
@@ -53,7 +57,7 @@ export async function syncReminders(items: RoutineItem[], enabled: boolean, rema
 // 파일로 받는다 — iPhone Safari: 다운로드 목록에서 파일을 누르면 「모두 추가」로 캘린더에 들어간다.
 // (공유 시트에는 캘린더가 없어서 쓰지 않는다) PC: 받은 파일을 Google · Outlook 캘린더에서 가져오기
 export async function exportCalendar(text: string): Promise<void> {
-  const name = 'gudo-routine.ics';
+  const name = 'gudo-calendar.ics';
   const file = new File([text], name, { type: 'text/calendar' });
   const url = URL.createObjectURL(file);
   const a = document.createElement('a');

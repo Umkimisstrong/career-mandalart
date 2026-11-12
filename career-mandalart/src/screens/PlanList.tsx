@@ -1,7 +1,7 @@
 // 메인 화면 — 「목록」(크기 · 점검 필터)과 「만들기」(크기 → 템플릿 여부 → 연령대)를 탭으로 나눈다.
 import { useState } from 'react';
 import { Alert, Image, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
-import { BellIcon, InfoIcon, ShapeIcon, TrashIcon } from '../components/Icons';
+import { BellIcon, CalendarIcon, InfoIcon, ShapeIcon, TrashIcon } from '../components/Icons';
 import { Appear, Tap } from '../components/Motion';
 import { APP_NAME, APP_NAME_EN, APP_TAGLINE_EN } from '../brand';
 import { AGE_BANDS, AgeBand } from '../categories/data';
@@ -33,6 +33,9 @@ type Props = {
   onAbout: () => void;
   onTemplates: (age?: AgeBand) => void;
   onToday: () => void;
+  onCalendar: () => void;
+  // 오늘 남은 캘린더 일정 수 (📅 배지)
+  eventsToday: number;
   // 데스크톱 앱에서만: 바탕화면에 띄운 목표 id · 띄우기 켜고 끄기
   widget?: string[];
   onWidget: (id: string) => void;
@@ -51,7 +54,7 @@ function confirm(message: string, onYes: () => void) {
 }
 
 export default function PlanList(props: Props) {
-  const { plans, home, onHome, onAbout, onTheme, notice } = props;
+  const { plans, home, onHome, onAbout, onTheme, onCalendar, eventsToday, notice } = props;
   const { t, ui } = useTheme();
   const items = routineItems(plans);
   const left = items.filter(i => i.dueToday && !i.stats.checked).length;
@@ -80,6 +83,15 @@ export default function PlanList(props: Props) {
           {left > 0 && (
             <View style={[styles.badge, { backgroundColor: t.accent }]}>
               <Text style={[styles.badgeText, { color: t.on(t.accent) }]}>{left}</Text>
+            </View>
+          )}
+        </Tap>
+        <Tap onPress={onCalendar} hitSlop={6}
+          style={[styles.iconBtn, { borderColor: t.border, backgroundColor: t.surface }]} accessibilityLabel="캘린더">
+          <CalendarIcon color={eventsToday ? t.primary : t.sub} />
+          {eventsToday > 0 && (
+            <View style={[styles.badge, { backgroundColor: t.primary }]}>
+              <Text style={[styles.badgeText, { color: t.onPrimary }]}>{eventsToday}</Text>
             </View>
           )}
         </Tap>

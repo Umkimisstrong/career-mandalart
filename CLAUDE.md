@@ -24,6 +24,7 @@
 | 청사진 크기 | `Plan.size` 1 · 3 · 5 · 7 · 9 (없으면 9 = 81칸 시그니처, 기본값 유지). 저장 구조는 그대로 9×9, `model.ts` 의 `blocksOf(size)` · `cellsOf(size, block)`(3칸은 세부 목표 묶음이 세로 [1,4,7]) · `slotPos`(7칸은 위 · 아래 줄 반 칸 안으로 = 육각) · `trackedCells`(완료 · 반복 점검 칸, 1칸은 핵심 목표). 화면 배치 `src/components/ShapeLayout.ts`. QR 6번째 튜플 = size (9 면 생략). **3 · 5칸은 세부 목표 묶음마다 빈 자리에 실행 과제 칸을 더 열 수 있다**(최대 3×3) — `Plan.extra`(블록 → 칸), `cellsIn` · `growSlots` · `setExtra`, 블록 화면 ＋ · 「이 칸 빼기」, QR 7번째 튜플 · 팀 코드 `x` 로 전달. 7칸(육각)은 자리가 어긋나 제외 |
 | 반복 점검 · 알림 | `src/routine.ts`: 실행 과제 `Cell.routine`(freq daily · weekdays · weekly · monthly, days, time 'HH:MM', start) + `Cell.log`(체크한 기간 키: 일 = 날짜, 주 = 그 주 월요일, 월 = 'YYYY-MM'). `routineStats`(연속 · 달성률 · 놓친 전 기간), `routineItems`, `dayGrid`, `upcoming`. 화면 `src/screens/Today.tsx`(오늘의 점검), 칸 편집 ⑤ `src/components/RoutinePicker.tsx`. 알림 `src/notify.ts`(expo-notifications 로컬 알림, 35일 · 최대 60개 예약, 체크한 기간 제외) / `notify.web.ts`(열려 있을 때 알림 · 앱 배지) + `src/ics.ts`(캘린더 반복 일정 + VALARM). `Store.notify` = 알림 켬. routine · log 는 QR 에 담지 않음(JSON 백업에는 포함) |
 | Windows 데스크톱 · 위젯 | `career-mandalart/desktop/` Electron(main.cjs · preload.cjs). 큰 창 = Vercel 웹 앱, 작은 창 = 같은 주소 `?widget=<목표 id>` → `src/screens/Widget.tsx`(저장 안 함, storage 이벤트로 읽기만). 다리 `src/desktop.ts`(window.gudoDesktop). `Store.widget` = 띄울 목표 id. 창 위치 · 크기 · 항상 위는 userData/widgets.json. 빌드 `cd desktop && npm install && node node_modules/electron/install.js && npm run dist` → `out/GUDO-Setup-*.exe` (npm 12 는 install script 를 막아 electron 바이너리를 직접 받아야 함). 로컬 시험 `npm run dev`(localhost:8090). **자동 업데이트(1.2.0~)**: `desktop/updater.cjs`(electron-updater, generic provider = GitHub `releases/latest/download`), 새 버전 배포 = `desktop/package.json` version 올리고 `npm run release` → 릴리스 `desktop-v<버전>`. 배포 링크(설치 · 덮어 설치) https://github.com/Umkimisstrong/career-mandalart/releases/latest/download/GUDO-Setup.exe. 다른 GitHub 릴리스를 만들면 latest 가 바뀌어 업데이트가 깨지니 주의. 화면 변경은 Vercel 배포만으로 반영(릴리스 불필요) |
+| 캘린더 · 일정 | **일정은 목표와 별개**(사용자 결정 2026-11-12). `src/calendar.ts`: `Store.events: CalEvent[]`(id · date 'YYYY-MM-DD' · time? · title · dur? · alarm?(몇 분 전, 0 = 그 시각) · done?), 한 줄 형식 `parseLine`(「날짜 시간 할 일 ~얼마나 !알림」) · `formatLine`, `eventAlarms`, `routineOnDay`(매주 · 매월은 정한 요일 · 날짜에만). 화면 `src/screens/Calendar.tsx`(메인 머리 🔔 옆 📅). 알림은 `syncReminders(items, events, …)` 로 반복 점검과 함께, `.ics` 에도 일정. 백업 코드에 포함, QR · 팀 코드에는 없음. 앞으로 알림 길(channel): 알림톡 · 메일 — `docs/calendar.md` |
 | 칸보다 많은 일 | 블록당 실행 과제는 최대 8칸(3×3). 더 필요하면 ① `Cell.items`(하위 할 일 체크리스트, 칸 편집 창 · 칸에 ☑ n/m · 팀 코드 `i` 로 전달, QR 에는 없음) ② 「새 목표로 펼치기」 — 실행 과제를 핵심 목표로 새 목표 생성, `Cell.child` ↔ `Plan.parent` 로 서로 이동(↗ · ↖) |
 | 팀 목표 | **서버 없이.** 만들기 ② 「팀 목표」 → 세부 목표 = 균형성과표(BSC) 카테고리, 이 기기가 관리자. `src/team.ts`: `Plan.team`(id · role · block · owners · stamps), 초대장 · 갱신 코드(링크 `?team=` · QR `GDT1:`), `receiveTeamCode`(보낸 사람이 고칠 수 있는 블록만, 더 최근일 때만). 담당자는 자기 블록만 편집, 관리자만 복제 · 삭제. 화면 `src/screens/Team.tsx`. 체크리스트 수준 · 실시간 없음(사용자 결정 2026-11-09). 근거 · 결정 `docs/team.md` |
 | 호스팅 | Vercel 무료 플랜만 사용, 자체 도메인 없음 (사용자 결정 2026-11-01) |
@@ -35,16 +36,17 @@
 ## 폴더 구조
 ```
 career-mandalart/
-  App.tsx                 화면 전환(list · plan(overview|block) · team · today · backup · qr · version …) + 자동 저장, ?widget= · ?team= 처리
+  App.tsx                 화면 전환(list · plan(overview|block) · team · today · calendar · backup · qr · version …) + 자동 저장, ?widget= · ?team= 처리
   src/model.ts            데이터 모델(Plan · Cell · Store), 크기 · 칸 규칙(blocksOf · cellsIn · growSlots), 진행률, 샘플
   src/storage.ts          AsyncStorage(웹 localStorage) 저장 · 로드, 백업 코드(JSON) 내보내기 · 가져오기
   src/theme.ts            테마 토큰 · 공통 스타일
   src/team.ts             팀 목표: 초대장 · 갱신 코드 형식, 받기 규칙(receiveTeamCode), 권한(canEditBlock)
   src/desktop.ts          Windows 데스크톱 앱과의 다리(window.gudoDesktop), WIDGET_ID
   src/routine.ts · notify(.web).ts · ics.ts  반복 점검 계산 · 알림 · 캘린더 파일
+  src/calendar.ts         캘린더 일정(Store.events) · 한 줄 형식 해석 · 일정 알림
   src/categories/         data.ts(개인 매슬로우 + 팀 BSC 카테고리) · tree.ts · units.ts · templates.ts(연령대 템플릿 · buildPlan)
   src/components/         CategoryPicker · RoutinePicker · ShapeLayout · PlanPreview · Icons(휴지통 · 종 · 모양 아이콘) · InstallBanner
-  src/screens/            PlanList(목록 · 만들기 탭) · Overview · BlockEditor(칸 편집 · 하위 할 일 · 펼치기 · 칸 늘리기) · Today · Team · Widget · Version · Backup · QrShare · QrScan · Templates · Story · About · ThemeSettings
+  src/screens/            PlanList(목록 · 만들기 탭) · Overview · BlockEditor(칸 편집 · 하위 할 일 · 펼치기 · 칸 늘리기) · Today · Calendar · Team · Widget · Version · Backup · QrShare · QrScan · Templates · Story · About · ThemeSettings
   src/share/              이미지 카드: card.ts(배치 모델 cardModel) · render.web.ts(캔버스 그리기), 화면 CardShare
   src/qr/                 QR 코덱(codec.ts, base45 공용), 웹 이미지 생성 · 읽기(image.web.ts)
   desktop/                Windows 데스크톱 앱(Electron): main.cjs(큰 창 · 작은 창 · 트레이) · preload.cjs · updater.cjs(자동 업데이트) · release.cjs(npm run release)
@@ -74,10 +76,10 @@ npm run setup:git       # 로컬 Git 자동배포 1회 설정
 npm run deploy:dry      # EAS 호출 없이 배포 파이프라인 점검
 ```
 
-## 현재 상태 (2026-11-11)
+## 현재 상태 (2026-11-12)
 - 배포: 웹 https://career-mandalart.vercel.app (GitHub `main` push → Vercel 자동). Windows 앱 1.2.1 — 설치 · 업데이트 링크 https://github.com/Umkimisstrong/career-mandalart/releases/latest/download/GUDO-Setup.exe, 설치본은 GitHub 릴리스로 자동 업데이트.
-- 기능 목록 · 이력은 FEATURES.md. 크기(1 · 3 · 5 · 7 · 9) · 단계별 만들기 · 미리보기 · 반복 점검 · 팀 목표 · 칸 늘리기 · 하위 할 일 · 펼치기 · 데스크톱 작은 창 · 버전 화면까지.
-- 검증: 2026-11-11 verify-gudo 로 목록 · 만들기 · 칸 편집 · 팀 · 작은 창 5개 기능을 실제 앱에서 증명. 미검증: 실제 iPhone · Android 화면, 휴대폰 알림, 네이티브 카메라 QR, 작은 창 실제 마우스 클릭.
+- 기능 목록 · 이력은 FEATURES.md. 크기(1 · 3 · 5 · 7 · 9) · 단계별 만들기 · 미리보기 · 반복 점검 · 팀 목표 · 칸 늘리기 · 하위 할 일 · 펼치기 · 캘린더 · 데스크톱 작은 창 · 버전 화면까지.
+- 검증: 2026-11-11 verify-gudo 로 목록 · 만들기 · 칸 편집 · 팀 · 작은 창 5개 기능을 실제 앱에서 증명. 2026-11-12 캘린더(넣기 · 풀어 보기 · 완료 · 고치기 · 지우기 · 반복 점검 체크 · 📅 배지 · 알림 울림 · .ics) 증명. 미검증: 실제 iPhone · Android 화면, 휴대폰 알림, 네이티브 카메라 QR, 작은 창 실제 마우스 클릭.
 - 판매 시작 기준(사용자 결정): ① 사용자 10명 피드백 ② 디자인 · 테마 확정 ③ 9×9 이미지 카드 — ③ 완료(2026-11-11, 목표 화면 「카드」 · 퍼즐 그림 · 흐림 조절), ② **확정**(2026-11-11 사용자: 둥근 파스텔 UI · 움직임 · 앱 테마 / 블록 테마 두 층 · 4계열 · 퍼즐 그림). 남은 기준 ① 10명 피드백.
 - 알려진 빈틈: 팀 목표 실행 과제 편집 창에 개인(매슬로우) 추천이 뜸. 기기끼리 데이터 자동 동기화 없음(백업 코드 · QR 로 옮김).
 - GitHub: https://github.com/Umkimisstrong/career-mandalart (public). 루트 `vercel.json` 이 `career-mandalart/` 를 빌드.
@@ -85,5 +87,5 @@ npm run deploy:dry      # EAS 호출 없이 배포 파이프라인 점검
 
 ## 다음 할 일 후보
 - 팀 목표 실행 과제 편집 창을 BSC 에 맞는 추천으로 (지금은 개인 카테고리 추천)
-- 캘린더 메뉴 (달력에서 반복 점검 · 일정 보기, 형식에 맞춘 일정 입력)
+- 일정 알림 길 넓히기 — 알림톡 · 메일 (서버 · 유료 발송 필요, `docs/calendar.md`)
 - 실제 휴대폰 점검 (화면 · 알림 · 카메라 QR)
