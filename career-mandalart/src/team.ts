@@ -7,6 +7,7 @@
 import { deflateSync, inflateSync, strFromU8, strToU8 } from 'fflate';
 import { CENTER, newPlan, Plan, PLAN_SIZES, PlanSize, sizeOf } from './model';
 import { base45Decode, base45Encode } from './qr/codec';
+import { APP_URL } from './site';
 
 export type TeamRole = 'admin' | 'member';
 
@@ -98,8 +99,6 @@ const unb64url = (str: string) => {
   const s = atob(str.replace(/-/g, '+').replace(/_/g, '/'));
   return Uint8Array.from(s, ch => ch.charCodeAt(0));
 };
-
-export const APP_URL = 'https://career-mandalart.vercel.app';
 
 // 초대장 · 갱신 코드 — 링크(메신저용)와 QR 문자열(사진용)
 export function teamCode(p: Plan, k: TeamKind, to?: number): { link: string; qr: string } {

@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>구도 GUDO · 새 주소</title>
+<meta name="robots" content="noindex">
+<link rel="canonical" href="https://gudo.pages.dev/">
+<!-- 옛 주소(career-mandalart.vercel.app)에 남겨 두는 이사 안내. 앱은 https://gudo.pages.dev 로 옮겼다.
+     ?team= · ?widget= 같은 주소 뒤 값이 있으면 그대로 붙여 새 주소로 바로 넘긴다.
+     이 기기에 저장된 목표가 있으면 주소 # 뒤(서버로 안 보내지는 부분)에 실어 새 주소에서 자동 복원한다 (src/site.ts takeMove). -->
+<script>
+  var NEW = 'https://gudo.pages.dev';
+  if (location.search) location.replace(NEW + location.pathname + location.search + location.hash);
+</script>
+<style>
+  :root { --bg: #F6F3FB; --card: #FFFFFF; --ink: #2B2540; --sub: #6E6787; --accent: #6C5BD4; --accent-ink: #FFFFFF; --line: #E4DEF2; --soft: #EEE9FA; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #17141F; --card: #221E2E; --ink: #EDE9F7; --sub: #A69FBD; --accent: #9C8CF0; --accent-ink: #17141F; --line: #352F45; --soft: #2B2639; }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.6 -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; }
+  main { max-width: 440px; margin: 0 auto; padding: 40px 16px; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 20px; padding: 24px 20px; }
+  .star { font-size: 28px; color: var(--accent); }
+  h1 { font-size: 22px; margin: 4px 0 8px; }
+  p { margin: 0 0 12px; color: var(--sub); }
+  .addr { display: block; background: var(--soft); border-radius: 12px; padding: 10px 12px; font-weight: 700; color: var(--ink); text-decoration: none; margin: 0 0 16px; word-break: break-all; }
+  button, .btn { display: block; width: 100%; border: 0; border-radius: 14px; padding: 14px; font: inherit; font-weight: 700; cursor: pointer; text-align: center; text-decoration: none; }
+  .primary { background: var(--accent); color: var(--accent-ink); }
+  .ghost { background: var(--soft); color: var(--ink); margin-top: 10px; }
+  ol { padding-left: 20px; margin: 16px 0 0; color: var(--sub); font-size: 14px; }
+  textarea { width: 100%; height: 90px; margin-top: 10px; border: 1px solid var(--line); border-radius: 12px; background: var(--bg); color: var(--ink); font: 12px monospace; padding: 8px; }
+  .hide { display: none; }
+  small { color: var(--sub); }
+</style>
+</head>
+<body>
+<main>
+  <div class="card">
+    <div class="star">★</div>
+    <h1>구도 GUDO 가 새 주소로 이사했어요</h1>
+    <p>앞으로는 아래 주소를 써 주세요. 앱은 그대로, 무료 · 회원가입 없음도 그대로예요.</p>
+    <a class="addr" href="https://gudo.pages.dev/">gudo.pages.dev</a>
+
+    <div id="has" class="hide">
+      <p>이 기기에 목표 <b id="count">0</b>개가 저장되어 있어요. 버튼을 누르면 새 주소로 그대로 옮겨져요.</p>
+      <button id="move" class="primary">내 목표 가지고 새 주소로 옮기기</button>
+      <button id="copy" class="ghost">백업 코드 복사 (버튼이 안 될 때)</button>
+      <textarea id="code" class="hide" readonly></textarea>
+      <ol>
+        <li>옮긴 뒤 새 주소에서 목표가 보이는지 확인하세요.</li>
+        <li>iPhone: 새 주소를 Safari 로 연 채 공유 → 「홈 화면에 추가」, 옛 아이콘은 지워도 돼요.</li>
+        <li>버튼이 안 되면: 「백업 코드 복사」 → 새 주소의 「백업 · 복원」에 붙여넣기 → 「복원하기」.</li>
+      </ol>
+    </div>
+
+    <div id="none" class="hide">
+      <a class="btn primary" href="https://gudo.pages.dev/">새 주소로 가기</a>
+    </div>
+  </div>
+  <p style="text-align:center;margin-top:16px"><small>입력한 내용은 이 기기 안에서만 옮겨지고, 서버로 보내지지 않아요.</small></p>
+</main>
+<script>
+  var KEY = 'career-mandalart/store/v1';
+  var raw = null;
+  try { raw = localStorage.getItem(KEY); } catch (e) {}
+  var plans = 0;
+  try { plans = raw ? JSON.parse(raw).plans.length : 0; } catch (e) { raw = null; }
+  document.getElementById(raw ? 'has' : 'none').classList.remove('hide');
+  document.getElementById('count').textContent = plans;
+
+  function b64url(bytes) {
+    var s = '';
+    for (var i = 0; i < bytes.length; i += 0x8000) s += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000));
+    return btoa(s).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+  }
+  async function pack(text) {
+    var bytes = new TextEncoder().encode(text);
+    if (typeof CompressionStream === 'undefined') return 'move0=' + b64url(bytes);
+    var out = new Response(new Blob([bytes]).stream().pipeThrough(new CompressionStream('deflate-raw')));
+    return 'move=' + b64url(new Uint8Array(await out.arrayBuffer()));
+  }
+  document.getElementById('move').onclick = async function () {
+    location.href = NEW + '/#' + await pack(raw);
+  };
+  document.getElementById('copy').onclick = async function () {
+    var box = document.getElementById('code');
+    box.value = raw;
+    box.classList.remove('hide');
+    box.select();
+    try { await navigator.clipboard.writeText(raw); this.textContent = '복사했어요 — 새 주소의 「백업 · 복원」에 붙여넣으세요'; }
+    catch (e) { this.textContent = '아래 글자를 모두 선택해 복사하세요'; }
+  };
+</script>
+</body>
+</html>

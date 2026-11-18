@@ -48,8 +48,8 @@ iPhone 은 Safari 로 주소를 연 뒤 **공유 → 홈 화면에 추가**, And
 
 ## 웹 배포 (Vercel)
 
-- 루트 `vercel.json` 이 이 폴더(`career-mandalart/`)를 빌드합니다 (`npm run build:web` → `dist/`).
-- `main` 에 push 하면 1~2분 안에 https://career-mandalart.vercel.app 이 새로 배포됩니다.
+- 웹 앱은 Cloudflare Pages(`gudo`)에 있습니다: `npm run deploy:web` = `npm run build:web` → `dist/` → wrangler 배포 (처음 한 번 `npx wrangler login`).
+- 주소 https://gudo.pages.dev. 옛 주소 https://career-mandalart.vercel.app 은 `moved/` 이사 안내만 남아 있고, 루트 `vercel.json` 으로 `main` push 때 배포됩니다.
 - `scripts/pwa.mjs` 가 빌드 뒤 PWA 메타 · manifest · 서비스 워커(`sw.js`) · 화면 빌드 표시(`gudo-build`)를 넣습니다. 버전 화면의 「화면 빌드」가 이 값입니다.
 - 호스팅 선택 근거는 [docs/hosting.md](../docs/hosting.md).
 

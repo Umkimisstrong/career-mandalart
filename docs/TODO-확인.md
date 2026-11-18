@@ -21,7 +21,7 @@ _최종 갱신: 2026-11-14_
 
 ## 2. 공유용 링크 · QR
 
-- 공유 링크: **https://career-mandalart.vercel.app**
+- 공유 링크: **https://gudo.pages.dev**
 - Windows 앱 설치 · 덮어 설치: **https://github.com/Umkimisstrong/career-mandalart/releases/latest/download/GUDO-Setup.exe**
 - 링크 QR 이미지: [`docs/share/career-mandalart-link-qr.png`](share/career-mandalart-link-qr.png) (`node scripts/share-qr.mjs` 로 재생성)
 - PC에서 설치 안내 미리 보기: 주소 끝에 `?install-preview=ios` 또는 `?install-preview=inapp-kakao`

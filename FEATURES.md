@@ -2,7 +2,7 @@
 
 **구도 GUDO · Nine Ways** (옛 이름 커리어 만다라트) 의 기능을 한눈에 보는 문서입니다. 기능이 추가될 때마다 이 파일을 갱신합니다.
 
-- 서비스: https://career-mandalart.vercel.app
+- 서비스: https://gudo.pages.dev (2026-11-18 이전 — 옛 주소 career-mandalart.vercel.app 은 이사 안내)
 - 저장소: https://github.com/Umkimisstrong/career-mandalart
 - 로컬 경로: `C:\Claude\01. Career`
 

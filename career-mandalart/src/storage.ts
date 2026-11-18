@@ -27,6 +27,18 @@ export function exportJson(store: Store): string {
   return JSON.stringify(store, null, 2);
 }
 
+// 이 기기에 저장한 적이 있나 — 옛 주소에서 옮겨 올 때 통째로 받을지(처음) 합칠지 고른다
+export async function hasSaved(): Promise<boolean> {
+  return (await AsyncStorage.getItem(KEY)) != null;
+}
+
+// 옛 주소에서 옮겨 온 데이터: 처음 여는 기기면 설정(테마 · 알림 …)까지 통째로, 아니면 백업 복원처럼 합친다
+export function adoptMoved(current: Store, text: string, fresh: boolean): Store {
+  const parsed = JSON.parse(text);
+  if (fresh && isStore(parsed)) return parsed;
+  return importJson(current, text);
+}
+
 // 붙여넣은 JSON 을 검증해 기존 계획과 병합(같은 id 는 덮어씀)
 export function importJson(current: Store, text: string): Store {
   const parsed = JSON.parse(text);

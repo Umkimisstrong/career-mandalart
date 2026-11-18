@@ -3,7 +3,7 @@
 import type { CalEvent } from './calendar';
 import { addDays, dateKey, dueOn, parseKey, RoutineItem } from './routine';
 
-const APP_URL = 'https://career-mandalart.vercel.app';
+import { APP_URL } from './site';
 const BYDAY = ['SU', 'MO', 'TU', 'WE', 'TH', 'FR', 'SA'];
 
 const esc = (s: string) => s.replace(/\\/g, '\\\\').replace(/;/g, '\\;').replace(/,/g, '\\,').replace(/\r?\n/g, '\\n');

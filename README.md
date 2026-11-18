@@ -2,7 +2,7 @@
 
 **만다라트(9×9 목표표)로 목표를 설계하고 매일 점검하는 크로스플랫폼 앱 — Claude Code(AI 개발 도구)와 함께 만들고 있는 개인 프로젝트입니다.**
 
-👉 웹: https://career-mandalart.vercel.app · 🪟 Windows: [GUDO-Setup.exe](https://github.com/Umkimisstrong/career-mandalart/releases/latest/download/GUDO-Setup.exe)
+👉 웹: https://gudo.pages.dev · 🪟 Windows: [GUDO-Setup.exe](https://github.com/Umkimisstrong/career-mandalart/releases/latest/download/GUDO-Setup.exe)
 
 <img src="docs/screenshot-1.png" width="360" alt="9×9 목표판">
 

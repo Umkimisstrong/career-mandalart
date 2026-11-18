@@ -1,7 +1,8 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "installCommand": "cd career-mandalart && npm ci",
-  "buildCommand": "cd career-mandalart && npm run build:web",
-  "outputDirectory": "career-mandalart/dist",
+  "installCommand": "echo skip",
+  "buildCommand": "echo moved",
+  "outputDirectory": "career-mandalart/moved",
+  "framework": null,
   "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
 }

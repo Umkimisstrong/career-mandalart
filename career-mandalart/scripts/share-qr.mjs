@@ -3,7 +3,7 @@
 //   node scripts/share-qr.mjs [url] [출력경로]
 import QRCode from 'qrcode';
 
-const url = process.argv[2] ?? 'https://career-mandalart.vercel.app';
+const url = process.argv[2] ?? 'https://gudo.pages.dev';
 const out = process.argv[3] ?? '../docs/share/career-mandalart-link-qr.png';
 
 await QRCode.toFile(out, url, { errorCorrectionLevel: 'M', margin: 4, width: 1024 });

@@ -1,4 +1,4 @@
-// 구도 GUDO Windows 데스크톱 앱 — 웹 앱(Vercel)을 큰 창으로 열고, 고른 목표를 바탕화면 작은 창(항상 위)으로 띄운다.
+// 구도 GUDO Windows 데스크톱 앱 — 웹 앱(Cloudflare Pages)을 큰 창으로 열고, 고른 목표를 바탕화면 작은 창(항상 위)으로 띄운다.
 // 데이터는 이 앱 안의 저장소(localStorage)에 따로 저장된다. 다른 기기와는 「백업 코드」 · QR 로 옮긴다.
 const { app, BrowserWindow, Menu, Tray, ipcMain, nativeImage, screen, shell } = require('electron');
 const fs = require('fs');
@@ -6,7 +6,11 @@ const path = require('path');
 const { checkSilent, installNow, onChange, startUpdater, updateInfo } = require('./updater.cjs');
 
 const arg = process.argv.find(a => a.startsWith('--url='));
-const BASE = (arg ? arg.slice(6) : process.env.GUDO_URL) || 'https://career-mandalart.vercel.app';
+const HOME = 'https://gudo.pages.dev';
+const BASE = (arg ? arg.slice(6) : process.env.GUDO_URL) || HOME;
+// 1.2.x 까지 쓰던 주소. 저장 공간은 주소마다 따로라, 처음 한 번 그쪽 데이터를 새 주소로 옮긴다 (moveOldStore)
+const OLD = 'https://career-mandalart.vercel.app';
+const STORE_KEY = 'career-mandalart/store/v1';
 const ICON = path.join(__dirname, 'icon.png');
 // 시험용: --profile=<폴더> 로 실제 앱과 다른 저장소 · 설정을 쓴다 (npm run dev)
 const profile = process.argv.find(a => a.startsWith('--profile='));
@@ -26,6 +30,31 @@ function loadConfig() {
 }
 function saveConfig() {
   try { fs.writeFileSync(CONFIG(), JSON.stringify(config, null, 2)); } catch { /* 무시 */ }
+}
+
+// 옛 주소 저장 공간 → 새 주소 저장 공간 (같은 PC 안에서만). 앱 화면을 띄우기 전에, 숨은 창으로
+// 두 주소의 작은 파일(manifest.json)을 열어 그 주소의 localStorage 를 읽고 쓴다. 앱 화면을 열면 앱이 빈 데이터를
+// 먼저 저장해 버리므로 앱은 열지 않는다. 새 주소에 이미 데이터가 있으면 덮어쓰지 않고, 옛 데이터도 지우지 않는다.
+// 끝나면 moved.json 을 남겨 다시 하지 않는다 — 인터넷이 안 돼 실패하면 다음 실행 때 다시.
+async function moveOldStore() {
+  const flag = path.join(app.getPath('userData'), 'moved.json');
+  if (BASE !== HOME || fs.existsSync(flag)) return;
+  const win = new BrowserWindow({ show: false });
+  const read = `localStorage.getItem(${JSON.stringify(STORE_KEY)})`;
+  try {
+    await win.loadURL(`${OLD}/manifest.json`);
+    const old = await win.webContents.executeJavaScript(read);
+    let moved = false;
+    if (old) {
+      await win.loadURL(`${HOME}/manifest.json`);
+      if (!(await win.webContents.executeJavaScript(read))) {
+        await win.webContents.executeJavaScript(`localStorage.setItem(${JSON.stringify(STORE_KEY)}, ${JSON.stringify(old)})`);
+        moved = true;
+      }
+    }
+    fs.writeFileSync(flag, JSON.stringify({ at: new Date().toISOString(), from: OLD, moved }));
+  } catch { /* 다음 실행 때 다시 */ }
+  win.destroy();
 }
 
 function openMain(show = true) {
@@ -150,8 +179,10 @@ if (!app.requestSingleInstanceLock()) {
   app.quit();
 } else {
   app.on('second-instance', () => openMain());
-  app.whenReady().then(() => {
+  app.whenReady().then(async () => {
     app.setAppUserModelId('app.gudo.desktop');
+    // 인터넷이 느려도 10초 넘게 기다리지 않는다
+    await Promise.race([moveOldStore(), new Promise(r => setTimeout(r, 10000))]);
     loadConfig();
     buildTray();
     // 작은 창이 있고 「시작할 때 실행」으로 켜졌으면 큰 창은 숨긴 채로 (트레이에서 열기)

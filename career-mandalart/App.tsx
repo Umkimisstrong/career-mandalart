@@ -29,7 +29,8 @@ import CalendarScreen from './src/screens/Calendar';
 import { dateKey, routineItems, toggleKey } from './src/routine';
 import { desktop, WIDGET_ID } from './src/desktop';
 import WidgetApp from './src/screens/Widget';
-import { loadStore, saveStore, STORE_KEY } from './src/storage';
+import { adoptMoved, hasSaved, loadStore, saveStore, STORE_KEY } from './src/storage';
+import { takeMove } from './src/site';
 import { blockThemeFor, BoardProvider, buildBoard, buildTheme, isDark, ThemeProvider } from './src/theme';
 import type { AgeBand } from './src/categories/data';
 
@@ -68,8 +69,21 @@ function App() {
   const onBoard = (plan: Plan, node: ReactNode) => <BoardProvider value={boardOf(plan)}>{node}</BoardProvider>;
 
   useEffect(() => {
-    loadStore().then(s => {
+    // 옛 주소의 「새 주소로 옮기기」로 왔으면(#move=…) 그 데이터를 받는다
+    const moved = Platform.OS === 'web' ? takeMove() : null;
+    Promise.all([loadStore(), hasSaved()]).then(([s, saved]) => {
       loaded.current = true;
+      if (moved) {
+        try {
+          const next = adoptMoved(s, moved, !saved);
+          setStore(next);
+          setNotice({ text: `옛 주소의 목표 ${next.plans.length}개를 옮겨 왔어요. 이제 이 주소를 쓰세요.` });
+        } catch {
+          setStore(s);
+          setNotice({ text: '옮겨 온 데이터를 읽지 못했어요. 옛 주소의 「백업 · 복원」에서 백업 코드를 복사해 여기에 붙여넣어 주세요.', error: true });
+        }
+        return;
+      }
       // 팀 초대장 · 갱신 링크(?team=…)로 열었으면 바로 반영하고 그 목표를 연다
       const code = Platform.OS === 'web' ? new URLSearchParams(location.search).get('team') : null;
       if (code) {

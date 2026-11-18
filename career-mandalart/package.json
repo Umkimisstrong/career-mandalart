@@ -31,6 +31,7 @@
     "web": "expo start --web",
     "typecheck": "tsc --noEmit",
     "build:web": "expo export --platform web && node scripts/pwa.mjs dist",
+    "deploy:web": "npm run build:web && npx wrangler pages deploy dist --project-name gudo --branch main",
     "setup:git": "powershell -ExecutionPolicy Bypass -File scripts/setup-local-git.ps1",
     "deploy:dry": "node scripts/deploy.mjs refs/heads/develop dry-run --dry"
   },
