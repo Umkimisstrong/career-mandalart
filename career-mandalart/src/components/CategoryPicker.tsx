@@ -3,13 +3,14 @@
 //  - 실행 과제 칸        : 2레벨 세부 카테고리 → 3레벨 행동 → 단위(시간 · 장소 · 수량)
 //    블록 카테고리의 세부 카테고리가 기본으로 안내되고, 다른 카테고리 탭으로 바꿀 수 있다.
 //    직접 쓴 행동은 그 카테고리에 추가해 다음에 다시 고를 수 있다 (Store.custom).
+//  - team 이면 매슬로우 대신 균형성과표(BSC) 카테고리 · 핵심 결과 행동, 연령대 · 키워드 근거는 숨긴다.
 import { useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import {
-  AGE_BANDS, AgeBand, CATEGORIES, categoryById, MASLOW, MaslowLevel,
+  AGE_BANDS, AgeBand, CATEGORIES, categoryById, MASLOW, MaslowLevel, Perspective, PERSPECTIVES, TEAM_CATEGORIES, teamCategoryById,
 } from '../categories/data';
 import { rankSubs, subById } from '../categories/tree';
-import { QTY_MAX, QTY_UNITS, UNIT_GROUPS, UnitField } from '../categories/units';
+import { QTY_MAX, QTY_UNITS, TEAM_QTY_UNITS, UNIT_GROUPS, UnitField } from '../categories/units';
 import type { ActionSpec } from '../model';
 import { useTheme } from '../theme';
 import WEIGHTS from '../categories/keywordWeights.json';
@@ -21,6 +22,8 @@ const weightOf = (id: string, age?: AgeBand) =>
 const keywordsOf = (id: string) => (WEIGHTS.keywords as Record<string, string[]>)[id] ?? [];
 
 const LEVELS = Object.keys(MASLOW).map(Number) as MaslowLevel[];
+// 팀: 바탕(학습과 성장)부터 결과(재무)까지 — 개인의 매슬로우 순서와 같은 읽는 방향
+const PERSPECTIVE_ORDER: Perspective[] = ['learning', 'process', 'customer', 'finance'];
 
 export function useChip() {
   const { t } = useTheme();
@@ -33,19 +36,23 @@ export function useChip() {
   };
 }
 
-export function GoalCategoryPicker({ selected, onSelect }: {
+export function GoalCategoryPicker({ selected, onSelect, team }: {
   selected?: string;
   onSelect: (id: string | undefined) => void;
+  team?: boolean; // 팀 목표 — 균형성과표 4관점
 }) {
   const { t, box, text } = useChip();
+  const rows = team
+    ? PERSPECTIVE_ORDER.map(p => ({ key: p, label: PERSPECTIVES[p], cats: TEAM_CATEGORIES.filter(c => c.perspective === p) }))
+    : LEVELS.map(level => ({ key: String(level), label: `${level} ${MASLOW[level].label}`, cats: CATEGORIES.filter(c => c.maslow === level) }));
   return (
     <View style={{ gap: 8 }}>
-      <Text style={[styles.title, { color: t.text }]}>① 목표 카테고리</Text>
-      {LEVELS.map(level => (
-        <View key={level} style={styles.levelRow}>
-          <Text style={[styles.level, { color: t.sub }]}>{level} {MASLOW[level].label}</Text>
+      <Text style={[styles.title, { color: t.text }]}>① {team ? '팀 목표 카테고리 · 균형성과표' : '목표 카테고리'}</Text>
+      {rows.map(row => (
+        <View key={row.key} style={styles.levelRow}>
+          <Text style={[styles.level, { color: t.sub }]}>{row.label}</Text>
           <View style={[styles.wrap, { flex: 1 }]}>
-            {CATEGORIES.filter(c => c.maslow === level).map(c => {
+            {row.cats.map(c => {
               const sel = c.id === selected;
               return (
                 <Pressable key={c.id} onPress={() => onSelect(sel ? undefined : c.id)} style={[styles.chip, box(sel)]}>
@@ -60,8 +67,9 @@ export function GoalCategoryPicker({ selected, onSelect }: {
   );
 }
 
-export function ActionBuilder({ spec, blockCat, typed, age, custom, onAge, onChange, onAddCustom }: {
+export function ActionBuilder({ spec, blockCat, typed, age, custom, onAge, onChange, onAddCustom, team }: {
   spec: ActionSpec;
+  team?: boolean; // 팀 목표 — BSC 카테고리 · 핵심 결과 행동
   blockCat?: string;
   typed: string; // 직접 입력한 행동 (카테고리에 추가 버튼용)
   age?: AgeBand;
@@ -71,19 +79,24 @@ export function ActionBuilder({ spec, blockCat, typed, age, custom, onAge, onCha
   onAddCustom: (catId: string, label: string) => void;
 }) {
   const { t, box, text } = useChip();
-  const catId = spec.cat ?? blockCat ?? CATEGORIES[0].id;
-  const cat = categoryById(catId) ?? CATEGORIES[0];
-  const subs = rankSubs(cat.id, age);
+  // 팀이면 BSC 카테고리 안에서만 (개인 카테고리가 저장돼 있으면 블록 카테고리로)
+  type Pick = { id: string; label: string; emoji: string; desc?: string; ageNotes?: Partial<Record<AgeBand, string>> };
+  const pool: Pick[] = team ? TEAM_CATEGORIES : CATEGORIES;
+  const find = (id?: string): Pick | undefined => (team ? teamCategoryById(id) : categoryById(id));
+  const cat = find(spec.cat) ?? find(blockCat) ?? pool[0];
+  const subs = rankSubs(cat.id, team ? undefined : age);
   const sub = subById(cat.id, spec.sub);
   const mine = custom[cat.id] ?? [];
   const set = (patch: Partial<ActionSpec>) => onChange({ ...spec, ...patch });
 
   // 블록 카테고리를 맨 앞에, 나머지는 사람들이 많이 이야기한 순서로
-  const tabs = [...CATEGORIES].sort((a, b) =>
-    Number(b.id === blockCat) - Number(a.id === blockCat) || weightOf(b.id, age) - weightOf(a.id, age));
-  const words = keywordsOf(cat.id);
+  // (팀은 원래 순서 — BSC 카테고리는 키워드 자산 비율이 없다)
+  const tabs = [...pool].sort((a, b) =>
+    Number(b.id === blockCat) - Number(a.id === blockCat) || (team ? 0 : weightOf(b.id, age) - weightOf(a.id, age)));
+  const words = team ? [] : keywordsOf(cat.id);
   const pct = Math.round(weightOf(cat.id, age));
-  const rec = (ages?: AgeBand[]) => !!age && !!ages?.includes(age);
+  const rec = (ages?: AgeBand[]) => !team && !!age && !!ages?.includes(age);
+  const units = team ? TEAM_QTY_UNITS : QTY_UNITS;
 
   const act = sub?.acts.find(a => a.label === spec.act);
   const pickAct = (label: string, unit?: string) => {
@@ -111,7 +124,8 @@ export function ActionBuilder({ spec, blockCat, typed, age, custom, onAge, onCha
         })}
       </ScrollView>
 
-      <View style={[styles.wrap, { alignItems: 'center' }]}>
+      {team && <Text style={[styles.small, { color: t.sub }]}>💡 {cat.desc ? `${cat.desc} — ` : ''}실행 과제는 숫자로 잴 수 있는 핵심 결과로 (몇 % · 몇 건 · 몇 명 · 언제까지)</Text>}
+      {!team && <View style={[styles.wrap, { alignItems: 'center' }]}>
         <Text style={[styles.small, { color: t.sub }]}>내 연령대</Text>
         {AGE_BANDS.map(a => {
           const sel = a.id === age;
@@ -121,8 +135,8 @@ export function ActionBuilder({ spec, blockCat, typed, age, custom, onAge, onCha
             </Pressable>
           );
         })}
-      </View>
-      {!!age && !!cat.ageNotes?.[age] && <Text style={[styles.small, { color: t.sub }]}>💡 {cat.ageNotes[age]}</Text>}
+      </View>}
+      {!team && !!age && !!cat.ageNotes?.[age] && <Text style={[styles.small, { color: t.sub }]}>💡 {cat.ageNotes[age]}</Text>}
       {words.length > 0 && (
         <Text style={[styles.small, { color: t.sub }]}>
           🔎 {age ? `${AGE_BANDS.find(a => a.id === age)?.label} 글의 ${pct}%` : `목표 이야기의 ${pct}%`}가 이 영역을 언급 · 자주 쓴 말: {words.join(' · ')}
@@ -200,7 +214,7 @@ export function ActionBuilder({ spec, blockCat, typed, age, custom, onAge, onCha
             </View>
             <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ flexGrow: 0 }}
               contentContainerStyle={{ gap: 4 }}>
-              {QTY_UNITS.map(u => (
+              {units.map(u => (
                 <Pressable key={u} onPress={() => set({ qty: spec.qty!.map((x, j) => (j === i ? { ...x, unit: u } : x)) })}
                   style={[styles.ageChip, box(u === q.unit)]}>
                   <Text style={[styles.ageText, text(u === q.unit)]}>{u}</Text>

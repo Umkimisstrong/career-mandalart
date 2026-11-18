@@ -24,6 +24,8 @@ export const UNIT_GROUPS: { id: string; label: string; icon: string; fields: { i
 ];
 
 export const QTY_UNITS = ['회', '일', '시간', '분', '개', '권', '편', '명', '만원', 'km', 'kg', '페이지', '점', '차', '곳', '잔', '보', '곡', '장', '강', '문제'];
+// 팀 목표(OKR 식 핵심 결과)에서 바꿔 고르는 단위
+export const TEAM_QTY_UNITS = ['%', '건', '명', '회', '개', '곳', '만원', '점', '일', '시간'];
 export const QTY_MAX = 3;
 
 // 직접 입력한 날짜 등은 "까지"를 붙여 준다

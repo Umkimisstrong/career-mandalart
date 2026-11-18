@@ -4,7 +4,7 @@ import {
   KeyboardAvoidingView, Modal, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput,
   useWindowDimensions, View,
 } from 'react-native';
-import { AgeBand, catInfo, categoryById } from '../categories/data';
+import { AgeBand, catInfo } from '../categories/data';
 import { guideSub } from '../categories/tree';
 import { composeText } from '../categories/units';
 import BoardCell, { Ink, paintCell } from '../components/BoardCell';
@@ -184,6 +184,7 @@ export default function BlockEditor({
           trackable={cellRole(block, editing) === 'action' || shape === 1}
           cell={getCell(plan, block, editing)}
           blockCat={blockCat}
+          team={!!plan.team}
           guide={guideSub(blockCat, editing, age)?.id}
           age={age}
           custom={custom}
@@ -201,11 +202,12 @@ export default function BlockEditor({
   );
 }
 
-function CellEditor({ role, trackable, cell, blockCat, guide, age, custom, onAge, onAddCustom, onClose, onSave, onRemove, childTitle, onExpand }: {
+function CellEditor({ role, trackable, cell, blockCat, team, guide, age, custom, onAge, onAddCustom, onClose, onSave, onRemove, childTitle, onExpand }: {
   role: keyof typeof ROLE_LABEL;
   trackable: boolean; // 완료 · 반복 점검을 다는 칸
   cell: Cell;
   blockCat?: string;
+  team: boolean; // 팀 목표 — 카테고리 · 추천을 균형성과표로
   guide?: string;
   age?: AgeBand;
   custom: Record<string, string[]>;
@@ -240,8 +242,8 @@ function CellEditor({ role, trackable, cell, blockCat, guide, age, custom, onAge
 
   // 카테고리를 고를 때 제목이 비어 있거나 이전 카테고리 이름 그대로면 새 카테고리 이름으로 채운다
   const selectCat = (id: string | undefined) => {
-    const prev = categoryById(cat)?.label;
-    if (!text.trim() || text === prev) setText(categoryById(id)?.label ?? '');
+    const prev = catInfo(cat)?.label;
+    if (!text.trim() || text === prev) setText(catInfo(id)?.label ?? '');
     setCat(id);
   };
 
@@ -258,11 +260,12 @@ function CellEditor({ role, trackable, cell, blockCat, guide, age, custom, onAge
         <ScrollView style={[styles.sheetScroll, { backgroundColor: t.bg, borderTopLeftRadius: t.radius.card, borderTopRightRadius: t.radius.card }]} contentContainerStyle={styles.sheet} keyboardShouldPersistTaps="handled">
           <Text style={[styles.sheetTitle, { color: t.text }]}>{ROLE_LABEL[role]}</Text>
           {/* 카테고리를 먼저 고르고, 그 아래에서 내용을 입력한다 */}
-          {role !== 'action' && <GoalCategoryPicker selected={cat} onSelect={selectCat} />}
+          {role !== 'action' && <GoalCategoryPicker selected={cat} onSelect={selectCat} team={team} />}
           {role === 'action' && (
             <ActionBuilder
               spec={spec}
               blockCat={blockCat}
+              team={team}
               typed={text === composed ? '' : text}
               age={age}
               custom={custom}
