@@ -88,5 +88,6 @@ npm run deploy:dry      # EAS 호출 없이 배포 파이프라인 점검
 - 환경: Node 26.13, Git · GitHub CLI · Vercel CLI · wrangler(Cloudflare) 로그인. PowerShell 에서는 `vercel.cmd`. 데스크톱 빌드는 `career-mandalart/desktop` 에서 (npm 12 는 electron 바이너리를 `node node_modules/electron/install.js` 로 직접 받음).
 
 ## 다음 할 일 후보
+- **차기 목표(2026-11-18 결정): 구도 = AI 세션 정리함.** 핵심 목표 → 「AI 로 내보내기」(프롬프트 + 사용자가 고른 폴더에 GUDO.md · gudo.json), 본부 = 핵심 목표 · 세부 목표마다 세션 · 실행 과제 세션은 필요할 때만, 진행 현황은 폴더의 구도 형식 JSON → 앱이 가져오기(Windows 는 주기적 동기화 + 날짜별 백업), 팀은 전체를 내보내되 내 블록만. 목표: App Store · Microsoft Store 출시. 설계 `docs/ai-sessions.md`
 - 일정 알림 길 넓히기 — 알림톡 · 메일 (서버 · 유료 발송 필요, `docs/calendar.md`)
 - 실제 휴대폰 점검 (화면 · 알림 · 카메라 QR)
