@@ -14,7 +14,8 @@ export const folderSupported = () => typeof window !== 'undefined' && 'showDirec
 // 고른 폴더. 창을 닫았거나 브라우저가 막으면 오류(이름 · 메시지를 화면에 보여 원인을 알 수 있게)
 export async function pickFolder(): Promise<Folder | null> {
   const pick = (window as unknown as { showDirectoryPicker: (o: object) => Promise<Dir> }).showDirectoryPicker.bind(window);
-  return await pick({ id: 'gudo-ai', mode: 'readwrite' });
+  // 옵션 없이 연다 — 고르는 단계와 「수정 허용」 단계를 나눠서(canWrite), Chrome 이 허용 창 없이 취소로 돌려주는 경우를 피한다
+  return await pick({});
 }
 
 // ---- 목표마다 고른 폴더 기억 (IndexedDB) ----
