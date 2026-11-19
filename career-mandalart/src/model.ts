@@ -73,6 +73,8 @@ export type Plan = {
   parent?: { plan: string; block: number; cell: number };
   // 이 목표만의 블록 테마 (판의 색 · 그림). 없으면 블록 기본 테마 — src/theme.ts blockThemeFor
   blockTheme?: BlockTheme;
+  // AI 로 내보내기 때 지시서에 담는 「내 상황」(직무 · 분야 · 쓸 수 있는 시간 …). 이 기기에만 — QR · 팀 코드에는 없음
+  aiNote?: string;
 };
 
 // 1 · 3 · 5 · 7 · 9칸 버전 — N칸 한 묶음 = 가운데 1 + 둘레 N-1.

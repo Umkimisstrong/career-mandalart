@@ -304,7 +304,15 @@ function App() {
     } else if (route.name === 'ai') {
       const plan = store.plans.find(p => p.id === route.id);
       if (plan) {
-        screen = onBoard(plan, <AiExport plan={plan} onBack={() => setRoute({ name: 'plan', id: plan.id, block: null })} />);
+        screen = onBoard(plan,
+          <AiExport
+            plan={plan}
+            age={store.age}
+            // 지시서용 메모라 수정 시각(목록 순서 · 팀 갱신)은 그대로 둔다
+            onNote={aiNote => updatePlan(plan.id, p => ({ ...p, aiNote: aiNote || undefined }))}
+            onBack={() => setRoute({ name: 'plan', id: plan.id, block: null })}
+          />,
+        );
       }
     } else if (route.name === 'card') {
       const plan = store.plans.find(p => p.id === route.id);

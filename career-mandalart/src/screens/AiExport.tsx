@@ -1,19 +1,20 @@
 // AI 로 내보내기 (1단계) — 목표를 AI 세션의 시작 파일로. 프롬프트 복사 · GUDO.md · gudo.json 받기. 설계 docs/ai-sessions.md
 import { useMemo, useState } from 'react';
-import { Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { aiGuide, aiJson, aiPrompt, buildAiDoc } from '../ai/export';
 import { copyText, saveText } from '../ai/file';
+import type { AgeBand } from '../categories/data';
 import { Tap } from '../components/Motion';
 import { Plan } from '../model';
 import { useTheme } from '../theme';
 
-type Props = { plan: Plan; onBack: () => void };
+type Props = { plan: Plan; age?: AgeBand; onNote: (note: string) => void; onBack: () => void };
 
-export default function AiExport({ plan, onBack }: Props) {
+export default function AiExport({ plan, age, onNote, onBack }: Props) {
   const { t, ui } = useTheme();
   const [note, setNote] = useState('');
   const [show, setShow] = useState(false);
-  const doc = useMemo(() => buildAiDoc(plan), [plan]);
+  const doc = useMemo(() => buildAiDoc(plan, new Date(), age), [plan, age]);
   const guide = useMemo(() => aiGuide(doc), [doc]);
   const prompt = useMemo(() => aiPrompt(doc), [doc]);
   const tasks = doc.goals.reduce((n, g) => n + g.tasks.length, 0);
@@ -47,9 +48,23 @@ export default function AiExport({ plan, onBack }: Props) {
               ? myGoal
                 ? `팀 목표 전체를 맥락으로 담고, AI 에게는 「${myGoal.no}. ${myGoal.text || '내 세부 목표'}」 담당 세션만 만들도록 적어요.`
                 : '보기 전용으로 받은 팀 목표예요. AI 는 세션을 만들지 않고 정리 · 질문만 도와요.'
-              : '핵심 목표가 본부 세션, 세부 목표마다 세션 하나, 실행 과제는 작업이 필요할 때만 세션을 열도록 적어요.'}
+              : '핵심 목표가 본부 세션, 세부 목표마다 세션 하나, 실행 과제는 결과물이 나올 때만 세션을 열고, 빈 세부 목표는 실행 과제 제안부터 하도록 적어요.'}
           </Text>
         </View>
+
+        <Text style={[styles.step, { color: t.text }]}>AI 에게 알려 줄 내 상황 <Text style={[ui.sub, { fontWeight: '400' }]}>(선택)</Text></Text>
+        <TextInput
+          value={plan.aiNote ?? ''}
+          onChangeText={onNote}
+          multiline
+          placeholder={'예: 백엔드 개발 5년 차, 평일 저녁 1시간 · 주말 반나절 가능\n클라우드 자격증과 오픈소스 기여에 관심'}
+          placeholderTextColor={t.sub}
+          accessibilityLabel="AI 에게 알려 줄 내 상황"
+          style={[ui.input, { minHeight: 84, textAlignVertical: 'top' }]}
+        />
+        <Text style={ui.sub}>
+          직무 · 분야 · 쓸 수 있는 시간처럼 계획에 필요한 것을 적으면 AI 가 되묻지 않고 내게 맞춰 세워요.{doc.me.age ? ` 연령대(${doc.me.age})도 함께 담겨요.` : ''} 이 기기에만 저장돼요.
+        </Text>
 
         <Text style={[styles.step, { color: t.text }]}>① 대화형 AI 에 바로 쓰기</Text>
         <Tap style={ui.btnPrimary} onPress={copy}>
