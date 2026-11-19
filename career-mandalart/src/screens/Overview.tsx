@@ -3,6 +3,7 @@ import { Pressable, ScrollView, StyleSheet, Text, TextInput, useWindowDimensions
 import BoardCell, { Ink, paintCell } from '../components/BoardCell';
 import { layoutPlan } from '../components/ShapeLayout';
 import { CENTER, cellRole, cellsIn, getCell, Plan, progress, sizeOf } from '../model';
+import { Tap } from '../components/Motion';
 import { useBoard, useTheme } from '../theme';
 
 type Props = {
@@ -12,6 +13,7 @@ type Props = {
   onOpenBlock: (block: number) => void;
   onQr: () => void;
   onCard: () => void;
+  onAi: () => void; // AI 로 내보내기
   onLook: () => void; // 이 목표의 블록 테마
   onTeam?: () => void; // 팀 목표만
   parentTitle?: string; // 다른 목표의 실행 과제에서 펼친 목표면 그 목표 이름
@@ -20,7 +22,7 @@ type Props = {
   notice?: { text: string; error?: boolean };
 };
 
-export default function Overview({ plan, onBack, onRename, onOpenBlock, onQr, onCard, onLook, onTeam, parentTitle, onParent, notice }: Props) {
+export default function Overview({ plan, onBack, onRename, onOpenBlock, onQr, onCard, onAi, onLook, onTeam, parentTitle, onParent, notice }: Props) {
   const { width } = useWindowDimensions();
   const { t, ui } = useTheme();
   const board = useBoard();
@@ -97,6 +99,11 @@ export default function Overview({ plan, onBack, onRename, onOpenBlock, onQr, on
             {shape === 1 ? `목표 ${pr.done}/${pr.filled} 완료 · 칸을 눌러 적어 보세요` : `실행 과제 ${pr.done}/${pr.filled} 완료 · 블록을 눌러 설계하세요`}
           </Text>
         </View>
+
+        {/* 머리 줄은 휴대폰 너비가 꽉 차서, AI 내보내기는 판 아래에 */}
+        <Tap style={[ui.btn, { width: size }]} onPress={onAi} accessibilityLabel="AI 로 내보내기">
+          <Text style={ui.btnText}>✦ AI 로 내보내기 — 세션으로 진행하기</Text>
+        </Tap>
       </ScrollView>
     </View>
   );

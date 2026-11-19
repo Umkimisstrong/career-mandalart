@@ -17,6 +17,7 @@ import PlanList, { Home } from './src/screens/PlanList';
 import QrScan from './src/screens/QrScan';
 import QrShare from './src/screens/QrShare';
 import CardShare from './src/screens/CardShare';
+import AiExport from './src/screens/AiExport';
 import PlanTheme from './src/screens/PlanTheme';
 import Story from './src/screens/Story';
 import Team from './src/screens/Team';
@@ -46,6 +47,7 @@ type Route =
   | { name: 'calendar' }
   | { name: 'qr'; id: string }
   | { name: 'card'; id: string }
+  | { name: 'ai'; id: string }
   | { name: 'team'; id: string }
   | { name: 'look'; id: string }
   | { name: 'version' }
@@ -299,6 +301,11 @@ function App() {
       if (plan) {
         screen = <QrShare plan={plan} onBack={() => setRoute({ name: 'plan', id: plan.id, block: null })} />;
       }
+    } else if (route.name === 'ai') {
+      const plan = store.plans.find(p => p.id === route.id);
+      if (plan) {
+        screen = onBoard(plan, <AiExport plan={plan} onBack={() => setRoute({ name: 'plan', id: plan.id, block: null })} />);
+      }
     } else if (route.name === 'card') {
       const plan = store.plans.find(p => p.id === route.id);
       if (plan) {
@@ -332,6 +339,7 @@ function App() {
             onOpenBlock={block => { setNotice(undefined); setRoute({ ...route, block }); }}
             onQr={() => setRoute({ name: 'qr', id: plan.id })}
             onCard={() => setRoute({ name: 'card', id: plan.id })}
+            onAi={() => setRoute({ name: 'ai', id: plan.id })}
             onLook={() => setRoute({ name: 'look', id: plan.id })}
             onTeam={plan.team ? () => setRoute({ name: 'team', id: plan.id }) : undefined}
             parentTitle={plan.parent ? store.plans.find(p => p.id === plan.parent!.plan)?.title : undefined}

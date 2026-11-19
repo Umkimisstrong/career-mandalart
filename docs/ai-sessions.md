@@ -1,6 +1,8 @@
 # 차기 목표 — 구도 = AI 세션 정리함 (2026-11-18 초안)
 
-> 상태: **방향 결정 · 설계 초안.** 사용자 결정(2026-11-18)을 정리한 문서. 구현 전 남은 질문은 맨 아래.
+> 상태: **1단계 구현 (2026-11-19)** — 목표 화면 「✦ AI 로 내보내기」: 프롬프트 복사 · `GUDO.md` · `gudo.json` 받기 (`src/ai/export.ts` · `src/screens/AiExport.tsx`). 다음: 2단계 폴더 고르기 · 3단계 현황 가져오기 · 4단계 자동 동기화 · 5단계(팀은 1단계에 포함).
+>
+> `gudo.json` 형식 `gudo-ai/1`: `core` · `goals[]`(no · block · text · category · folder · mine · `tasks[]`), 실행 과제는 `id`("블록-칸") · `text` · `done` · `status`(todo · doing · done · skip) · `note` · `routine`(읽기 전용) · `items` · `updatedAt`. 비어 있는 실행 과제 칸은 넣지 않는다.
 
 ## 1. 왜
 
