@@ -18,6 +18,8 @@ import QrScan from './src/screens/QrScan';
 import QrShare from './src/screens/QrShare';
 import CardShare from './src/screens/CardShare';
 import AiExport from './src/screens/AiExport';
+import { applyAiDoc, reportText } from './src/ai/import';
+import { startAutoSync } from './src/ai/sync';
 import PlanTheme from './src/screens/PlanTheme';
 import Story from './src/screens/Story';
 import Team from './src/screens/Team';
@@ -135,6 +137,19 @@ function App() {
     desktop?.onPage?.(page => page === 'version' && setRoute({ name: 'version' }));
     desktop?.onUnpin(id => setStore(s => s && { ...s, widget: s.widget?.filter(w => w !== id) }));
   }, []);
+
+  // Windows 앱: 연결한 AI 작업 폴더의 진행 현황(gudo.json)을 1분마다 · 창으로 돌아올 때 자동으로 가져온다 (src/ai/sync.ts)
+  const plansRef = useRef<Plan[]>([]);
+  plansRef.current = store?.plans ?? [];
+  const syncing = !!store && !!desktop;
+  useEffect(() => {
+    if (!syncing || WIDGET_ID) return;
+    return startAutoSync(() => plansRef.current, (id, doc, report) => {
+      updatePlan(id, p => ({ ...applyAiDoc(p, doc).plan, updatedAt: Date.now() }));
+      const title = plansRef.current.find(p => p.id === id)?.title ?? '';
+      setNotice({ text: `「${title}」 ${reportText(report)} (AI 작업 폴더에서 자동으로)` });
+    });
+  }, [syncing]);
 
   // 반복 점검이 바뀌면 알림 · 배지를 다시 맞춘다 (자주 바뀌니 잠깐 모았다가)
   useEffect(() => {
@@ -312,6 +327,7 @@ function App() {
             onNote={aiNote => updatePlan(plan.id, p => ({ ...p, aiNote: aiNote || undefined }))}
             // AI 진행 현황 가져오기 · 되돌리기 — 실제 진행이라 수정 시각을 올린다
             onImport={next => updatePlan(plan.id, () => ({ ...next, updatedAt: Date.now() }))}
+            onAuto={on => updatePlan(plan.id, p => ({ ...p, aiAuto: on ? undefined : false }))}
             onBack={() => setRoute({ name: 'plan', id: plan.id, block: null })}
           />,
         );

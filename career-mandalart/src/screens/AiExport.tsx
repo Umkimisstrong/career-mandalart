@@ -3,23 +3,25 @@
 //   다음 단계는 앞 단계를 마쳐야 아래에 나타난다 (미리 보이면 어수선해서 — 사용자 결정 2026-11-19)
 // 폴더 고르기는 Windows 앱에서만 (웹 · 휴대폰은 파일 받기 — 사용자 결정 2026-11-19)
 import { ReactNode, useEffect, useMemo, useState } from 'react';
-import { Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Platform, Pressable, ScrollView, StyleSheet, Switch, Text, TextInput, View } from 'react-native';
 import { aiGuide, aiJson, aiPrompt, buildAiDoc } from '../ai/export';
 import { copyText, saveText } from '../ai/file';
 import { backupBeforeImport, canWrite, Folder, folderSupported, forgetFolder, pickFolder, readProgress, rememberFolder, savedFolder, writeWorkspace } from '../ai/folder';
 import { applyAiDoc, parseAiDoc, reportText } from '../ai/import';
+import { useSyncState } from '../ai/sync';
 import type { AgeBand } from '../categories/data';
 import { Appear, Tap } from '../components/Motion';
 import { desktop } from '../desktop';
 import { Plan } from '../model';
 import { useTheme } from '../theme';
 
-type Props = { plan: Plan; age?: AgeBand; onNote: (note: string) => void; onImport: (next: Plan) => void; onBack: () => void };
+type Props = { plan: Plan; age?: AgeBand; onNote: (note: string) => void; onImport: (next: Plan) => void; onAuto: (on: boolean) => void; onBack: () => void };
 type Way = 'chat' | 'folder';
 
 const START = 'GUDO.md 를 읽고 시작해 줘';
 
-export default function AiExport({ plan, age, onNote, onImport, onBack }: Props) {
+export default function AiExport({ plan, age, onNote, onImport, onAuto, onBack }: Props) {
+  const sync = useSyncState(plan.id);
   const { t, ui } = useTheme();
   const [note, setNote] = useState('');
   const [show, setShow] = useState(false);
@@ -255,6 +257,24 @@ export default function AiExport({ plan, age, onNote, onImport, onBack }: Props)
                 <Tap style={ui.btnPrimary} onPress={importFolder} accessibilityLabel="폴더에서 현황 가져오기">
                   <Text style={ui.btnPrimaryText}>{busy ? '가져오는 중…' : '폴더에서 현황 가져오기'}</Text>
                 </Tap>
+                {/* 4단계: 자동 동기화 */}
+                <View style={[styles.folder, { backgroundColor: t.surface, borderColor: t.border }]}>
+                  <View style={{ flex: 1, gap: 2 }}>
+                    <Text style={[styles.p, { color: t.text }]}>자동으로 가져오기</Text>
+                    <Text style={ui.sub}>
+                      {plan.aiAuto === false
+                        ? '꺼짐 — 버튼을 누를 때만 가져와요.'
+                        : !folder
+                          ? '폴더를 연결하면 1분마다 · 창을 열 때 자동으로 가져와요.'
+                          : sync?.error
+                            ? sync.error
+                            : sync
+                              ? `1분마다 확인 · 마지막 ${new Date(sync.at).toTimeString().slice(0, 5)}${sync.changed ? ` · 칸 ${sync.changed}개 반영` : ' · 바뀐 것 없음'}`
+                              : '1분마다 · 창을 열 때 확인해요.'}
+                    </Text>
+                  </View>
+                  <Switch value={plan.aiAuto !== false} onValueChange={onAuto} accessibilityLabel="자동으로 가져오기" />
+                </View>
               </>
             ) : (
               <>

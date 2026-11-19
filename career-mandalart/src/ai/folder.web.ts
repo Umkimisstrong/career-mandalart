@@ -106,3 +106,16 @@ export async function backupBeforeImport(dir: Folder, appPlan: unknown, incoming
   await writeText(b, name, JSON.stringify({ savedAt: now.toISOString(), app: appPlan, received }, null, 2));
   return `.gudo/backups/${name}`;
 }
+
+// ---- 4단계: 자동 동기화 ----
+
+// 묻지 않고 쓰기 권한만 확인 (자동으로 돌 때는 허락 창을 띄울 수 없다)
+export async function hasWrite(dir: Folder): Promise<boolean> {
+  if (!dir.queryPermission) return true;
+  try { return (await dir.queryPermission({ mode: 'readwrite' })) === 'granted'; } catch { return false; }
+}
+
+// gudo.json 마지막 수정 시각 — 바뀌지 않았으면 읽지 않는다 (없으면 null)
+export async function progressStamp(dir: Folder): Promise<number | null> {
+  try { return (await (await dir.getFileHandle('gudo.json')).getFile()).lastModified; } catch { return null; }
+}

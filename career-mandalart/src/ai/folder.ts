@@ -15,3 +15,5 @@ export async function writeWorkspace(_dir: Folder, _doc: AiDoc): Promise<WriteRe
 }
 export async function readProgress(_dir: Folder): Promise<string | null> { return null; }
 export async function backupBeforeImport(_dir: Folder, _appPlan: unknown, _incoming: string): Promise<string> { return ''; }
+export async function hasWrite(_dir: Folder): Promise<boolean> { return false; }
+export async function progressStamp(_dir: Folder): Promise<number | null> { return null; }

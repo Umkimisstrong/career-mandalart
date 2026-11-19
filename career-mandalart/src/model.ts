@@ -77,6 +77,8 @@ export type Plan = {
   blockTheme?: BlockTheme;
   // AI 로 내보내기 때 지시서에 담는 「내 상황」(직무 · 분야 · 쓸 수 있는 시간 …). 이 기기에만 — QR · 팀 코드에는 없음
   aiNote?: string;
+  // Windows 앱: 연결한 AI 작업 폴더에서 진행 현황을 자동으로 가져올지 (false = 끔, 없으면 켬) — src/ai/sync.ts
+  aiAuto?: boolean;
 };
 
 // 1 · 3 · 5 · 7 · 9칸 버전 — N칸 한 묶음 = 가운데 1 + 둘레 N-1.
