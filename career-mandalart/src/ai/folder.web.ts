@@ -87,3 +87,22 @@ export async function writeWorkspace(dir: Folder, doc: AiDoc): Promise<WriteResu
   }
   return { written, kept };
 }
+
+// ---- 3단계: 현황 가져오기 ----
+
+// 폴더의 gudo.json 읽기 (없으면 null)
+export async function readProgress(dir: Folder): Promise<string | null> {
+  return readText(dir, 'gudo.json');
+}
+
+const pad = (n: number) => String(n).padStart(2, '0');
+// 가져오기 전 백업 — 폴더/.gudo/backups/YYYY-MM-DD-HHMMSS.json 에 「가져오기 전 앱의 목표」와 「받은 gudo.json」을 함께
+export async function backupBeforeImport(dir: Folder, appPlan: unknown, incoming: string, now = new Date()): Promise<string> {
+  const g = await dir.getDirectoryHandle('.gudo', { create: true });
+  const b = await g.getDirectoryHandle('backups', { create: true });
+  const name = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}-${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}.json`;
+  let received: unknown = incoming;
+  try { received = JSON.parse(incoming); } catch { /* 글 그대로 */ }
+  await writeText(b, name, JSON.stringify({ savedAt: now.toISOString(), app: appPlan, received }, null, 2));
+  return `.gudo/backups/${name}`;
+}

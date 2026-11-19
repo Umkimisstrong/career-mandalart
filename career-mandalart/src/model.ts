@@ -28,6 +28,8 @@ export type Cell = {
   items?: SubItem[];
   // 실행 과제 칸: 이 과제를 핵심 목표로 펼친 새 목표의 id
   child?: string;
+  // 실행 과제 칸: AI 세션이 gudo.json 에 남긴 진행 상태 (AI 로 내보내기 3단계 「현황 가져오기」, src/ai/import.ts). QR · 팀 코드에는 없음
+  ai?: { status: 'todo' | 'doing' | 'done' | 'skip'; note?: string; at: string };
 };
 
 export type SubItem = { text: string; done: boolean };

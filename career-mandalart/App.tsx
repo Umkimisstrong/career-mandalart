@@ -310,6 +310,8 @@ function App() {
             age={store.age}
             // 지시서용 메모라 수정 시각(목록 순서 · 팀 갱신)은 그대로 둔다
             onNote={aiNote => updatePlan(plan.id, p => ({ ...p, aiNote: aiNote || undefined }))}
+            // AI 진행 현황 가져오기 · 되돌리기 — 실제 진행이라 수정 시각을 올린다
+            onImport={next => updatePlan(plan.id, () => ({ ...next, updatedAt: Date.now() }))}
             onBack={() => setRoute({ name: 'plan', id: plan.id, block: null })}
           />,
         );

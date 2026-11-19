@@ -259,6 +259,12 @@ function CellEditor({ role, trackable, cell, blockCat, team, guide, age, custom,
         <Appear kind="sheet" style={styles.sheetWrap}>
         <ScrollView style={[styles.sheetScroll, { backgroundColor: t.bg, borderTopLeftRadius: t.radius.card, borderTopRightRadius: t.radius.card }]} contentContainerStyle={styles.sheet} keyboardShouldPersistTaps="handled">
           <Text style={[styles.sheetTitle, { color: t.text }]}>{ROLE_LABEL[role]}</Text>
+          {/* AI 세션이 남긴 진행 상태 (AI 로 내보내기 → 진행 현황 가져오기) */}
+          {!!cell.ai && (
+            <Text style={{ color: t.sub, fontSize: 13, lineHeight: 19 }}>
+              ✦ AI {AI_STATUS[cell.ai.status]} · {cell.ai.at.slice(0, 10)}{cell.ai.note ? ` — ${cell.ai.note}` : ''}
+            </Text>
+          )}
           {/* 카테고리를 먼저 고르고, 그 아래에서 내용을 입력한다 */}
           {role !== 'action' && <GoalCategoryPicker selected={cat} onSelect={selectCat} team={team} />}
           {role === 'action' && (
@@ -363,6 +369,8 @@ function CellEditor({ role, trackable, cell, blockCat, team, guide, age, custom,
     </Modal>
   );
 }
+
+const AI_STATUS = { todo: '할 일', doing: '진행 중', done: '완료', skip: '건너뜀' } as const;
 
 const styles = StyleSheet.create({
   sub: { position: 'absolute', right: 6, top: 4, fontSize: 10, fontWeight: '700' },

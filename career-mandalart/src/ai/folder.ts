@@ -13,3 +13,5 @@ export async function canWrite(_dir: Folder): Promise<boolean> { return false; }
 export async function writeWorkspace(_dir: Folder, _doc: AiDoc): Promise<WriteResult> {
   throw new Error('이 기기에서는 폴더를 고를 수 없어요. 파일 받기를 써 주세요.');
 }
+export async function readProgress(_dir: Folder): Promise<string | null> { return null; }
+export async function backupBeforeImport(_dir: Folder, _appPlan: unknown, _incoming: string): Promise<string> { return ''; }

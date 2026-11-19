@@ -6,19 +6,20 @@ import { ReactNode, useEffect, useMemo, useState } from 'react';
 import { Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { aiGuide, aiJson, aiPrompt, buildAiDoc } from '../ai/export';
 import { copyText, saveText } from '../ai/file';
-import { canWrite, Folder, folderSupported, forgetFolder, pickFolder, rememberFolder, savedFolder, writeWorkspace } from '../ai/folder';
+import { backupBeforeImport, canWrite, Folder, folderSupported, forgetFolder, pickFolder, readProgress, rememberFolder, savedFolder, writeWorkspace } from '../ai/folder';
+import { applyAiDoc, parseAiDoc, reportText } from '../ai/import';
 import type { AgeBand } from '../categories/data';
 import { Appear, Tap } from '../components/Motion';
 import { desktop } from '../desktop';
 import { Plan } from '../model';
 import { useTheme } from '../theme';
 
-type Props = { plan: Plan; age?: AgeBand; onNote: (note: string) => void; onBack: () => void };
+type Props = { plan: Plan; age?: AgeBand; onNote: (note: string) => void; onImport: (next: Plan) => void; onBack: () => void };
 type Way = 'chat' | 'folder';
 
 const START = 'GUDO.md 를 읽고 시작해 줘';
 
-export default function AiExport({ plan, age, onNote, onBack }: Props) {
+export default function AiExport({ plan, age, onNote, onImport, onBack }: Props) {
   const { t, ui } = useTheme();
   const [note, setNote] = useState('');
   const [show, setShow] = useState(false);
@@ -67,6 +68,36 @@ export default function AiExport({ plan, age, onNote, onBack }: Props) {
       setNote(err.name === 'AbortError' ? '폴더를 고르지 않았어요. 다시 눌러 폴더 안으로 들어가 「폴더 선택」을 눌러 주세요.' : `폴더를 열지 못했어요 (${err.name}: ${err.message}).`);
     }
   };
+  // ---- 4. 진행 현황 가져오기 (3단계) ----
+  const [pasted, setPasted] = useState('');
+  const [undo, setUndo] = useState<Plan | null>(null);
+  const take = (text: string, backup?: string) => {
+    const { plan: next, report } = applyAiDoc(plan, parseAiDoc(text));
+    if (report.changed) { setUndo(plan); onImport(next); }
+    setNote(reportText(report) + (backup ? ` · 가져오기 전 상태를 ${backup} 에 백업했어요` : ''));
+  };
+  const importFolder = async () => {
+    if (!folder) { setNote('먼저 위 1번에서 폴더를 고르세요.'); return; }
+    if (busy) return;
+    setBusy(true);
+    try {
+      if (!(await canWrite(folder))) { setNote('폴더에 쓸 권한을 받지 못했어요. 다시 눌러 허락해 주세요.'); return; }
+      const text = await readProgress(folder);
+      if (text === null) { setNote(`「${folder.name}」 폴더에 gudo.json 이 없어요. 1번에서 시작 파일을 먼저 만드세요.`); return; }
+      parseAiDoc(text); // 형식이 맞는지 먼저 — 깨진 파일은 백업도 하지 않는다
+      const backup = await backupBeforeImport(folder, plan, text);
+      take(text, backup);
+    } catch (e) {
+      setNote((e as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  };
+  const importPasted = () => {
+    try { take(pasted); setPasted(''); } catch (e) { setNote((e as Error).message); }
+  };
+  const revert = () => { if (undo) { onImport(undo); setUndo(null); setNote('가져오기 전으로 되돌렸어요.'); } };
+
   const unlink = async () => { await forgetFolder(plan.id); setFolder(null); setNote('이 목표와 폴더의 연결을 끊었어요. 폴더 안 파일은 그대로예요.'); };
 
   const copy = async (text: string, done: string) => {
@@ -116,7 +147,7 @@ export default function AiExport({ plan, age, onNote, onBack }: Props) {
       </Tap>),
     todo(2, 'Claude · ChatGPT · Gemini 에서 새 대화를 열고 붙여넣으세요.'),
     todo(3, 'AI 가 목표 요약과 세션 계획을 보여 주면, 읽어 보고 「승인」하거나 고칠 점을 답하세요.'),
-    todo(4, '진행하면서 AI 가 돌려주는 gudo.json(진행 현황)은 보관해 두세요. 구도로 가져오기는 다음 업데이트에서 열려요.'),
+    todo(4, '진행하면서 AI 가 돌려주는 gudo.json(진행 현황)을 아래 4번에 붙여넣으면 구도 칸에 완료 · 진행 중이 반영돼요.'),
   ];
   const folderTodos = folders ? [
     todo(1, folder ? `연결된 폴더 「${folder.name}」 에 시작 파일을 만들거나, 다른 폴더를 고르세요.` : '진행을 관리할 폴더를 고르세요. GUDO.md · gudo.json · 세부 목표 폴더가 바로 만들어져요.',
@@ -211,6 +242,34 @@ export default function AiExport({ plan, age, onNote, onBack }: Props) {
           <Appear key={way} style={{ gap: 12 }}>
             {head('3', '다음에 할 일', false)}
             {way === 'chat' ? chatTodos : folderTodos}
+          </Appear>
+        )}
+
+        {/* 4. 진행 현황 가져오기 — AI 가 고친 gudo.json 을 구도에 반영 */}
+        {step2 && (
+          <Appear key={`in-${way}`} style={{ gap: 10 }}>
+            {head('4', '진행 현황 가져오기', false, '진행한 뒤에')}
+            {way === 'folder' && folders ? (
+              <>
+                <Text style={[styles.p, { color: t.text }]}>AI 가 폴더의 gudo.json 에 기록한 진행(완료 · 진행 중 · 메모)을 구도 칸에 반영해요. 가져올 때마다 폴더의 .gudo/backups 에 날짜별로 백업해요.</Text>
+                <Tap style={ui.btnPrimary} onPress={importFolder} accessibilityLabel="폴더에서 현황 가져오기">
+                  <Text style={ui.btnPrimaryText}>{busy ? '가져오는 중…' : '폴더에서 현황 가져오기'}</Text>
+                </Tap>
+              </>
+            ) : (
+              <>
+                <Text style={[styles.p, { color: t.text }]}>AI 가 돌려준 gudo.json(또는 그 답 전체)을 붙여넣으면 완료 · 진행 중 · 메모를 구도 칸에 반영해요.</Text>
+                <TextInput value={pasted} onChangeText={setPasted} multiline placeholder="AI 가 돌려준 gudo.json 붙여넣기" placeholderTextColor={t.sub}
+                  accessibilityLabel="gudo.json 붙여넣기" style={[ui.input, { minHeight: 72, textAlignVertical: 'top' }]} />
+                <Tap style={ui.btnPrimary} onPress={importPasted} accessibilityLabel="붙여넣은 현황 가져오기">
+                  <Text style={ui.btnPrimaryText}>붙여넣은 현황 가져오기</Text>
+                </Tap>
+              </>
+            )}
+            <Text style={ui.sub}>AI 가 손댄 실행 과제만 반영하고, 앱에서 문장을 바꾼 칸과 내 메모는 건드리지 않아요.</Text>
+            {undo && (
+              <Pressable onPress={revert} accessibilityLabel="가져오기 되돌리기"><Text style={[ui.back, { paddingVertical: 4 }]}>↶ 방금 가져온 것 되돌리기</Text></Pressable>
+            )}
           </Appear>
         )}
 
