@@ -47,7 +47,10 @@ export default function AiExport({ plan, age, onNote, onBack }: Props) {
     // 고르지 않았거나 브라우저가 폴더 창을 막으면(앱 안 미리보기 창 등) 조용히 끝나지 않게 알린다
     try {
       const dir = await pickFolder();
-      if (!dir) { setNote('폴더를 받지 못했어요. 선택을 취소했거나 이 브라우저가 폴더 접근을 막은 거예요 — Windows 앱이나 Chrome · Edge 에서 해 보세요.'); return; }
+      if (!dir) {
+        setNote('폴더를 받지 못했어요. 폴더를 고른 뒤 뜨는 「사이트에서 파일을 보도록 · 수정하도록 허용」 창에서 둘 다 「허용」을 눌러야 해요. 바탕화면 · 문서 · 사용자 폴더 자체는 브라우저가 막으니 그 안에 만든 새 폴더를 고르세요.');
+        return;
+      }
       await writeTo(dir);
     } catch (e) {
       setNote(`폴더를 열지 못했어요: ${(e as Error).message} — Windows 앱이나 Chrome · Edge 에서 해 보세요.`);
