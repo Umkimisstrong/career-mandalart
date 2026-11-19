@@ -1,5 +1,6 @@
 // AI 로 내보내기 — 단계마다 사용자가 다음에 할 일을 안내한다. 설계 docs/ai-sessions.md
 //   1. AI 에게 알려 줄 내 상황 (필수) → 2. 방법 고르기 (대화형 AI · 폴더에서 세션) → 3. 다음에 할 일 (버튼이 그 자리에)
+//   다음 단계는 앞 단계를 마쳐야 아래에 나타난다 (미리 보이면 어수선해서 — 사용자 결정 2026-11-19)
 // 폴더 고르기는 Windows 앱에서만 (웹 · 휴대폰은 파일 받기 — 사용자 결정 2026-11-19)
 import { ReactNode, useEffect, useMemo, useState } from 'react';
 import { Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
@@ -7,7 +8,7 @@ import { aiGuide, aiJson, aiPrompt, buildAiDoc } from '../ai/export';
 import { copyText, saveText } from '../ai/file';
 import { canWrite, Folder, folderSupported, forgetFolder, pickFolder, rememberFolder, savedFolder, writeWorkspace } from '../ai/folder';
 import type { AgeBand } from '../categories/data';
-import { Tap } from '../components/Motion';
+import { Appear, Tap } from '../components/Motion';
 import { desktop } from '../desktop';
 import { Plan } from '../model';
 import { useTheme } from '../theme';
@@ -34,7 +35,9 @@ export default function AiExport({ plan, age, onNote, onBack }: Props) {
   const [busy, setBusy] = useState(false);
   useEffect(() => { if (folders) savedFolder(plan.id).then(setFolder); }, [plan.id]);
 
-  const step1 = !!plan.aiNote?.trim();
+  // 내 상황은 「다음」을 눌러야 마친 것으로 (적는 도중에 다음 단계가 튀어나오지 않게). 이미 적어 둔 목표는 바로 열린 채로
+  const [opened, setOpened] = useState(!!plan.aiNote?.trim());
+  const step1 = opened && !!plan.aiNote?.trim();
   const step2 = step1 && way !== null;
 
   // 폴더에 시작 파일 만들기 — 고른 폴더는 이 목표에 기억해 다음에 같은 곳에 다시 쓴다
@@ -76,7 +79,6 @@ export default function AiExport({ plan, age, onNote, onBack }: Props) {
   };
 
   // ---- 그리기 도우미 ----
-  const lock = (on: boolean) => (on ? null : { opacity: 0.35, pointerEvents: 'none' as const });
   const head = (n: string, label: string, done: boolean, hint?: string) => (
     <View style={styles.stepRow}>
       <View style={[styles.stepNum, { backgroundColor: done ? t.primary : t.surface, borderColor: done ? t.primary : t.border }]}>
@@ -186,30 +188,40 @@ export default function AiExport({ plan, age, onNote, onBack }: Props) {
         <Text style={ui.sub}>
           직무 · 분야 / 경력 / 가진 · 따고 싶은 자격증 / 주당 쓸 수 있는 시간 / 10년 후 되고 싶은 모습 — 이 다섯 가지를 적으면 AI 가 되묻지 않고 내게 맞춰 계획을 세워요.{doc.me.age ? ` 연령대(${doc.me.age})도 함께 담겨요.` : ''} 이 기기에만 저장돼요.
         </Text>
-        {!step1 && <Text style={[ui.sub, { color: t.primary, fontWeight: '700' }]}>먼저 내 상황을 적어 주세요. 적으면 다음 단계가 열려요.</Text>}
+        {!step1 && (
+          <Tap style={ui.btnPrimary} accessibilityLabel="다음"
+            onPress={() => (plan.aiNote?.trim() ? (setOpened(true), setNote('')) : setNote('먼저 내 상황을 적어 주세요.'))}>
+            <Text style={ui.btnPrimaryText}>다음</Text>
+          </Tap>
+        )}
 
-        {/* 2. 방법 고르기 */}
-        <View style={[{ gap: 10 }, lock(step1)]}>
-          {head('2', '방법 고르기', step2)}
-          <View style={styles.row}>
-            {card('chat', '💬 대화형 AI', '프롬프트를 복사해 Claude · ChatGPT · Gemini 대화창에 붙여넣기')}
-            {card('folder', '📁 폴더에서 세션', folders ? '폴더를 고르면 시작 파일을 만들고, 그 폴더에서 AI 도구로 진행' : '시작 파일을 받아 폴더에 넣고, 그 폴더에서 AI 도구로 진행')}
-          </View>
-        </View>
+        {/* 2. 방법 고르기 — 내 상황을 마치면 나타난다 */}
+        {step1 && (
+          <Appear style={{ gap: 10 }}>
+            {head('2', '방법 고르기', step2)}
+            <View style={styles.row}>
+              {card('chat', '💬 대화형 AI', '프롬프트를 복사해 Claude · ChatGPT · Gemini 대화창에 붙여넣기')}
+              {card('folder', '📁 폴더에서 세션', folders ? '폴더를 고르면 시작 파일을 만들고, 그 폴더에서 AI 도구로 진행' : '시작 파일을 받아 폴더에 넣고, 그 폴더에서 AI 도구로 진행')}
+            </View>
+          </Appear>
+        )}
 
-        {/* 3. 다음에 할 일 */}
-        <View style={[{ gap: 12 }, lock(step2)]}>
-          {head('3', '다음에 할 일', false, way ? undefined : '방법을 고르면 보여요')}
-          {way === 'chat' && chatTodos}
-          {way === 'folder' && folderTodos}
-        </View>
+        {/* 3. 다음에 할 일 — 방법을 고르면 나타난다 (바꾸면 다시) */}
+        {step2 && (
+          <Appear key={way} style={{ gap: 12 }}>
+            {head('3', '다음에 할 일', false)}
+            {way === 'chat' ? chatTodos : folderTodos}
+          </Appear>
+        )}
 
         {!!note && <Text style={[ui.sub, { color: t.primary, fontWeight: '700' }]}>{note}</Text>}
 
-        <Pressable onPress={() => setShow(!show)} accessibilityLabel="프롬프트 보기">
-          <Text style={[ui.back, { paddingVertical: 4 }]}>{show ? '▾ 프롬프트 접기' : '▸ 프롬프트 보기'}</Text>
-        </Pressable>
-        {show && (
+        {step1 && (
+          <Pressable onPress={() => setShow(!show)} accessibilityLabel="프롬프트 보기">
+            <Text style={[ui.back, { paddingVertical: 4 }]}>{show ? '▾ 프롬프트 접기' : '▸ 프롬프트 보기'}</Text>
+          </Pressable>
+        )}
+        {step1 && show && (
           <View style={[styles.pre, { backgroundColor: t.surface, borderColor: t.border }]}>
             <Text selectable style={[styles.mono, { color: t.text }]}>{prompt}</Text>
           </View>
