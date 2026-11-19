@@ -57,13 +57,13 @@ export default function AiExport({ plan, age, onNote, onBack }: Props) {
           value={plan.aiNote ?? ''}
           onChangeText={onNote}
           multiline
-          placeholder={'예: 백엔드 개발 5년 차, 평일 저녁 1시간 · 주말 반나절 가능\n클라우드 자격증과 오픈소스 기여에 관심'}
+          placeholder={'예: 백엔드 개발, 5년 차, 정보처리기사 있음 · AWS 준비 중, 주 5시간, 클라우드 아키텍트'}
           placeholderTextColor={t.sub}
           accessibilityLabel="AI 에게 알려 줄 내 상황"
           style={[ui.input, { minHeight: 84, textAlignVertical: 'top' }]}
         />
         <Text style={ui.sub}>
-          직무 · 분야 · 쓸 수 있는 시간처럼 계획에 필요한 것을 적으면 AI 가 되묻지 않고 내게 맞춰 세워요.{doc.me.age ? ` 연령대(${doc.me.age})도 함께 담겨요.` : ''} 이 기기에만 저장돼요.
+          직무 · 분야 / 경력 / 가진 · 따고 싶은 자격증 / 주당 쓸 수 있는 시간 / 10년 후 되고 싶은 모습 — 이 다섯 가지를 적으면 AI 가 되묻지 않고 내게 맞춰 세워요.{doc.me.age ? ` 연령대(${doc.me.age})도 함께 담겨요.` : ''} 이 기기에만 저장돼요.
         </Text>
 
         <Text style={[styles.step, { color: t.text }]}>① 대화형 AI 에 바로 쓰기</Text>
