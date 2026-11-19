@@ -1,6 +1,8 @@
 # 차기 목표 — 구도 = AI 세션 정리함 (2026-11-18 초안)
 
-> 상태: **1단계 구현 (2026-11-19)** — 목표 화면 「✦ AI 로 내보내기」: 프롬프트 복사 · `GUDO.md` · `gudo.json` 받기 (`src/ai/export.ts` · `src/screens/AiExport.tsx`). 다음: 2단계 폴더 고르기 · 3단계 현황 가져오기 · 4단계 자동 동기화 · 5단계(팀은 1단계에 포함).
+> 상태: **2단계 구현 (2026-11-19)** — 「📁 폴더 고르기」로 폴더에 시작 파일 · 세부 목표 폴더를 바로 만든다(`src/ai/folder.web.ts`, 파일 시스템 접근 API: Windows 앱 · PC Chrome · Edge). 고른 폴더는 목표마다 IndexedDB 에 기억, `gudo.json` · `README.md` 는 있으면 그대로(진행 기록 보호), `GUDO.md` 만 새로. 다른 목표의 `gudo.json` 이 있는 폴더는 막는다. 1단계 보강: 「나에 대해」(`Plan.aiNote` · 연령대), 결과물 과제만 세션, 빈 세부 목표는 제안 3~8개, 진행 순서 — Gemini · ChatGPT 에서 같은 동작 확인.
+>
+> 1단계 (2026-11-19) — 목표 화면 「✦ AI 로 내보내기」: 프롬프트 복사 · `GUDO.md` · `gudo.json` 받기 (`src/ai/export.ts` · `src/screens/AiExport.tsx`). 다음: 2단계 폴더 고르기 · 3단계 현황 가져오기 · 4단계 자동 동기화 · 5단계(팀은 1단계에 포함).
 >
 > `gudo.json` 형식 `gudo-ai/1`: `core` · `goals[]`(no · block · text · category · folder · mine · `tasks[]`), 실행 과제는 `id`("블록-칸") · `text` · `done` · `status`(todo · doing · done · skip) · `note` · `routine`(읽기 전용) · `items` · `updatedAt`. 비어 있는 실행 과제 칸은 넣지 않는다.
 

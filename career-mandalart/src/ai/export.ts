@@ -178,3 +178,26 @@ export function aiPrompt(doc: AiDoc): string {
     '```',
   ].join('\n');
 }
+
+// 세부 목표 폴더의 처음 README — 세션이 인수인계를 채워 간다. 이미 있으면 앱이 덮어쓰지 않는다
+export function aiReadme(doc: AiDoc, g: AiGoal): string {
+  const lines = [
+    `# ${g.no}. ${g.text || `세부 목표 ${g.no}`}`,
+    '',
+    `구도 「${doc.title}」 · 핵심 목표 「${doc.core.text || '비어 있음'}」 의 세부 목표 세션 작업 공간입니다. 규칙은 상위 폴더의 \`GUDO.md\`.`,
+    '',
+    '## 실행 과제',
+    '',
+    ...(g.tasks.length ? g.tasks.map(t => `- ${check(t.done)} \`${t.id}\` ${t.text}`) : ['- (아직 없음 — 아래 「제안」부터)']),
+    '',
+    '## 한 일',
+    '',
+    '## 남은 일',
+    '',
+    '## 다음 사람이 알아야 할 것',
+    '',
+    '## 제안 (구도 앱에 옮겨 적으면 실행 과제가 됨)',
+    '',
+  ];
+  return lines.join('\n');
+}
