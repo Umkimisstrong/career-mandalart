@@ -44,7 +44,14 @@ export default function AiExport({ plan, age, onNote, onBack }: Props) {
     }
   };
   const choose = async () => {
-    try { await writeTo(await pickFolder()); } catch (e) { setNote((e as Error).message); }
+    // 고르지 않았거나 브라우저가 폴더 창을 막으면(앱 안 미리보기 창 등) 조용히 끝나지 않게 알린다
+    try {
+      const dir = await pickFolder();
+      if (!dir) { setNote('폴더를 받지 못했어요. 선택을 취소했거나 이 브라우저가 폴더 접근을 막은 거예요 — Windows 앱이나 Chrome · Edge 에서 해 보세요.'); return; }
+      await writeTo(dir);
+    } catch (e) {
+      setNote(`폴더를 열지 못했어요: ${(e as Error).message} — Windows 앱이나 Chrome · Edge 에서 해 보세요.`);
+    }
   };
   const unlink = async () => { await forgetFolder(plan.id); setFolder(null); setNote('이 목표와 폴더의 연결을 끊었어요. 폴더 안 파일은 그대로예요.'); };
 
