@@ -143,10 +143,13 @@ function buildTray() {
     { label: '구도 열기', click: () => openMain() },
     { label: '작은 창 모두 앞으로', click: () => widgets.forEach(w => w.showInactive()) },
     { type: 'separator' },
-    { label: 'Windows 시작할 때 실행', type: 'checkbox', checked: login(), click: m => {
-      app.setLoginItemSettings({ openAtLogin: m.checked, args: ['--hidden'] });
-    } },
-    { type: 'separator' },
+    // Microsoft Store 판(MSIX)은 시작 프로그램을 앱이 직접 바꿀 수 없다 (Windows 설정 › 시작 앱에서)
+    ...(process.windowsStore ? [] : [
+      { label: 'Windows 시작할 때 실행', type: 'checkbox', checked: login(), click: m => {
+        app.setLoginItemSettings({ openAtLogin: m.checked, args: ['--hidden'] });
+      } },
+      { type: 'separator' },
+    ]),
     { label: `버전 · 업데이트 (v${app.getVersion()})`, click: () => { openMain(); main.webContents.send('gudo:page', 'version'); } },
     { type: 'separator' },
     { label: '종료', click: () => { quitting = true; app.quit(); } },

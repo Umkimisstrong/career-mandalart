@@ -2,7 +2,7 @@
 // 앱 아이콘 만들기 — 「북극성 격자」: 남색 밤하늘에 3×3 판, 가운데 금빛 칸에 북극성.
 // 색은 북극성 테마(src/theme.ts northstar)와 같다. 바깥 라이브러리 없이 node 만으로 PNG 를 그린다 (4×4 슈퍼샘플링).
 //   node scripts/make-icons.mjs   → assets/*.png · desktop/icon.png 를 다시 만든다
-import { writeFileSync } from 'node:fs';
+import { mkdirSync, writeFileSync } from 'node:fs';
 import { deflateSync } from 'node:zlib';
 
 const NAVY = [0x0B, 0x10, 0x26];
@@ -53,16 +53,20 @@ function sample(px, py, { bg, scale = 1, mono = false, plain = false }) {
   return null;
 }
 
-function render(size, opts) {
+// w × h 그림. 가로로 긴 그림(스토어 넓은 타일)은 높이 h 만큼의 정사각 아이콘을 가운데에 두고 양옆은 바탕으로 채운다
+function render(size, opts, h = size) {
+  const w = size, side = Math.min(w, h), ox = (w - side) / 2, oy = (h - side) / 2;
   const SS = 4;
-  const out = Buffer.alloc(size * size * 4);
-  for (let y = 0; y < size; y++) for (let x = 0; x < size; x++) {
+  const out = Buffer.alloc(w * h * 4);
+  for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
     let r = 0, g = 0, b = 0, a = 0;
     for (let sy = 0; sy < SS; sy++) for (let sx = 0; sx < SS; sx++) {
-      const c = sample(((x + (sx + 0.5) / SS) * 512) / size, ((y + (sy + 0.5) / SS) * 512) / size, opts);
+      const px = ((x + (sx + 0.5) / SS - ox) * 512) / side, py = ((y + (sy + 0.5) / SS - oy) * 512) / side;
+      const inside = px >= 0 && px <= 512 && py >= 0 && py <= 512;
+      const c = inside ? sample(px, py, opts) : opts.bg === 'full' ? NAVY : null;
       if (c) { r += c[0]; g += c[1]; b += c[2]; a++; }
     }
-    const o = (y * size + x) * 4;
+    const o = (y * w + x) * 4;
     if (a) { out[o] = r / a; out[o + 1] = g / a; out[o + 2] = b / a; }
     out[o + 3] = Math.round((a / (SS * SS)) * 255);
   }
@@ -78,15 +82,15 @@ const chunk = (type, data) => {
   const crc = Buffer.alloc(4); crc.writeUInt32BE(crc32(td));
   return Buffer.concat([len, td, crc]);
 };
-function png(size, rgba, rgb = false) {
-  const ch = rgb ? 3 : 4;
-  const raw = Buffer.alloc(size * (size * ch + 1));
-  for (let y = 0; y < size; y++) {
-    raw[y * (size * ch + 1)] = 0;
-    for (let x = 0; x < size; x++) for (let k = 0; k < ch; k++) raw[y * (size * ch + 1) + 1 + x * ch + k] = rgba[(y * size + x) * 4 + k];
+function png(size, rgba, rgb = false, h = size) {
+  const w = size, ch = rgb ? 3 : 4;
+  const raw = Buffer.alloc(h * (w * ch + 1));
+  for (let y = 0; y < h; y++) {
+    raw[y * (w * ch + 1)] = 0;
+    for (let x = 0; x < w; x++) for (let k = 0; k < ch; k++) raw[y * (w * ch + 1) + 1 + x * ch + k] = rgba[(y * w + x) * 4 + k];
   }
   const ihdr = Buffer.alloc(13);
-  ihdr.writeUInt32BE(size, 0); ihdr.writeUInt32BE(size, 4);
+  ihdr.writeUInt32BE(w, 0); ihdr.writeUInt32BE(h, 4);
   ihdr[8] = 8; ihdr[9] = rgb ? 2 : 6;
   return Buffer.concat([Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]), chunk('IHDR', ihdr), chunk('IDAT', deflateSync(raw, { level: 9 })), chunk('IEND', Buffer.alloc(0))]);
 }
@@ -107,8 +111,14 @@ const jobs = [
   ['assets/android-icon-monochrome.png', 432, { bg: 'none', scale: 0.62, mono: true }],
   // Windows 앱 (창 · 작업 표시줄 · 설치 파일)
   ['desktop/icon.png', 512, { bg: 'round' }],
+  // Microsoft Store (MSIX) 타일 — desktop/build/appx/ (electron-builder 가 이름으로 찾는다). 타일은 꽉 찬 바탕
+  ['desktop/build/appx/StoreLogo.png', 50, { bg: 'full', scale: 0.8 }],
+  ['desktop/build/appx/Square44x44Logo.png', 44, { bg: 'full', scale: 0.8 }],
+  ['desktop/build/appx/Square150x150Logo.png', 150, { bg: 'full', scale: 0.7 }],
+  ['desktop/build/appx/Wide310x150Logo.png', 310, { bg: 'full', scale: 0.7 }, false, 150],
 ];
-for (const [file, size, opts, rgb] of jobs) {
-  writeFileSync(file, png(size, render(size, opts), rgb));
-  console.log(`✓ ${file} (${size})`);
+mkdirSync('desktop/build/appx', { recursive: true });
+for (const [file, size, opts, rgb, h] of jobs) {
+  writeFileSync(file, png(size, render(size, opts, h ?? size), rgb, h ?? size));
+  console.log(`✓ ${file} (${size}${h ? `×${h}` : ''})`);
 }

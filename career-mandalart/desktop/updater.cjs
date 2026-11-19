@@ -25,6 +25,8 @@ let quit = () => {};
 function startUpdater(onQuit) {
   quit = onQuit;
   if (!app.isPackaged) { state = '개발 실행 — 업데이트 확인 안 함'; return; }
+  // Microsoft Store 판(MSIX)은 스토어가 업데이트를 맡는다 — 스스로 받으면 정책 위반 · 설치 경로도 막혀 있다
+  if (process.windowsStore) { state = `Microsoft Store 가 업데이트를 맡아요 (${app.getVersion()})`; return; }
   ({ autoUpdater: updater } = require('electron-updater'));
   updater.autoDownload = true;
   updater.autoInstallOnAppQuit = true;
