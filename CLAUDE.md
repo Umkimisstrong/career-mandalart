@@ -79,7 +79,7 @@ npm run deploy:dry      # EAS 호출 없이 배포 파이프라인 점검
 ```
 
 ## 현재 상태 (2026-11-12)
-- 배포: 웹 https://gudo.pages.dev (`npm run deploy:web`, 2026-11-18 Vercel 에서 이전). 옛 주소는 이사 안내(GitHub `main` push → Vercel). Windows 앱 1.2.1 — 설치 · 업데이트 링크 https://github.com/Umkimisstrong/career-mandalart/releases/latest/download/GUDO-Setup.exe, 설치본은 GitHub 릴리스로 자동 업데이트.
+- 배포: 웹 https://gudo.pages.dev (`npm run deploy:web`, 2026-11-18 Vercel 에서 이전). 옛 주소는 이사 안내(GitHub `main` push → Vercel). Windows 앱 1.3.1 (2026-11-19, 새 아이콘) — 설치 · 업데이트 링크 https://github.com/Umkimisstrong/career-mandalart/releases/latest/download/GUDO-Setup.exe, 설치본은 GitHub 릴리스로 자동 업데이트.
 - 기능 목록 · 이력은 FEATURES.md. 크기(1 · 3 · 5 · 7 · 9) · 단계별 만들기 · 미리보기 · 반복 점검 · 팀 목표 · 칸 늘리기 · 하위 할 일 · 펼치기 · 캘린더 · 데스크톱 작은 창 · 버전 화면까지.
 - 검증: 2026-11-11 verify-gudo 로 목록 · 만들기 · 칸 편집 · 팀 · 작은 창 5개 기능을 실제 앱에서 증명. 2026-11-12 캘린더(넣기 · 풀어 보기 · 완료 · 고치기 · 지우기 · 반복 점검 체크 · 📅 배지 · 알림 울림 · .ics) 증명. 미검증: 실제 iPhone · Android 화면, 휴대폰 알림, 네이티브 카메라 QR, 작은 창 실제 마우스 클릭.
 - 판매 시작 기준(사용자 결정): ① 사용자 10명 피드백 ② 디자인 · 테마 확정 ③ 9×9 이미지 카드 — ③ 완료(2026-11-11, 목표 화면 「카드」 · 퍼즐 그림 · 흐림 조절), ② **확정**(2026-11-11 사용자: 둥근 파스텔 UI · 움직임 · 앱 테마 / 블록 테마 두 층 · 4계열 · 퍼즐 그림). 남은 기준 ① 10명 피드백.
