@@ -11,15 +11,10 @@ export type Folder = Dir;
 
 export const folderSupported = () => typeof window !== 'undefined' && 'showDirectoryPicker' in window;
 
-// 사용자가 창을 닫으면 null
+// 고른 폴더. 창을 닫았거나 브라우저가 막으면 오류(이름 · 메시지를 화면에 보여 원인을 알 수 있게)
 export async function pickFolder(): Promise<Folder | null> {
-  try {
-    const pick = (window as unknown as { showDirectoryPicker: (o: object) => Promise<Dir> }).showDirectoryPicker;
-    return await pick({ id: 'gudo-ai', mode: 'readwrite' });
-  } catch (e) {
-    if ((e as Error).name === 'AbortError') return null;
-    throw e;
-  }
+  const pick = (window as unknown as { showDirectoryPicker: (o: object) => Promise<Dir> }).showDirectoryPicker.bind(window);
+  return await pick({ id: 'gudo-ai', mode: 'readwrite' });
 }
 
 // ---- 목표마다 고른 폴더 기억 (IndexedDB) ----

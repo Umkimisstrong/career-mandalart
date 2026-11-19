@@ -44,16 +44,16 @@ export default function AiExport({ plan, age, onNote, onBack }: Props) {
     }
   };
   const choose = async () => {
-    // 고르지 않았거나 브라우저가 폴더 창을 막으면(앱 안 미리보기 창 등) 조용히 끝나지 않게 알린다
+    // 고르지 않았거나 브라우저가 폴더 창을 막으면 조용히 끝나지 않게, 브라우저가 준 이유까지 알린다
     try {
       const dir = await pickFolder();
-      if (!dir) {
-        setNote('폴더를 받지 못했어요. 폴더를 고른 뒤 뜨는 「사이트에서 파일을 보도록 · 수정하도록 허용」 창에서 둘 다 「허용」을 눌러야 해요. 바탕화면 · 문서 · 사용자 폴더 자체는 브라우저가 막으니 그 안에 만든 새 폴더를 고르세요.');
-        return;
-      }
+      if (!dir) { setNote('이 기기에서는 폴더를 고를 수 없어요. 파일 받기를 써 주세요.'); return; }
       await writeTo(dir);
     } catch (e) {
-      setNote(`폴더를 열지 못했어요: ${(e as Error).message} — Windows 앱이나 Chrome · Edge 에서 해 보세요.`);
+      const err = e as Error;
+      setNote(err.name === 'AbortError'
+        ? `폴더를 받지 못했어요 (${err.message || '취소됨'}). 폴더 안으로 들어가 「폴더 선택」을 누르고, 뜨는 허용 창에서 「허용」을 눌러 주세요. 바탕화면 · 문서 · 사용자 폴더 자체는 브라우저가 막아요.`
+        : `폴더를 열지 못했어요 (${err.name}: ${err.message}). Windows 앱이나 Chrome · Edge 최신 버전에서 해 보세요.`);
     }
   };
   const unlink = async () => { await forgetFolder(plan.id); setFolder(null); setNote('이 목표와 폴더의 연결을 끊었어요. 폴더 안 파일은 그대로예요.'); };
