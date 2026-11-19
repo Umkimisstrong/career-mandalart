@@ -16,7 +16,7 @@
     "android": {
       "package": "com.careermandalart.app",
       "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE",
+        "backgroundColor": "#0B1026",
         "foregroundImage": "./assets/android-icon-foreground.png",
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
@@ -30,7 +30,7 @@
       [
         "expo-camera",
         {
-          "cameraPermission": "구도 QR 코드를 읽어 청사진을 불러오기 위해 카메라를 사용합니다."
+          "cameraPermission": "구도 QR 코드를 읽어 목표를 불러오기 위해 카메라를 사용합니다."
         }
       ],
       "expo-notifications"
