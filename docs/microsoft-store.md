@@ -28,6 +28,8 @@ _작성: 2026-11-19_
 
 `desktop/package.json` `build.appx` 에 들어가 있다.
 
+**2026-11-21 첫 제출(1.3.1.0) — 인증 대기.** 제출 칸별 값 · 복사 버튼: [store/microsoft-submit.html](store/microsoft-submit.html). 개인정보 질문은 패키지 기능(인터넷 · runFullTrust) 때문에 「예」로 고정되어 개인정보처리방침 URL 을 넣었다.
+
 ## 2. 순서
 
 | # | 할 일 | 누가 |

@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>스토어 제출 안내</title>
+<style>
+:root{--bg:#f6f5fb;--card:#fff;--ink:#1d1b2e;--sub:#5f5b78;--line:#e4e1f0;--accent:#24386E;--gold:#b8860b;--chip:#eef0fa;--ok:#1f7a4d;--warn:#9a5b00;--warnbg:#fff6e5}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0B1026;--card:#151c3a;--ink:#eef0fa;--sub:#aab2d6;--line:#2a345e;--accent:#9fb4ff;--gold:#F5C451;--chip:#1e2852;--ok:#6fd39f;--warn:#F5C451;--warnbg:#2a2610}}
+:root[data-theme="dark"]{--bg:#0B1026;--card:#151c3a;--ink:#eef0fa;--sub:#aab2d6;--line:#2a345e;--accent:#9fb4ff;--gold:#F5C451;--chip:#1e2852;--ok:#6fd39f;--warn:#F5C451;--warnbg:#2a2610}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.6 system-ui,'Malgun Gothic',sans-serif;padding:20px 16px 60px}
+main{max-width:760px;margin:0 auto}
+h1{font-size:22px;margin:0 0 4px}
+.lead{color:var(--sub);margin:0 0 18px}
+nav{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:18px}
+nav a{background:var(--chip);color:var(--accent);text-decoration:none;padding:4px 10px;border-radius:999px;font-size:13px}
+section{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin-bottom:14px}
+h2{font-size:17px;margin:0 0 4px;display:flex;gap:10px;align-items:center}
+h2 .n{background:var(--accent);color:var(--card);border-radius:50%;width:26px;height:26px;display:inline-flex;align-items:center;justify-content:center;font-size:14px;flex:none}
+.where{color:var(--sub);font-size:13px;margin:0 0 10px}
+table{width:100%;border-collapse:collapse}
+td{border-top:1px solid var(--line);padding:8px 6px;vertical-align:top}
+td:first-child{color:var(--sub);width:34%;font-size:14px}
+.v{display:flex;gap:8px;align-items:flex-start;justify-content:space-between}
+.v span{white-space:pre-wrap;word-break:break-word}
+button.copy{flex:none;border:1px solid var(--line);background:var(--chip);color:var(--accent);border-radius:8px;padding:2px 9px;font-size:12px;cursor:pointer}
+button.copy.done{color:var(--ok)}
+.note{background:var(--warnbg);color:var(--warn);border-radius:10px;padding:8px 12px;font-size:13.5px;margin-top:10px}
+ul{margin:6px 0;padding-left:20px}
+.shots{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;margin-top:8px}
+.shots figure{margin:0;font-size:12px;color:var(--sub)}
+.shots img{width:100%;border-radius:8px;border:1px solid var(--line);display:block}
+code{background:var(--chip);padding:1px 6px;border-radius:6px;font-size:13px}
+details{margin-top:8px}summary{cursor:pointer;color:var(--accent)}
+</style></head><body><main>
+<h1>Microsoft Store 제출 안내 — 구도 GUDO</h1>
+<p class="lead">Partner Center › 앱 및 게임 › 구도 GUDO › <b>제출 시작</b>을 누르면 아래 칸들이 나옵니다. 위에서부터 채우고, 값 옆 「복사」를 눌러 붙여넣으세요.</p>
+<nav><a href="#s1">가격</a><a href="#s2">속성</a><a href="#s3">연령 등급</a><a href="#s4">패키지</a><a href="#s5">스토어 등록 정보</a><a href="#s6">제출 옵션</a><a href="#s7">제출</a></nav>
+
+<section id="s1"><h2><span class="n">1</span>가격 및 사용 가능 여부</h2>
+<p class="where">Pricing and availability</p>
+<table>
+<tr><td>시장</td><td>모든 시장 (기본값 그대로)</td></tr>
+<tr><td>표시 여부</td><td>공개 — Store 에서 검색 가능</td></tr>
+<tr><td>가격</td><td><b>무료</b></td></tr>
+<tr><td>무료 평가판</td><td>평가판 없음</td></tr>
+<tr><td>출시 일정</td><td>인증 통과 즉시 출시</td></tr>
+</table></section>
+
+<section id="s2"><h2><span class="n">2</span>속성</h2>
+<p class="where">Properties</p>
+<table>
+<tr><td>범주</td><td>생산성 (Productivity) · 하위 범주 없음</td></tr>
+<tr><td>개인정보처리방침 URL</td><td class="v"><span>https://gudo.pages.dev/privacy</span><button class="copy">복사</button></td></tr>
+<tr><td>웹 사이트</td><td class="v"><span>https://gudo.pages.dev</span><button class="copy">복사</button></td></tr>
+<tr><td>지원 연락처</td><td class="v"><span>gudonineway@gmail.com</span><button class="copy">복사</button></td></tr>
+<tr><td>제품 선언</td><td>모두 체크 안 함<br><small>(Xbox · 펜 · 사용자 데이터 수집 등 해당 없음)</small></td></tr>
+<tr><td>시스템 요구 사항</td><td>최소 · 권장 모두 비워 두기 (키보드 · 마우스만 쓰면 기본값)</td></tr>
+</table>
+<div class="note">개인정보처리방침 주소는 지금 실제로 열립니다 (확인함).</div></section>
+
+<section id="s3"><h2><span class="n">3</span>연령 등급</h2>
+<p class="where">Age ratings — IARC 설문</p>
+<table>
+<tr><td>이메일</td><td class="v"><span>gudonineway@gmail.com</span><button class="copy">복사</button></td></tr>
+<tr><td>앱 종류</td><td>「게임이 아닌 앱」 — 유틸리티 · 생산성 · 통신 · 기타</td></tr>
+<tr><td>폭력 · 성적 · 언어 · 약물 등</td><td>모두 <b>아니요</b></td></tr>
+<tr><td>사용자끼리 대화 · 공유 콘텐츠</td><td><b>아니요</b> — 채팅 없음 (팀 초대 코드는 사용자가 직접 복사해 전달)</td></tr>
+<tr><td>위치 공유</td><td><b>아니요</b></td></tr>
+<tr><td>디지털 상품 구매</td><td><b>아니요</b></td></tr>
+<tr><td>제한 없는 인터넷 접속(웹 브라우저 기능)</td><td><b>아니요</b> — 자기 사이트 화면만 엶</td></tr>
+</table>
+<div class="note">결과는 보통 「3+ / 모든 연령」으로 나옵니다.</div></section>
+
+<section id="s4"><h2><span class="n">4</span>패키지</h2>
+<p class="where">Packages</p>
+<ul>
+<li>올릴 파일 (약 156MB) — 탐색기에서 이 폴더를 열어 끌어다 놓기:</li>
+</ul>
+<table><tr><td>파일</td><td class="v"><span>C:\Claude\01. Career\career-mandalart\desktop\out\GUDO-Store.appx</span><button class="copy">복사</button></td></tr>
+<tr><td>장치 패밀리</td><td><b>Windows 10/11 Desktop</b> 만 체크 (Xbox · Holographic 등은 해제)</td></tr></table>
+<p style="margin:10px 0 4px">「runFullTrust 제한된 기능」을 쓰는 이유를 묻는 칸이 나오면:</p>
+<table><tr><td>사유 (영어)</td><td class="v"><span>GUDO is an Electron desktop app. runFullTrust is required to run the Win32 desktop process that shows the app window, the desktop mini widget window and the system tray icon. The app does not collect user data; everything is stored locally.</span><button class="copy">복사</button></td></tr></table>
+<div class="note">업로드 후 「패키지 확인 완료」가 뜰 때까지 기다리세요. 이름 · 게시자 오류가 나면 화면을 캡처해서 보여 주세요.</div></section>
+
+<section id="s5"><h2><span class="n">5</span>스토어 등록 정보</h2>
+<p class="where">Store listings — 패키지 언어가 한국어 · 영어라 <b>두 언어 모두</b> 채워야 합니다</p>
+<h3 style="font-size:15px;margin:10px 0 4px">한국어 (ko-kr)</h3>
+<table>
+<tr><td>제품 이름</td><td>구도 GUDO (예약한 이름 자동)</td></tr>
+<tr><td>설명</td><td class="v"><span>구도(GUDO · Nine Ways)는 만다라트(9×9 목표표) 방식으로 목표를 설계하고 실천을 점검하는 앱입니다.
+
+- 핵심 목표 하나 → 세부 목표 8개 → 실행 과제 64개. 부담되면 1 · 3 · 5 · 7칸으로 작게 시작
+- 연령대별 템플릿과 카테고리 추천으로 빈 칸 앞에서 막히지 않게
+- 반복 점검 · 오늘의 점검 · 캘린더 · 알림으로 매일의 실천을 기록
+- 바탕화면 작은 창 — 목표를 띄워 두고 바로 확인
+- AI 로 내보내기 — 목표 구조 그대로 Claude · ChatGPT · Gemini 세션을 시작하고, 진행 현황을 다시 가져와 칸에 반영
+- 팀 목표 — 서버 없이 초대장으로 블록마다 담당자를 정해 함께 보기
+- 테마 · 퍼즐 그림 · 이미지 카드
+- 회원가입 · 서버 없음. 모든 내용은 내 PC 에만 저장</span><button class="copy">복사</button></td></tr>
+<tr><td>짧은 설명</td><td class="v"><span>하나의 목적을 아홉 갈래 길로 — 81칸 목표 지도를 그리고, 바탕화면에 띄워 두고, AI 세션으로 진행하세요.</span><button class="copy">복사</button></td></tr>
+<tr><td>제품 기능<br><small>(한 줄씩 칸마다)</small></td><td class="v"><span>81칸 목표 지도 (1 · 3 · 5 · 7 · 9칸)
+연령대별 템플릿 · 카테고리 추천
+반복 점검 · 캘린더 · 알림
+바탕화면 작은 창
+AI 세션 내보내기 · 진행 현황 자동 동기화
+서버 없이 팀 목표
+회원가입 없음 · 내 PC 에만 저장</span><button class="copy">복사</button></td></tr>
+<tr><td>검색어<br><small>(칸마다 하나, 최대 7)</small></td><td class="v"><span>만다라트, 목표, 계획, 습관, 체크리스트, AI, 생산성</span><button class="copy">복사</button></td></tr>
+<tr><td>저작권</td><td class="v"><span>© 2026 GUDO</span><button class="copy">복사</button></td></tr>
+<tr><td>새로운 기능</td><td>비워 두기 (첫 출시)</td></tr>
+</table>
+<p style="margin:12px 0 2px"><b>스크린샷 (데스크톱)</b> — 이 순서로 7장, 폴더 <code>docs\store\microsoft\</code></p>
+<div class="shots">
+<figure><img src="microsoft/1-goal-map.png"><figcaption>1 목표 지도</figcaption></figure>
+<figure><img src="microsoft/2-cell-editor.png"><figcaption>2 칸 편집</figcaption></figure>
+<figure><img src="microsoft/3-today.png"><figcaption>3 오늘의 점검</figcaption></figure>
+<figure><img src="microsoft/4-calendar.png"><figcaption>4 캘린더</figcaption></figure>
+<figure><img src="microsoft/5-desktop-widget.png"><figcaption>5 작은 창</figcaption></figure>
+<figure><img src="microsoft/6-ai-export.png"><figcaption>6 AI 내보내기</figcaption></figure>
+<figure><img src="microsoft/7-themes.png"><figcaption>7 테마</figcaption></figure>
+</div>
+<table style="margin-top:8px"><tr><td>스크린샷 폴더</td><td class="v"><span>C:\Claude\01. Career\docs\store\microsoft</span><button class="copy">복사</button></td></tr></table>
+<p class="where" style="margin-top:8px">Store 로고 · 포스터 아트는 선택 — 비워 두면 패키지 아이콘을 씁니다.</p>
+
+<h3 style="font-size:15px;margin:14px 0 4px">English (en-us) — 「언어 추가」 후</h3>
+<table>
+<tr><td>Description</td><td class="v"><span>GUDO (Nine Ways) helps you design goals with the Mandal-Art 9×9 method and track daily practice.
+
+- One core goal → 8 sub-goals → 64 actions. Start small with 1, 3, 5 or 7 cells
+- Age-based templates and category suggestions
+- Routines, today's check, calendar and reminders
+- Desktop mini window to keep a goal in sight
+- Export to AI — start Claude, ChatGPT or Gemini sessions with your goal structure and sync progress back
+- Team goals without a server — invite owners per block
+- Themes, puzzle pictures and image cards
+- No sign-up, no server. Everything stays on your PC</span><button class="copy">복사</button></td></tr>
+<tr><td>Short description</td><td class="v"><span>One purpose, nine ways — map your goals on 81 cells, keep them on your desktop, and run them as AI sessions.</span><button class="copy">복사</button></td></tr>
+<tr><td>Product features</td><td class="v"><span>81-cell goal map (1, 3, 5, 7 or 9 cells)
+Age-based templates and category suggestions
+Routines, calendar and reminders
+Desktop mini window
+AI session export with progress sync
+Team goals without a server
+No sign-up, everything stays on your PC</span><button class="copy">복사</button></td></tr>
+<tr><td>Search terms</td><td class="v"><span>mandalart, goals, planner, habits, checklist, AI, productivity</span><button class="copy">복사</button></td></tr>
+<tr><td>Copyright</td><td class="v"><span>© 2026 GUDO</span><button class="copy">복사</button></td></tr>
+<tr><td>Screenshots</td><td>같은 7장을 올려도 됩니다 (앱 화면이 한국어라). 영어판 그림이 필요하면 말해 주세요.</td></tr>
+</table></section>
+
+<section id="s6"><h2><span class="n">6</span>제출 옵션</h2>
+<p class="where">Submission options</p>
+<table>
+<tr><td>게시 보류</td><td>「인증 통과 즉시 게시」</td></tr>
+<tr><td>인증 참고 사항<br><small>(Notes for certification)</small></td><td class="v"><span>No account or sign-in is needed. On first launch the app creates a sample goal; open it to see the 9×9 board. The window loads the app UI from https://gudo.pages.dev (our own site). The tray icon and the desktop mini window ("바탕화면에 띄우기" on a goal card) are why runFullTrust is declared. All data is stored locally; nothing is collected.</span><button class="copy">복사</button></td></tr>
+</table></section>
+
+<section id="s7"><h2><span class="n">7</span>제출</h2>
+<ul>
+<li>모든 칸이 「완료」가 되면 오른쪽 아래 <b>Store 에 제출</b>.</li>
+<li>인증은 보통 몇 시간 ~ 3영업일. 결과는 메일과 Partner Center 에 옵니다.</li>
+<li>거절되면 사유 화면을 캡처해서 보여 주세요 — 고쳐서 다시 올리면 됩니다.</li>
+<li>출시되면 주소: <code>https://apps.microsoft.com/detail/9MZG3RSX4DZ1</code></li>
+</ul></section>
+</main>
+<script>
+document.querySelectorAll('button.copy').forEach(b=>b.addEventListener('click',async()=>{
+  const t=b.previousElementSibling.textContent;
+  try{await navigator.clipboard.writeText(t)}catch(e){const a=document.createElement('textarea');a.value=t;document.body.appendChild(a);a.select();document.execCommand('copy');a.remove()}
+  b.textContent='복사됨';b.classList.add('done');setTimeout(()=>{b.textContent='복사';b.classList.remove('done')},1500);
+}));
+</script>
+</body></html>
