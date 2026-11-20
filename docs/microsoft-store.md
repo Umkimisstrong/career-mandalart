@@ -17,6 +17,17 @@ _작성: 2026-11-19_
 - 패키지를 만드는 PC 에 **Windows SDK** 가 있어야 한다 (`store.cjs` 가 `C:/Program Files (x86)/Windows Kits/10/bin/<버전>/x64/makeappx.exe` 를 찾는다. electron-builder 에 들어 있는 makeappx 는 이 PC 에서 실행되지 않음).
 - 기존 GitHub 설치본(`GUDO-Setup.exe`)은 그대로 둔다. 둘은 저장 공간이 따로라, 옮길 때는 「백업 · 복원」의 백업 코드를 쓴다.
 
+## 제품 ID (2026-11-20 예약)
+
+| | |
+|---|---|
+| Package/Identity/Name | `GUDO.GUDO` |
+| Publisher | `CN=53F97BE0-FD21-4431-9BE7-367003B99782` |
+| PublisherDisplayName | `GUDO` |
+| Store ID | `9MZG3RSX4DZ1` — https://apps.microsoft.com/detail/9MZG3RSX4DZ1 |
+
+`desktop/package.json` `build.appx` 에 들어가 있다.
+
 ## 2. 순서
 
 | # | 할 일 | 누가 |

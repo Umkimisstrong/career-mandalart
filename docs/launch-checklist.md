@@ -32,9 +32,9 @@ _작성: 2026-11-18_
 
 ### Microsoft Store (먼저 — 등록 무료, 지금 Windows 앱에 가장 가까움)
 절차 · 소개 문구 · 제출 값: [microsoft-store.md](microsoft-store.md)
-- [ ] Partner Center 개인 계정 · 신원 확인
-- [ ] 앱 이름 「구도 GUDO」 예약 → 제품 ID 세 값(Name · Publisher · PublisherDisplayName)을 `desktop/package.json` `build.appx` 에
-- [x] 스토어용 패키지(MSIX) 빌드 — `npm run dist:store` → `out/GUDO-Store.appx` (2026-11-19, 시험 값으로 만들어짐). 스토어판은 GitHub 자동 업데이트 · 「시작할 때 실행」 끔
+- [x] Partner Center 개인 계정 · 신원 확인 (2026-11-20)
+- [x] 앱 이름 「구도 GUDO」 예약 (2026-11-20, Store ID `9MZG3RSX4DZ1`) → 제품 ID 세 값을 `desktop/package.json` `build.appx` 에
+- [x] 스토어용 패키지(MSIX) 빌드 — `npm run dist:store` → `out/GUDO-Store.appx` (2026-11-20, 제품 ID 값으로 다시 만듦). 스토어판은 GitHub 자동 업데이트 · 「시작할 때 실행」 끔
 - [ ] 스토어 스크린샷 (1366×768 이상)
 - [x] 기존 GitHub 설치본은 그대로 둠 — 둘은 저장 공간이 따로, 옮길 때는 백업 코드
 

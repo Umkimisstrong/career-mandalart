@@ -33,9 +33,9 @@
       "artifactName": "GUDO-Setup.${ext}"
     },
     "appx": {
-      "identityName": "TODO.PartnerCenter.PackageIdentityName",
-      "publisher": "CN=TODO-PartnerCenter-Publisher",
-      "publisherDisplayName": "TODO-PartnerCenter-PublisherDisplayName",
+      "identityName": "GUDO.GUDO",
+      "publisher": "CN=53F97BE0-FD21-4431-9BE7-367003B99782",
+      "publisherDisplayName": "GUDO",
       "displayName": "구도 GUDO",
       "applicationId": "GUDO",
       "backgroundColor": "#0B1026",
